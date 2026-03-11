@@ -233,110 +233,78 @@ export default function AdminPage() {
   const totalLinksEF = establishments.reduce((s, e) => s + e.formations.length, 0);
   const totalLinksMF = metiers.reduce((s, m) => s + m.formations.length, 0);
 
-  const sidebarItems: { key: Tab; label: string; icon: React.ReactNode }[] = [
-    {
-      key: "dashboard", label: "Tableau de bord",
-      icon: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>,
-    },
-    {
-      key: "establishments", label: `Etablissements (${establishments.length})`,
-      icon: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>,
-    },
-    {
-      key: "formations", label: `Formations (${formations.length})`,
-      icon: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>,
-    },
-    {
-      key: "metiers", label: `Metiers (${metiers.length})`,
-      icon: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>,
-    },
-    {
-      key: "links-ef", label: `Liens Etab-Form (${totalLinksEF})`,
-      icon: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>,
-    },
-    {
-      key: "links-mf", label: `Liens Met-Form (${totalLinksMF})`,
-      icon: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>,
-    },
-    {
-      key: "enrich", label: "Enrichir (API)",
-      icon: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9"/></svg>,
-    },
+  const sidebarItems: { key: Tab; label: string }[] = [
+    { key: "dashboard", label: "Tableau de bord" },
+    { key: "establishments", label: `Etablissements (${establishments.length})` },
+    { key: "formations", label: `Formations (${formations.length})` },
+    { key: "metiers", label: `Metiers (${metiers.length})` },
+    { key: "links-ef", label: `Liens Etab-Form (${totalLinksEF})` },
+    { key: "links-mf", label: `Liens Met-Form (${totalLinksMF})` },
+    { key: "enrich", label: "Enrichir (API)" },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar - sticky */}
-      <aside className="w-64 bg-[#1B2A5B] text-white flex flex-col h-screen sticky top-0 shrink-0">
-        <div className="p-5 border-b border-white/10">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
-              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            </div>
-            <div>
-              <h1 className="font-bold text-sm leading-tight">Administration</h1>
-              <p className="text-blue-300 text-[11px]">Formations Ferroviaires</p>
-            </div>
-          </div>
+      <aside className="w-56 bg-[#1B2A5B] text-white flex flex-col h-screen sticky top-0 shrink-0">
+        <div className="px-4 py-4 border-b border-white/10">
+          <h1 className="font-bold text-sm leading-tight">Administration</h1>
+          <p className="text-blue-300 text-[11px]">Formations Ferroviaires</p>
         </div>
-        <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-          <p className="px-3 pt-2 pb-1.5 text-[10px] font-semibold text-blue-400 uppercase tracking-wider">General</p>
+        <nav className="flex-1 p-2 space-y-0.5 overflow-y-auto">
+          <p className="px-3 pt-2 pb-1 text-[10px] font-semibold text-blue-400 uppercase tracking-wider">General</p>
           {sidebarItems.slice(0, 1).map((item) => (
             <button
               key={item.key}
               onClick={() => setTab(item.key)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              className={`w-full text-left px-3 py-2 rounded-lg text-[13px] font-medium transition-all ${
                 tab === item.key
-                  ? "bg-white/15 text-white shadow-sm"
+                  ? "bg-white/15 text-white"
                   : "text-blue-200 hover:bg-white/5 hover:text-white"
               }`}
             >
-              {item.icon}
               {item.label}
             </button>
           ))}
-          <p className="px-3 pt-4 pb-1.5 text-[10px] font-semibold text-blue-400 uppercase tracking-wider">Donnees</p>
+          <p className="px-3 pt-3 pb-1 text-[10px] font-semibold text-blue-400 uppercase tracking-wider">Donnees</p>
           {sidebarItems.slice(1, 4).map((item) => (
             <button
               key={item.key}
               onClick={() => setTab(item.key)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              className={`w-full text-left px-3 py-2 rounded-lg text-[13px] font-medium transition-all ${
                 tab === item.key
-                  ? "bg-white/15 text-white shadow-sm"
+                  ? "bg-white/15 text-white"
                   : "text-blue-200 hover:bg-white/5 hover:text-white"
               }`}
             >
-              {item.icon}
               {item.label}
             </button>
           ))}
-          <p className="px-3 pt-4 pb-1.5 text-[10px] font-semibold text-blue-400 uppercase tracking-wider">Relations</p>
+          <p className="px-3 pt-3 pb-1 text-[10px] font-semibold text-blue-400 uppercase tracking-wider">Relations</p>
           {sidebarItems.slice(4, 6).map((item) => (
             <button
               key={item.key}
               onClick={() => setTab(item.key)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              className={`w-full text-left px-3 py-2 rounded-lg text-[13px] font-medium transition-all ${
                 tab === item.key
-                  ? "bg-white/15 text-white shadow-sm"
+                  ? "bg-white/15 text-white"
                   : "text-blue-200 hover:bg-white/5 hover:text-white"
               }`}
             >
-              {item.icon}
               {item.label}
             </button>
           ))}
-          <p className="px-3 pt-4 pb-1.5 text-[10px] font-semibold text-blue-400 uppercase tracking-wider">Outils</p>
+          <p className="px-3 pt-3 pb-1 text-[10px] font-semibold text-blue-400 uppercase tracking-wider">Outils</p>
           {sidebarItems.slice(6).map((item) => (
             <button
               key={item.key}
               onClick={() => setTab(item.key)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              className={`w-full text-left px-3 py-2 rounded-lg text-[13px] font-medium transition-all ${
                 tab === item.key
-                  ? "bg-white/15 text-white shadow-sm"
+                  ? "bg-white/15 text-white"
                   : "text-blue-200 hover:bg-white/5 hover:text-white"
               }`}
             >
-              {item.icon}
               {item.label}
             </button>
           ))}
