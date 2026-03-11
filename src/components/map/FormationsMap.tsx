@@ -712,9 +712,9 @@ export default function FormationsMap({
           <div className="px-4 py-3">
             <div className="flex rounded-xl bg-navy-900/5 p-1 gap-1">
               {([
-                { key: "establishments" as const, label: "Etablissements", count: displayedEstablishments.length, color: "bg-blue-500", icon: <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg> },
-                { key: "formations" as const, label: "Formations", count: formationsInResults.length, color: "bg-electric-500", icon: <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg> },
-                { key: "metiers" as const, label: "Metiers", count: metiersGrouped.length, color: "bg-amber-500", icon: <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10h20V9a2 2 0 00-2-2zM16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg> },
+                { key: "establishments" as const, label: "Etablissements", count: displayedEstablishments.length, color: "bg-blue-500" },
+                { key: "formations" as const, label: "Formations", count: formationsInResults.length, color: "bg-electric-500" },
+                { key: "metiers" as const, label: "Metiers", count: metiersGrouped.length, color: "bg-amber-500" },
               ]).map((v) => (
                 <button
                   key={v.key}
@@ -725,8 +725,7 @@ export default function FormationsMap({
                       : "text-navy-400 hover:text-navy-600 hover:bg-white/40"
                   }`}
                 >
-                  {v.icon}
-                  <span className="hidden sm:inline">{v.label}</span>
+                  <span>{v.label}</span>
                   <span className={`inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full text-[10px] font-bold ${
                     listView === v.key ? `${v.color} text-white` : "bg-navy-100 text-navy-500"
                   }`}>{v.count}</span>
