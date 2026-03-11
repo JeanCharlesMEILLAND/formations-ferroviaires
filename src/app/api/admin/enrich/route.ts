@@ -156,9 +156,15 @@ export async function POST(request: NextRequest) {
           const data = await resp.json();
           const results: ApiResult[] = data.results || [];
 
+          // First pass: check if any results match our RNCP code
+          const rncpTarget = rncpCode ? `RNCP${rncpCode}` : null;
+          const hasRncpMatches = rncpTarget
+            ? results.some(r => r.rncpCode === rncpTarget)
+            : false;
+
           for (const r of results) {
-            // Filter: only keep results matching our RNCP code if we have one
-            if (rncpCode && r.rncpCode && r.rncpCode !== `RNCP${rncpCode}`) {
+            // If we found RNCP matches, only keep those; otherwise keep all ROME results
+            if (hasRncpMatches && r.rncpCode !== rncpTarget) {
               continue;
             }
 
