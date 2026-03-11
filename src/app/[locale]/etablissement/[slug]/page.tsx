@@ -188,7 +188,7 @@ export default async function EstablishmentPage({
                                     >
                                       {/* eslint-disable-next-line @next/next/no-img-element */}
                                       <img src="/logos/avec-industrie-ferroviaire.svg" alt="" width={13} height={13} className="rounded-sm" />
-                                      Industrie Ferro.
+                                      aveclindustrieferroviaire
                                       <svg width="9" height="9" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40"><path d="M3 6l3-3M3 3h3v3" /></svg>
                                     </a>
                                   </div>
