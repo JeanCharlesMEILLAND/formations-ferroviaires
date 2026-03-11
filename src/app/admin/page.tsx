@@ -30,7 +30,7 @@ interface Metier {
   formations: Array<{ formation: { id: string; nameFr: string; slug: string } }>;
 }
 
-type Tab = "dashboard" | "establishments" | "formations" | "metiers" | "links-ef" | "links-mf";
+type Tab = "dashboard" | "establishments" | "formations" | "metiers" | "links-ef" | "links-mf" | "enrich";
 
 // ============================================================
 // Login Screen
@@ -258,6 +258,10 @@ export default function AdminPage() {
       key: "links-mf", label: `Liens Met-Form (${totalLinksMF})`,
       icon: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>,
     },
+    {
+      key: "enrich", label: "Enrichir (API)",
+      icon: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9"/></svg>,
+    },
   ];
 
   return (
@@ -307,7 +311,22 @@ export default function AdminPage() {
             </button>
           ))}
           <p className="px-3 pt-4 pb-1.5 text-[10px] font-semibold text-blue-400 uppercase tracking-wider">Relations</p>
-          {sidebarItems.slice(4).map((item) => (
+          {sidebarItems.slice(4, 6).map((item) => (
+            <button
+              key={item.key}
+              onClick={() => setTab(item.key)}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                tab === item.key
+                  ? "bg-white/15 text-white shadow-sm"
+                  : "text-blue-200 hover:bg-white/5 hover:text-white"
+              }`}
+            >
+              {item.icon}
+              {item.label}
+            </button>
+          ))}
+          <p className="px-3 pt-4 pb-1.5 text-[10px] font-semibold text-blue-400 uppercase tracking-wider">Outils</p>
+          {sidebarItems.slice(6).map((item) => (
             <button
               key={item.key}
               onClick={() => setTab(item.key)}
@@ -386,6 +405,9 @@ export default function AdminPage() {
               )}
               {tab === "links-mf" && (
                 <LinksMFTab metiers={metiers} formations={formations} onRefresh={loadData} onMessage={showMessage} />
+              )}
+              {tab === "enrich" && (
+                <EnrichTab onRefresh={loadData} onMessage={showMessage} />
               )}
             </>
           )}
@@ -1524,6 +1546,208 @@ function LinksMFTab({
             </div>
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Enrich Tab - API La Bonne Alternance
+// ============================================================
+
+interface EnrichFormation {
+  id: string;
+  nameFr: string;
+  romeCode: string | null;
+  rncpCode: string | null;
+  establishmentCount: number;
+}
+
+function EnrichTab({ onRefresh, onMessage }: { onRefresh: () => void; onMessage: (type: "success" | "error", text: string) => void }) {
+  const [enrichFormations, setEnrichFormations] = useState<EnrichFormation[]>([]);
+  const [totalEst, setTotalEst] = useState(0);
+  const [totalLnk, setTotalLnk] = useState(0);
+  const [loadingEnrich, setLoadingEnrich] = useState(true);
+  const [enriching, setEnriching] = useState(false);
+  const [enrichingId, setEnrichingId] = useState<string | null>(null);
+  const [enrichLogs, setEnrichLogs] = useState<string[]>([]);
+  const [enrichSummary, setEnrichSummary] = useState<{ formationsProcessed: number; apiResultsTotal: number; newEstablishments: number; newLinks: number } | null>(null);
+
+  const loadEnrichData = useCallback(async () => {
+    setLoadingEnrich(true);
+    try {
+      const res = await fetch("/api/admin/enrich");
+      if (res.ok) {
+        const data = await res.json();
+        setEnrichFormations(data.formations);
+        setTotalEst(data.totalEstablishments);
+        setTotalLnk(data.totalLinks);
+      }
+    } catch { /* ignore */ }
+    setLoadingEnrich(false);
+  }, []);
+
+  useEffect(() => { loadEnrichData(); }, [loadEnrichData]);
+
+  const runEnrichment = async (formationId?: string) => {
+    setEnriching(true);
+    setEnrichingId(formationId || "all");
+    setEnrichLogs([]);
+    setEnrichSummary(null);
+    try {
+      const res = await fetch("/api/admin/enrich", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formationId ? { formationId } : {}),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setEnrichLogs(data.logs || []);
+        setEnrichSummary(data.summary);
+        onMessage(
+          "success",
+          `Enrichissement termine : +${data.summary.newEstablishments} etablissements, +${data.summary.newLinks} liens`
+        );
+        await loadEnrichData();
+        onRefresh();
+      } else {
+        onMessage("error", data.error || "Erreur d'enrichissement");
+      }
+    } catch (err) {
+      onMessage("error", "Erreur reseau: " + (err as Error).message);
+    }
+    setEnriching(false);
+    setEnrichingId(null);
+  };
+
+  if (loadingEnrich) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-2 border-gray-200 border-t-[#1B2A5B] rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900">Enrichissement API</h2>
+        <p className="text-gray-500 text-sm mt-1">
+          Importer automatiquement les etablissements depuis l&apos;API La Bonne Alternance (gouvernement) via les codes ROME
+        </p>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+          <p className="text-sm text-gray-500">Formations avec code ROME</p>
+          <p className="text-2xl font-bold text-[#1B2A5B] mt-1">{enrichFormations.length}</p>
+        </div>
+        <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+          <p className="text-sm text-gray-500">Total etablissements</p>
+          <p className="text-2xl font-bold text-emerald-600 mt-1">{totalEst}</p>
+        </div>
+        <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+          <p className="text-sm text-gray-500">Total liens etab-formation</p>
+          <p className="text-2xl font-bold text-purple-600 mt-1">{totalLnk}</p>
+        </div>
+      </div>
+
+      <div className="bg-gradient-to-r from-[#1B2A5B] to-[#2a3f7e] rounded-xl p-6 mb-8 text-white">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-bold text-lg">Enrichir toutes les formations</h3>
+            <p className="text-blue-200 text-sm mt-1">
+              Interroge l&apos;API La Bonne Alternance pour chaque formation avec un code ROME, sur 10 points couvrant la France metropolitaine. Peut prendre quelques minutes.
+            </p>
+          </div>
+          <button
+            onClick={() => runEnrichment()}
+            disabled={enriching}
+            className="px-6 py-3 bg-white text-[#1B2A5B] rounded-xl font-bold text-sm hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shrink-0 ml-6"
+          >
+            {enriching && enrichingId === "all" ? (
+              <>
+                <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                Enrichissement...
+              </>
+            ) : (
+              <>
+                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9"/></svg>
+                Lancer l&apos;enrichissement global
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {enrichSummary && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 mb-6">
+          <h4 className="font-bold text-emerald-800 mb-2">Resultat</h4>
+          <div className="grid grid-cols-4 gap-4 text-sm">
+            <div><span className="text-emerald-600 font-bold">{enrichSummary.formationsProcessed}</span> formations traitees</div>
+            <div><span className="text-emerald-600 font-bold">{enrichSummary.apiResultsTotal}</span> resultats API</div>
+            <div><span className="text-emerald-600 font-bold">+{enrichSummary.newEstablishments}</span> nouveaux etablissements</div>
+            <div><span className="text-emerald-600 font-bold">+{enrichSummary.newLinks}</span> nouveaux liens</div>
+          </div>
+        </div>
+      )}
+
+      {enrichLogs.length > 0 && (
+        <div className="bg-gray-900 rounded-xl p-5 mb-8 max-h-72 overflow-auto">
+          <h4 className="text-green-400 font-mono text-xs font-bold mb-2">Logs</h4>
+          <pre className="text-green-300 font-mono text-xs whitespace-pre-wrap leading-relaxed">
+            {enrichLogs.join("\n")}
+          </pre>
+        </div>
+      )}
+
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-gray-50 border-b border-gray-200">
+              <th className="text-left px-5 py-3 font-semibold text-gray-600">Formation</th>
+              <th className="text-left px-5 py-3 font-semibold text-gray-600">Code ROME</th>
+              <th className="text-left px-5 py-3 font-semibold text-gray-600">Code RNCP</th>
+              <th className="text-center px-5 py-3 font-semibold text-gray-600">Etablissements</th>
+              <th className="text-center px-5 py-3 font-semibold text-gray-600">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {enrichFormations.map((f) => (
+              <tr key={f.id} className="border-b border-gray-100 hover:bg-gray-50">
+                <td className="px-5 py-3 font-medium text-gray-900">{f.nameFr}</td>
+                <td className="px-5 py-3">
+                  <span className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs font-mono font-bold">{f.romeCode}</span>
+                </td>
+                <td className="px-5 py-3 text-gray-500 font-mono text-xs">{f.rncpCode || "—"}</td>
+                <td className="px-5 py-3 text-center">
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                    f.establishmentCount === 0
+                      ? "bg-red-50 text-red-600"
+                      : f.establishmentCount < 5
+                        ? "bg-amber-50 text-amber-600"
+                        : "bg-emerald-50 text-emerald-600"
+                  }`}>
+                    {f.establishmentCount}
+                  </span>
+                </td>
+                <td className="px-5 py-3 text-center">
+                  <button
+                    onClick={() => runEnrichment(f.id)}
+                    disabled={enriching}
+                    className="px-3 py-1.5 bg-[#1B2A5B] text-white rounded-lg text-xs font-medium hover:bg-[#2a3f7e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {enriching && enrichingId === f.id ? (
+                      <svg className="animate-spin h-3.5 w-3.5 inline" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                    ) : (
+                      "Enrichir"
+                    )}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
