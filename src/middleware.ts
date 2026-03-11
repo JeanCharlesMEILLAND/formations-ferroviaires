@@ -15,10 +15,11 @@ function getLocale(request: NextRequest): string {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip static files and API routes
+  // Skip static files, API routes, and admin
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
+    pathname.startsWith("/admin") ||
     pathname.includes(".") ||
     pathname.startsWith("/favicon")
   ) {
@@ -39,5 +40,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|api|favicon.ico|assets|.*\\..*).*)"],
+  matcher: ["/((?!_next|api|admin|favicon.ico|assets|.*\\..*).*)"],
 };
