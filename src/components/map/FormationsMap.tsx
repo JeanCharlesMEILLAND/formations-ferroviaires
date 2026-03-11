@@ -90,6 +90,11 @@ interface FormationOption {
   level: { nameFr: string; nameEn: string; order: number };
 }
 
+interface MetierFormationLink {
+  metier: { slug: string; nameFr: string; family: string };
+  formation: { slug: string };
+}
+
 interface FilterData {
   regions: Region[];
   types: EstablishmentType[];
@@ -97,6 +102,7 @@ interface FilterData {
   domains: FormationDomain[];
   metiers: Metier[];
   formations: FormationOption[];
+  metierFormationLinks: MetierFormationLink[];
 }
 
 // ============================================================
@@ -402,11 +408,22 @@ export default function FormationsMap({
     return filterData.metiers;
   }, [filterData]);
 
+  // Build métiers-by-formation index for showing badges
+  const metiersByFormationSlug = useMemo(() => {
+    if (!filterData?.metierFormationLinks) return {};
+    const index: Record<string, Array<{ slug: string; nameFr: string; family: string }>> = {};
+    for (const link of filterData.metierFormationLinks) {
+      if (!index[link.formation.slug]) index[link.formation.slug] = [];
+      index[link.formation.slug].push(link.metier);
+    }
+    return index;
+  }, [filterData]);
+
   const hasFilters =
     searchQuery || selectedType || selectedRegion || selectedDomain || selectedLevel || selectedMetier || selectedFormation;
 
   return (
-    <div className="flex flex-col lg:flex-row gap-0 h-[calc(100vh-6rem)] min-h-[600px] overflow-hidden relative">
+    <div className="flex flex-col lg:flex-row gap-0 h-full min-h-0 overflow-hidden relative">
       {/* Mobile toggle */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -431,7 +448,7 @@ export default function FormationsMap({
         className={`${
           sidebarOpen ? "flex" : "hidden"
         } lg:flex w-full lg:w-[400px] bg-white border-r border-navy-100 flex-col overflow-hidden rounded-l-card`}
-        style={{ maxHeight: "calc(100vh - 6rem)", minHeight: 0 }}
+        style={{ maxHeight: "100%", minHeight: 0 }}
       >
         {/* Filters */}
         <div className="p-4 border-b border-navy-100 space-y-3">
@@ -541,23 +558,17 @@ export default function FormationsMap({
             </select>
           </div>
 
-          {/* Results count + reset */}
-          <div className="flex items-center justify-between">
-            <span className="text-caption text-navy-500 font-medium">
-              {establishments.length}{" "}
-              {establishments.length <= 1 ? dict.map.result : dict.map.results}
-            </span>
-            {hasFilters && (
+          {/* Reset filters + List view toggle */}
+          {hasFilters && (
+            <div className="flex justify-end">
               <button
                 onClick={resetFilters}
                 className="text-caption text-electric-600 hover:text-electric-700 font-medium"
               >
                 {dict.map.resetFilters}
               </button>
-            )}
-          </div>
-
-          {/* List view toggle */}
+            </div>
+          )}
           <div className="flex rounded-lg bg-navy-50 p-0.5 gap-0.5">
             {([
               { key: "establishments" as const, label: `Etablissements (${establishments.length})` },
@@ -667,51 +678,81 @@ export default function FormationsMap({
                 <p className="text-navy-400 text-body-sm">Aucune formation</p>
               </div>
             ) : (
-              formationsInResults.map(({ formation: f, count }) => (
-                <button
+              formationsInResults.map(({ formation: f, count }) => {
+                const linkedMetiers = metiersByFormationSlug[f.slug] || [];
+                return (
+                <div
                   key={f.id}
-                  onClick={() => {
-                    setSelectedFormation(f.slug);
-                    setListView("establishments");
-                  }}
-                  className={`w-full text-left p-4 border-b border-navy-50 hover:bg-navy-50/50 transition-colors ${
+                  className={`w-full text-left p-4 border-b border-navy-50 transition-colors ${
                     selectedFormation === f.slug
                       ? "bg-electric-50 border-l-4 border-l-electric-500"
                       : ""
                   }`}
                 >
-                  <div className="flex items-start gap-3">
-                    <div
-                      className="w-3 h-3 rounded-full mt-1.5 shrink-0"
-                      style={{ backgroundColor: f.domain.color }}
-                    />
-                    <div className="min-w-0">
-                      <h3 className="font-heading font-semibold text-body-sm text-navy-900">
-                        {f.nameFr}
-                      </h3>
-                      {f.rncpCode && (
-                        <p className="text-[10px] text-navy-300 mt-0.5">
-                          RNCP {f.rncpCode}
-                        </p>
-                      )}
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        <span
-                          className="inline-block px-2 py-0.5 rounded-full text-white text-[10px] font-medium"
-                          style={{ backgroundColor: f.domain.color }}
-                        >
-                          {locale === "fr" ? f.domain.nameFr : f.domain.nameEn}
-                        </span>
-                        <span className="inline-block px-2 py-0.5 rounded-full bg-navy-100 text-navy-600 text-[10px] font-medium">
-                          {locale === "fr" ? f.level.nameFr : f.level.nameEn}
-                        </span>
-                        <span className="text-[10px] text-navy-400 py-0.5">
-                          {count} {count <= 1 ? "etablissement" : "etablissements"}
-                        </span>
+                  <button
+                    onClick={() => {
+                      setSelectedFormation(f.slug);
+                      setListView("establishments");
+                    }}
+                    className="w-full text-left"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div
+                        className="w-3 h-3 rounded-full mt-1.5 shrink-0"
+                        style={{ backgroundColor: f.domain.color }}
+                      />
+                      <div className="min-w-0">
+                        <h3 className="font-heading font-semibold text-body-sm text-navy-900">
+                          {f.nameFr}
+                        </h3>
+                        {f.rncpCode && (
+                          <p className="text-[10px] text-navy-300 mt-0.5">
+                            RNCP {f.rncpCode}
+                          </p>
+                        )}
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          <span
+                            className="inline-block px-2 py-0.5 rounded-full text-white text-[10px] font-medium"
+                            style={{ backgroundColor: f.domain.color }}
+                          >
+                            {locale === "fr" ? f.domain.nameFr : f.domain.nameEn}
+                          </span>
+                          <span className="inline-block px-2 py-0.5 rounded-full bg-navy-100 text-navy-600 text-[10px] font-medium">
+                            {locale === "fr" ? f.level.nameFr : f.level.nameEn}
+                          </span>
+                          <span className="text-[10px] text-navy-400 py-0.5">
+                            {count} {count <= 1 ? "etablissement" : "etablissements"}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </button>
-              ))
+                  </button>
+                  {/* Métier badges */}
+                  {linkedMetiers.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-2.5 ml-6">
+                      {linkedMetiers.slice(0, 3).map((m) => (
+                        <button
+                          key={m.slug}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedMetier(m.slug);
+                            setListView("establishments");
+                          }}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 border border-amber-200 text-[10px] text-amber-800 font-medium hover:bg-amber-100 transition-colors"
+                          title={`Fiche metier : ${m.nameFr}`}
+                        >
+                          <svg width="10" height="10" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>
+                          {m.nameFr.length > 30 ? m.nameFr.slice(0, 28) + "..." : m.nameFr}
+                        </button>
+                      ))}
+                      {linkedMetiers.length > 3 && (
+                        <span className="text-[10px] text-amber-600 py-0.5">+{linkedMetiers.length - 3}</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+                );
+              })
             )
           ) : (
             /* === METIERS LIST === */

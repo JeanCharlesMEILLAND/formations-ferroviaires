@@ -43,3 +43,5 @@ group3-master-ingenieur-results.md
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.vercel

@@ -263,6 +263,66 @@ const establishments: Array<{
   { slug: "ecole-design-nantes", name: "École de Design Nantes Atlantique", city: "Nantes", region: "PDL", type: "autre", lat: 47.2078, lng: -1.5472, website: "https://www.lecolededesign.com/" },
   { slug: "rubika-valenciennes", name: "Rubika", city: "Valenciennes", region: "HDF", type: "autre", lat: 50.333, lng: 3.518, website: "https://rubika-edu.com/" },
   { slug: "cesi-nanterre", name: "CESI", city: "Nanterre", region: "IDF", type: "ecole-ingenieur", lat: 48.892, lng: 2.215, website: "https://www.cesi.fr/" },
+
+  // === NEW - GRANDES ECOLES & TOP ENGINEERING SCHOOLS ===
+  { slug: "ecole-polytechnique", name: "École Polytechnique", city: "Palaiseau", region: "IDF", type: "grande-ecole", lat: 48.7118, lng: 2.2052, website: "https://www.polytechnique.edu/" },
+  { slug: "mines-paris-psl", name: "Mines Paris - PSL", city: "Paris", region: "IDF", type: "grande-ecole", lat: 48.8451, lng: 2.3392, website: "https://www.minesparis.psl.eu/" },
+  { slug: "ensta-paris", name: "ENSTA Paris", city: "Palaiseau", region: "IDF", type: "grande-ecole", lat: 48.7110, lng: 2.2193, website: "https://www.ensta-paris.fr/" },
+  { slug: "isae-supaero", name: "ISAE-SUPAERO", city: "Toulouse", region: "OCC", type: "grande-ecole", lat: 43.5667, lng: 1.4747, website: "https://www.isae-supaero.fr/" },
+  { slug: "isae-ensma", name: "ISAE-ENSMA", city: "Chasseneuil-du-Poitou", region: "NAQ", type: "ecole-ingenieur", lat: 46.6614, lng: 0.3613, website: "https://www.ensma.fr/" },
+  { slug: "isae-supmeca", name: "ISAE-Supméca", city: "Saint-Ouen-sur-Seine", region: "IDF", type: "ecole-ingenieur", lat: 48.9122, lng: 2.3340, website: "https://www.isae-supmeca.fr/" },
+  { slug: "cnam-paris", name: "CNAM Paris", city: "Paris", region: "IDF", type: "grande-ecole", lat: 48.8665, lng: 2.3549, website: "https://www.cnam.fr/" },
+  { slug: "enac-toulouse", name: "ENAC Toulouse", city: "Toulouse", region: "OCC", type: "grande-ecole", lat: 43.5652, lng: 1.4793, website: "https://www.enac.fr/" },
+
+  // === NEW - ECOLES D'INGENIEURS TRANSPORT/FERROVIAIRE ===
+  { slug: "eigsi-la-rochelle", name: "EIGSI La Rochelle", city: "La Rochelle", region: "NAQ", type: "ecole-ingenieur", lat: 46.1570, lng: -1.1519, website: "https://www.eigsi.fr/" },
+  { slug: "enseeiht-toulouse", name: "ENSEEIHT Toulouse (INP)", city: "Toulouse", region: "OCC", type: "ecole-ingenieur", lat: 43.6020, lng: 1.4544, website: "https://www.enseeiht.fr/" },
+  { slug: "enseirb-matmeca", name: "ENSEIRB-MATMECA (Bordeaux INP)", city: "Talence", region: "NAQ", type: "ecole-ingenieur", lat: 44.8066, lng: -0.6052, website: "https://enseirb-matmeca.bordeaux-inp.fr/" },
+  { slug: "ece-paris", name: "ECE Paris", city: "Paris", region: "IDF", type: "ecole-ingenieur", lat: 48.8505, lng: 2.2888, website: "https://www.ece.fr/" },
+  { slug: "epf-cachan", name: "EPF", city: "Cachan", region: "IDF", type: "ecole-ingenieur", lat: 48.7895, lng: 2.3270, website: "https://www.epf.fr/" },
+  { slug: "esiee-paris", name: "ESIEE Paris", city: "Noisy-le-Grand", region: "IDF", type: "ecole-ingenieur", lat: 48.8403, lng: 2.5840, website: "https://www.esiee.fr/" },
+  { slug: "esigelec-rouen", name: "ESIGELEC", city: "Saint-Étienne-du-Rouvray", region: "NOR", type: "ecole-ingenieur", lat: 49.3830, lng: 1.0750, website: "https://www.esigelec.fr/" },
+  { slug: "junia-hei-lille", name: "Junia HEI", city: "Lille", region: "HDF", type: "ecole-ingenieur", lat: 50.6302, lng: 3.0417, website: "https://www.junia.com/" },
+  { slug: "ecam-lasalle-lyon", name: "ECAM LaSalle", city: "Lyon", region: "ARA", type: "ecole-ingenieur", lat: 45.7625, lng: 4.8250, website: "https://www.ecam.fr/" },
+  { slug: "icam-lille", name: "ICAM Lille", city: "Lille", region: "HDF", type: "ecole-ingenieur", lat: 50.6302, lng: 3.0417, website: "https://www.icam.fr/" },
+  { slug: "icam-toulouse", name: "ICAM Toulouse", city: "Toulouse", region: "OCC", type: "ecole-ingenieur", lat: 43.6130, lng: 1.4180, website: "https://www.icam.fr/" },
+  { slug: "icam-nantes", name: "ICAM Nantes", city: "Carquefou", region: "PDL", type: "ecole-ingenieur", lat: 47.2967, lng: -1.4919, website: "https://www.icam.fr/" },
+
+  // === NEW - ENI NETWORK ===
+  { slug: "enim-metz", name: "ENIM Metz", city: "Metz", region: "GES", type: "ecole-ingenieur", lat: 49.1033, lng: 6.2192, website: "https://enim.univ-lorraine.fr/" },
+  { slug: "enit-tarbes", name: "ENIT Tarbes", city: "Tarbes", region: "OCC", type: "ecole-ingenieur", lat: 43.2327, lng: 0.0700, website: "https://www.enit.fr/" },
+  { slug: "enib-brest", name: "ENIB Brest", city: "Plouzané", region: "BRE", type: "ecole-ingenieur", lat: 48.3604, lng: -4.5657, website: "https://www.enib.fr/" },
+  { slug: "enise-saint-etienne", name: "Centrale Lyon ENISE", city: "Saint-Étienne", region: "ARA", type: "ecole-ingenieur", lat: 45.4389, lng: 4.3900, website: "https://enise.ec-lyon.fr/" },
+
+  // === NEW - ARTS ET METIERS CAMPUSES ===
+  { slug: "arts-metiers-bordeaux", name: "Arts et Métiers (ENSAM) - Bordeaux", city: "Talence", region: "NAQ", type: "grande-ecole", lat: 44.8069, lng: -0.5960, website: "https://artsetmetiers.fr/" },
+  { slug: "arts-metiers-metz", name: "Arts et Métiers (ENSAM) - Metz", city: "Metz", region: "GES", type: "grande-ecole", lat: 49.1200, lng: 6.1600, website: "https://artsetmetiers.fr/" },
+  { slug: "arts-metiers-aix", name: "Arts et Métiers (ENSAM) - Aix-en-Provence", city: "Aix-en-Provence", region: "PAC", type: "grande-ecole", lat: 43.5123, lng: 5.4536, website: "https://artsetmetiers.fr/" },
+  { slug: "arts-metiers-angers", name: "Arts et Métiers (ENSAM) - Angers", city: "Angers", region: "PDL", type: "grande-ecole", lat: 47.4712, lng: -0.5554, website: "https://artsetmetiers.fr/" },
+  { slug: "arts-metiers-chalons", name: "Arts et Métiers (ENSAM) - Châlons-en-Champagne", city: "Châlons-en-Champagne", region: "GES", type: "grande-ecole", lat: 48.9570, lng: 4.3630, website: "https://artsetmetiers.fr/" },
+
+  // === NEW - POLYTECH NETWORK ===
+  { slug: "polytech-lille", name: "Polytech Lille", city: "Villeneuve-d'Ascq", region: "HDF", type: "ecole-ingenieur", lat: 50.6082, lng: 3.1387, website: "https://www.polytech-lille.fr/" },
+  { slug: "polytech-nantes", name: "Polytech Nantes", city: "Nantes", region: "PDL", type: "ecole-ingenieur", lat: 47.2833, lng: -1.5153, website: "https://polytech.univ-nantes.fr/" },
+  { slug: "polytech-lyon", name: "Polytech Lyon", city: "Villeurbanne", region: "ARA", type: "ecole-ingenieur", lat: 45.7810, lng: 4.8680, website: "https://polytech.univ-lyon1.fr/" },
+  { slug: "polytech-marseille", name: "Polytech Marseille", city: "Marseille", region: "PAC", type: "ecole-ingenieur", lat: 43.2330, lng: 5.4410, website: "https://polytech.univ-amu.fr/" },
+  { slug: "polytech-clermont", name: "Polytech Clermont", city: "Aubière", region: "ARA", type: "ecole-ingenieur", lat: 45.7620, lng: 3.1110, website: "https://polytech-clermont.fr/" },
+  { slug: "polytech-orleans", name: "Polytech Orléans", city: "Orléans", region: "CVL", type: "ecole-ingenieur", lat: 47.8460, lng: 1.9370, website: "https://www.univ-orleans.fr/fr/polytech" },
+  { slug: "polytech-tours", name: "Polytech Tours", city: "Tours", region: "CVL", type: "ecole-ingenieur", lat: 47.3669, lng: 0.7560, website: "https://polytech.univ-tours.fr/" },
+
+  // === NEW - UNIVERSITES ===
+  { slug: "universite-lille", name: "Université de Lille", city: "Villeneuve-d'Ascq", region: "HDF", type: "universite", lat: 50.6083, lng: 3.1380, website: "https://www.univ-lille.fr/" },
+  { slug: "universite-paris-saclay", name: "Université Paris-Saclay", city: "Gif-sur-Yvette", region: "IDF", type: "universite", lat: 48.7093, lng: 2.1683, website: "https://www.universite-paris-saclay.fr/" },
+
+  // === NEW - IUTs SUPPLEMENTAIRES ===
+  { slug: "iut-louis-pasteur-strasbourg", name: "IUT Louis Pasteur (Strasbourg)", city: "Schiltigheim", region: "GES", type: "iut", lat: 48.6100, lng: 7.7450, website: "https://iutlps.unistra.fr/" },
+  { slug: "iut-gradignan-bordeaux", name: "IUT de Bordeaux (Gradignan)", city: "Gradignan", region: "NAQ", type: "iut", lat: 44.7730, lng: -0.6125, website: "https://www.iut.u-bordeaux.fr/" },
+  { slug: "iut-blagnac", name: "IUT de Blagnac", city: "Blagnac", region: "OCC", type: "iut", lat: 43.6350, lng: 1.3890, website: "https://www.iut-blagnac.fr/" },
+  { slug: "iut-senart-fontainebleau", name: "IUT Sénart-Fontainebleau", city: "Lieusaint", region: "IDF", type: "iut", lat: 48.6283, lng: 2.5578, website: "https://www.iutsf.u-pec.fr/" },
+  { slug: "iut-mulhouse", name: "IUT de Mulhouse", city: "Mulhouse", region: "GES", type: "iut", lat: 47.7493, lng: 7.3417, website: "https://www.iut-mulhouse.uha.fr/" },
+  { slug: "iut-lorient", name: "IUT de Lorient-Pontivy", city: "Lorient", region: "BRE", type: "iut", lat: 47.7486, lng: -3.3659, website: "https://www-iutlorient.univ-ubs.fr/" },
+  { slug: "iut-mantes", name: "IUT de Mantes", city: "Mantes-la-Jolie", region: "IDF", type: "iut", lat: 48.9895, lng: 1.7110, website: "https://www.iut-mantes.uvsq.fr/" },
+  { slug: "iut-bethune", name: "IUT de Béthune", city: "Béthune", region: "HDF", type: "iut", lat: 50.5316, lng: 2.6500, website: "https://iut-bethune.univ-artois.fr/" },
 ];
 
 // Métiers from futurentrain.fr and aveclindustrieferroviaire.fr
@@ -655,6 +715,89 @@ const establishmentFormations: Array<{ establishment: string; formation: string 
   // === Bachelor Design Transport ===
   { establishment: "ecole-design-nantes", formation: "bachelor-design-transport" },
   { establishment: "rubika-valenciennes", formation: "bachelor-design-transport" },
+
+  // === NEW - GRANDES ECOLES → Master/Ingénieur ===
+  { establishment: "ecole-polytechnique", formation: "master-transports-mobilites" },
+  { establishment: "ecole-polytechnique", formation: "mastere-smart-mobility" },
+  { establishment: "mines-paris-psl", formation: "master-transports-mobilites" },
+  { establishment: "ensta-paris", formation: "master-transports-mobilites" },
+  { establishment: "ensta-paris", formation: "mastere-smart-mobility" },
+  { establishment: "isae-supaero", formation: "master-transports-mobilites" },
+  { establishment: "isae-supaero", formation: "ingenieur-transports-ensam" },
+  { establishment: "isae-ensma", formation: "ingenieur-transports-ensam" },
+  { establishment: "isae-supmeca", formation: "ingenieur-transports-ensam" },
+  { establishment: "cnam-paris", formation: "lp-exploitation-ferroviaire-cnam" },
+  { establishment: "enac-toulouse", formation: "master-transports-mobilites" },
+  { establishment: "enac-toulouse", formation: "mastere-smart-mobility" },
+
+  // === NEW - ECOLES D'INGENIEURS ===
+  { establishment: "eigsi-la-rochelle", formation: "ingenieur-ferroviaire-estaca" },
+  { establishment: "enseeiht-toulouse", formation: "ingenieur-gc-ge-insa" },
+  { establishment: "enseeiht-toulouse", formation: "master-transports-mobilites" },
+  { establishment: "enseirb-matmeca", formation: "ingenieur-transports-ensam" },
+  { establishment: "ece-paris", formation: "master-transports-mobilites" },
+  { establishment: "ece-paris", formation: "ingenieur-transports-ensam" },
+  { establishment: "epf-cachan", formation: "ingenieur-transports-ensam" },
+  { establishment: "esiee-paris", formation: "master-transports-mobilites" },
+  { establishment: "esiee-paris", formation: "ingenieur-transports-ensam" },
+  { establishment: "esigelec-rouen", formation: "ingenieur-gc-ge-insa" },
+  { establishment: "esigelec-rouen", formation: "ingenieur-transports-ensam" },
+  { establishment: "junia-hei-lille", formation: "ingenieur-gc-ge-insa" },
+  { establishment: "junia-hei-lille", formation: "ingenieur-transports-ensam" },
+  { establishment: "ecam-lasalle-lyon", formation: "ingenieur-transports-ensam" },
+  { establishment: "ecam-lasalle-lyon", formation: "ingenieur-transports-entpe" },
+  { establishment: "icam-lille", formation: "ingenieur-transports-ensam" },
+  { establishment: "icam-toulouse", formation: "ingenieur-transports-ensam" },
+  { establishment: "icam-nantes", formation: "ingenieur-transports-ensam" },
+
+  // === NEW - ENI NETWORK ===
+  { establishment: "enim-metz", formation: "ingenieur-transports-ensam" },
+  { establishment: "enim-metz", formation: "ingenieur-gc-ge-insa" },
+  { establishment: "enit-tarbes", formation: "ingenieur-transports-ensam" },
+  { establishment: "enib-brest", formation: "ingenieur-gc-ge-insa" },
+  { establishment: "enib-brest", formation: "ingenieur-transports-ensam" },
+  { establishment: "enise-saint-etienne", formation: "ingenieur-gc-ge-insa" },
+  { establishment: "enise-saint-etienne", formation: "ingenieur-transports-ensam" },
+
+  // === NEW - ARTS ET METIERS CAMPUSES ===
+  { establishment: "arts-metiers-bordeaux", formation: "ingenieur-transports-ensam" },
+  { establishment: "arts-metiers-metz", formation: "ingenieur-transports-ensam" },
+  { establishment: "arts-metiers-aix", formation: "ingenieur-transports-ensam" },
+  { establishment: "arts-metiers-angers", formation: "ingenieur-transports-ensam" },
+  { establishment: "arts-metiers-chalons", formation: "ingenieur-transports-ensam" },
+
+  // === NEW - POLYTECH NETWORK ===
+  { establishment: "polytech-lille", formation: "ingenieur-gc-ge-insa" },
+  { establishment: "polytech-lille", formation: "ingenieur-transports-ensam" },
+  { establishment: "polytech-nantes", formation: "ingenieur-gc-ge-insa" },
+  { establishment: "polytech-nantes", formation: "ingenieur-transports-ensam" },
+  { establishment: "polytech-lyon", formation: "ingenieur-transports-ensam" },
+  { establishment: "polytech-lyon", formation: "ingenieur-transports-entpe" },
+  { establishment: "polytech-marseille", formation: "ingenieur-gc-ge-insa" },
+  { establishment: "polytech-marseille", formation: "ingenieur-transports-ensam" },
+  { establishment: "polytech-clermont", formation: "ingenieur-gc-ge-insa" },
+  { establishment: "polytech-orleans", formation: "ingenieur-transports-ensam" },
+  { establishment: "polytech-tours", formation: "ingenieur-transports-ensam" },
+
+  // === NEW - UNIVERSITES ===
+  { establishment: "universite-lille", formation: "lp-maintenance-transports-guides" },
+  { establishment: "universite-paris-saclay", formation: "master-transports-mobilites" },
+  { establishment: "universite-paris-saclay", formation: "but-gim" },
+
+  // === NEW - IUTs SUPPLEMENTAIRES ===
+  { establishment: "iut-louis-pasteur-strasbourg", formation: "but-gim" },
+  { establishment: "iut-louis-pasteur-strasbourg", formation: "but-geii" },
+  { establishment: "iut-gradignan-bordeaux", formation: "but-gim" },
+  { establishment: "iut-gradignan-bordeaux", formation: "but-geii" },
+  { establishment: "iut-blagnac", formation: "but-gim" },
+  { establishment: "iut-senart-fontainebleau", formation: "but-gim" },
+  { establishment: "iut-senart-fontainebleau", formation: "but-geii" },
+  { establishment: "iut-mulhouse", formation: "but-gim" },
+  { establishment: "iut-mulhouse", formation: "but-geii" },
+  { establishment: "iut-lorient", formation: "but-gim" },
+  { establishment: "iut-mantes", formation: "but-gim" },
+  { establishment: "iut-bethune", formation: "but-gim" },
+  { establishment: "iut-bethune", formation: "but-geii" },
 ];
 
 // ============================================================

@@ -73,6 +73,11 @@ export async function getEstablishmentBySlug(slug: string) {
             include: {
               level: true,
               domain: true,
+              metiers: {
+                include: {
+                  metier: { select: { slug: true, nameFr: true, family: true } },
+                },
+              },
             },
           },
         },
@@ -160,5 +165,14 @@ export async function getFormationsForFilter() {
       level: { select: { nameFr: true, nameEn: true, order: true } },
     },
     orderBy: [{ level: { order: "asc" } }, { nameFr: "asc" }],
+  });
+}
+
+export async function getMetierFormationLinks() {
+  return prisma.metierFormation.findMany({
+    select: {
+      metier: { select: { slug: true, nameFr: true, family: true } },
+      formation: { select: { slug: true } },
+    },
   });
 }
