@@ -419,8 +419,12 @@ export default function FormationsMap({
     return index;
   }, [filterData]);
 
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+
   const hasFilters =
     searchQuery || selectedType || selectedRegion || selectedDomain || selectedLevel || selectedMetier || selectedFormation;
+
+  const activeFilterCount = [selectedType, selectedRegion, selectedDomain, selectedLevel, selectedMetier, selectedFormation].filter(Boolean).length;
 
   return (
     <div className="flex flex-col lg:flex-row gap-0 h-full min-h-0 overflow-hidden relative">
@@ -451,142 +455,242 @@ export default function FormationsMap({
         style={{ maxHeight: "100%", minHeight: 0 }}
       >
         {/* Filters */}
-        <div className="p-4 border-b border-navy-100 space-y-3">
+        <div className="border-b border-navy-100">
           {/* Search */}
-          <div className="relative">
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-navy-300"
-              width="18"
-              height="18"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <circle cx="8" cy="8" r="6" />
-              <path d="M14 14l4 4" />
-            </svg>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={dict.map.searchPlaceholder}
-              className="w-full pl-10 pr-4 py-2.5 rounded-card border border-navy-200 text-body-sm focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-transparent"
-            />
+          <div className="p-3 pb-0">
+            <div className="relative">
+              <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-300" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="7" cy="7" r="5.5" /><path d="M12 12l3.5 3.5" />
+              </svg>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={dict.map.searchPlaceholder}
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-navy-200 bg-navy-50/50 text-body-sm placeholder-navy-300 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-transparent focus:bg-white transition-colors"
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-navy-300 hover:text-navy-500 transition-colors">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* Métier & Formation dropdowns */}
-          <div className="grid grid-cols-1 gap-2">
-            <select
-              value={selectedMetier}
-              onChange={(e) => setSelectedMetier(e.target.value)}
-              className="py-2 px-3 rounded-button border border-navy-200 text-caption bg-white focus:outline-none focus:ring-2 focus:ring-electric-500"
-            >
-              <option value="">{dict.map.allMetiers}</option>
-              {Object.entries(metiersByFamily).map(([family, items]) => (
-                <optgroup key={family} label={family}>
-                  {items.map((m) => (
-                    <option key={m.slug} value={m.slug}>
-                      {m.nameFr}
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
-            <select
-              value={selectedFormation}
-              onChange={(e) => setSelectedFormation(e.target.value)}
-              className="py-2 px-3 rounded-button border border-navy-200 text-caption bg-white focus:outline-none focus:ring-2 focus:ring-electric-500"
-            >
-              <option value="">{dict.map.allFormations}</option>
-              {filterData?.formations.map((f) => (
-                <option key={f.slug} value={f.slug}>
-                  {f.nameFr}
-                </option>
-              ))}
-            </select>
+          {/* Primary filters: Métier & Formation */}
+          <div className="p-3 space-y-2">
+            <div className="relative">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-500 pointer-events-none" width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+              </svg>
+              <select
+                value={selectedMetier}
+                onChange={(e) => setSelectedMetier(e.target.value)}
+                className={`w-full py-2.5 pl-9 pr-8 rounded-xl border text-xs font-medium appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-electric-500 transition-colors cursor-pointer ${
+                  selectedMetier ? "border-amber-300 bg-amber-50 text-amber-800" : "border-navy-200 text-navy-600"
+                }`}
+              >
+                <option value="">{dict.map.allMetiers}</option>
+                {Object.entries(metiersByFamily).map(([family, items]) => (
+                  <optgroup key={family} label={family}>
+                    {items.map((m) => (
+                      <option key={m.slug} value={m.slug}>{m.nameFr}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+              <svg className="absolute right-3 top-1/2 -translate-y-1/2 text-navy-300 pointer-events-none" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+
+            <div className="relative">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-electric-500 pointer-events-none" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+              <select
+                value={selectedFormation}
+                onChange={(e) => setSelectedFormation(e.target.value)}
+                className={`w-full py-2.5 pl-9 pr-8 rounded-xl border text-xs font-medium appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-electric-500 transition-colors cursor-pointer ${
+                  selectedFormation ? "border-electric-300 bg-electric-50 text-electric-800" : "border-navy-200 text-navy-600"
+                }`}
+              >
+                <option value="">{dict.map.allFormations}</option>
+                {filterData?.formations.map((f) => (
+                  <option key={f.slug} value={f.slug}>{f.nameFr}</option>
+                ))}
+              </select>
+              <svg className="absolute right-3 top-1/2 -translate-y-1/2 text-navy-300 pointer-events-none" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
           </div>
 
-          {/* Filter dropdowns */}
-          <div className="grid grid-cols-2 gap-2">
-            <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              className="py-2 px-3 rounded-button border border-navy-200 text-caption bg-white focus:outline-none focus:ring-2 focus:ring-electric-500"
+          {/* Advanced filters toggle */}
+          <div className="px-3">
+            <button
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              className="w-full flex items-center justify-between py-2 px-3 rounded-lg hover:bg-navy-50 text-xs font-medium text-navy-500 transition-colors"
             >
-              <option value="">{dict.map.allTypes}</option>
-              {filterData?.types.map((t) => (
-                <option key={t.slug} value={t.slug}>
-                  {locale === "fr" ? t.nameFr : t.nameEn}
-                </option>
-              ))}
-            </select>
-            <select
-              value={selectedRegion}
-              onChange={(e) => setSelectedRegion(e.target.value)}
-              className="py-2 px-3 rounded-button border border-navy-200 text-caption bg-white focus:outline-none focus:ring-2 focus:ring-electric-500"
-            >
-              <option value="">{dict.map.allRegions}</option>
-              {filterData?.regions.map((r) => (
-                <option key={r.code} value={r.code}>
-                  {r.name}
-                </option>
-              ))}
-            </select>
-            <select
-              value={selectedDomain}
-              onChange={(e) => setSelectedDomain(e.target.value)}
-              className="py-2 px-3 rounded-button border border-navy-200 text-caption bg-white focus:outline-none focus:ring-2 focus:ring-electric-500"
-            >
-              <option value="">{dict.map.allDomains}</option>
-              {filterData?.domains.map((d) => (
-                <option key={d.slug} value={d.slug}>
-                  {locale === "fr" ? d.nameFr : d.nameEn}
-                </option>
-              ))}
-            </select>
-            <select
-              value={selectedLevel}
-              onChange={(e) => setSelectedLevel(e.target.value)}
-              className="py-2 px-3 rounded-button border border-navy-200 text-caption bg-white focus:outline-none focus:ring-2 focus:ring-electric-500"
-            >
-              <option value="">{dict.map.allLevels}</option>
-              {filterData?.levels.map((l) => (
-                <option key={l.slug} value={l.slug}>
-                  {locale === "fr" ? l.nameFr : l.nameEn}
-                </option>
-              ))}
-            </select>
+              <span className="flex items-center gap-2">
+                <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
+                </svg>
+                Filtres avances
+                {activeFilterCount > 0 && (
+                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-electric-500 text-white text-[10px] font-bold">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </span>
+              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className={`transition-transform ${showAdvancedFilters ? "rotate-180" : ""}`}>
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
+            </button>
           </div>
 
-          {/* Reset filters + List view toggle */}
+          {/* Advanced filter dropdowns */}
+          {showAdvancedFilters && (
+            <div className="px-3 pb-1 space-y-2 animate-in slide-in-from-top-2">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="relative">
+                  <label className="block text-[10px] font-semibold text-navy-400 uppercase tracking-wider mb-1 ml-1">Type</label>
+                  <select
+                    value={selectedType}
+                    onChange={(e) => setSelectedType(e.target.value)}
+                    className={`w-full py-2 pl-3 pr-7 rounded-lg border text-xs font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-electric-500 cursor-pointer ${
+                      selectedType ? "border-blue-300 bg-blue-50 text-blue-700" : "border-navy-200 bg-white text-navy-600"
+                    }`}
+                  >
+                    <option value="">{dict.map.allTypes}</option>
+                    {filterData?.types.map((t) => (
+                      <option key={t.slug} value={t.slug}>{locale === "fr" ? t.nameFr : t.nameEn}</option>
+                    ))}
+                  </select>
+                  <svg className="absolute right-2.5 bottom-2.5 text-navy-300 pointer-events-none" width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+                <div className="relative">
+                  <label className="block text-[10px] font-semibold text-navy-400 uppercase tracking-wider mb-1 ml-1">Region</label>
+                  <select
+                    value={selectedRegion}
+                    onChange={(e) => setSelectedRegion(e.target.value)}
+                    className={`w-full py-2 pl-3 pr-7 rounded-lg border text-xs font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-electric-500 cursor-pointer ${
+                      selectedRegion ? "border-green-300 bg-green-50 text-green-700" : "border-navy-200 bg-white text-navy-600"
+                    }`}
+                  >
+                    <option value="">{dict.map.allRegions}</option>
+                    {filterData?.regions.map((r) => (
+                      <option key={r.code} value={r.code}>{r.name}</option>
+                    ))}
+                  </select>
+                  <svg className="absolute right-2.5 bottom-2.5 text-navy-300 pointer-events-none" width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+                <div className="relative">
+                  <label className="block text-[10px] font-semibold text-navy-400 uppercase tracking-wider mb-1 ml-1">Domaine</label>
+                  <select
+                    value={selectedDomain}
+                    onChange={(e) => setSelectedDomain(e.target.value)}
+                    className={`w-full py-2 pl-3 pr-7 rounded-lg border text-xs font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-electric-500 cursor-pointer ${
+                      selectedDomain ? "border-purple-300 bg-purple-50 text-purple-700" : "border-navy-200 bg-white text-navy-600"
+                    }`}
+                  >
+                    <option value="">{dict.map.allDomains}</option>
+                    {filterData?.domains.map((d) => (
+                      <option key={d.slug} value={d.slug}>{locale === "fr" ? d.nameFr : d.nameEn}</option>
+                    ))}
+                  </select>
+                  <svg className="absolute right-2.5 bottom-2.5 text-navy-300 pointer-events-none" width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+                <div className="relative">
+                  <label className="block text-[10px] font-semibold text-navy-400 uppercase tracking-wider mb-1 ml-1">Niveau</label>
+                  <select
+                    value={selectedLevel}
+                    onChange={(e) => setSelectedLevel(e.target.value)}
+                    className={`w-full py-2 pl-3 pr-7 rounded-lg border text-xs font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-electric-500 cursor-pointer ${
+                      selectedLevel ? "border-indigo-300 bg-indigo-50 text-indigo-700" : "border-navy-200 bg-white text-navy-600"
+                    }`}
+                  >
+                    <option value="">{dict.map.allLevels}</option>
+                    {filterData?.levels.map((l) => (
+                      <option key={l.slug} value={l.slug}>{locale === "fr" ? l.nameFr : l.nameEn}</option>
+                    ))}
+                  </select>
+                  <svg className="absolute right-2.5 bottom-2.5 text-navy-300 pointer-events-none" width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Active filters pills + reset */}
           {hasFilters && (
-            <div className="flex justify-end">
+            <div className="px-3 py-2 flex items-center gap-2 flex-wrap">
+              {selectedMetier && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-50 border border-amber-200 text-[10px] text-amber-700 font-medium">
+                  {filterData?.metiers.find(m => m.slug === selectedMetier)?.nameFr}
+                  <button onClick={() => setSelectedMetier("")} className="hover:text-red-500"><svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+                </span>
+              )}
+              {selectedFormation && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-electric-50 border border-electric-200 text-[10px] text-electric-700 font-medium">
+                  {filterData?.formations.find(f => f.slug === selectedFormation)?.nameFr}
+                  <button onClick={() => setSelectedFormation("")} className="hover:text-red-500"><svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+                </span>
+              )}
+              {selectedType && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-blue-50 border border-blue-200 text-[10px] text-blue-700 font-medium">
+                  {filterData?.types.find(t => t.slug === selectedType)?.[locale === "fr" ? "nameFr" : "nameEn"]}
+                  <button onClick={() => setSelectedType("")} className="hover:text-red-500"><svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+                </span>
+              )}
+              {selectedRegion && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-50 border border-green-200 text-[10px] text-green-700 font-medium">
+                  {filterData?.regions.find(r => r.code === selectedRegion)?.name}
+                  <button onClick={() => setSelectedRegion("")} className="hover:text-red-500"><svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+                </span>
+              )}
+              {selectedDomain && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-purple-50 border border-purple-200 text-[10px] text-purple-700 font-medium">
+                  {filterData?.domains.find(d => d.slug === selectedDomain)?.[locale === "fr" ? "nameFr" : "nameEn"]}
+                  <button onClick={() => setSelectedDomain("")} className="hover:text-red-500"><svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+                </span>
+              )}
+              {selectedLevel && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-[10px] text-indigo-700 font-medium">
+                  {filterData?.levels.find(l => l.slug === selectedLevel)?.[locale === "fr" ? "nameFr" : "nameEn"]}
+                  <button onClick={() => setSelectedLevel("")} className="hover:text-red-500"><svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+                </span>
+              )}
               <button
                 onClick={resetFilters}
-                className="text-caption text-electric-600 hover:text-electric-700 font-medium"
+                className="ml-auto text-[10px] text-red-500 hover:text-red-600 font-semibold flex items-center gap-1 shrink-0"
               >
-                {dict.map.resetFilters}
+                <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/></svg>
+                Tout effacer
               </button>
             </div>
           )}
-          <div className="flex rounded-lg bg-navy-50 p-0.5 gap-0.5">
-            {([
-              { key: "establishments" as const, label: `Etablissements (${establishments.length})` },
-              { key: "formations" as const, label: `Formations (${formationsInResults.length})` },
-              { key: "metiers" as const, label: `Metiers (${metiersGrouped.length})` },
-            ]).map((v) => (
-              <button
-                key={v.key}
-                onClick={() => setListView(v.key)}
-                className={`flex-1 py-1.5 rounded-md text-[10px] font-semibold transition-colors ${
-                  listView === v.key
-                    ? "bg-white text-navy-900 shadow-sm"
-                    : "text-navy-400 hover:text-navy-600"
-                }`}
-              >
-                {v.label}
-              </button>
-            ))}
+
+          {/* View mode toggle */}
+          <div className="px-3 pb-3">
+            <div className="flex rounded-xl bg-navy-50 p-1 gap-1">
+              {([
+                { key: "establishments" as const, label: "Etablissements", count: establishments.length, icon: <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg> },
+                { key: "formations" as const, label: "Formations", count: formationsInResults.length, icon: <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg> },
+                { key: "metiers" as const, label: "Metiers", count: metiersGrouped.length, icon: <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10h20V9a2 2 0 00-2-2zM16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg> },
+              ]).map((v) => (
+                <button
+                  key={v.key}
+                  onClick={() => setListView(v.key)}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-[11px] font-semibold transition-all ${
+                    listView === v.key
+                      ? "bg-white text-navy-900 shadow-sm"
+                      : "text-navy-400 hover:text-navy-600"
+                  }`}
+                >
+                  {v.icon}
+                  <span className="hidden sm:inline">{v.label}</span>
+                  <span className={`inline-flex items-center justify-center min-w-[20px] h-5 px-1 rounded-md text-[10px] font-bold ${
+                    listView === v.key ? "bg-navy-100 text-navy-700" : "bg-navy-100/50 text-navy-400"
+                  }`}>{v.count}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
