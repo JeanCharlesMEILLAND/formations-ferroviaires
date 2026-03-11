@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import * as XLSX from "xlsx";
 
 // ============================================================
 // Types
@@ -649,29 +650,53 @@ function DashboardTab({
 // Section Header
 // ============================================================
 
-function SectionHeader({ title, count, onAdd, search, onSearch }: {
-  title: string; count: number; onAdd: () => void; search: string; onSearch: (v: string) => void;
+function SectionHeader({ title, count, filteredCount, onAdd, search, onSearch, onExport, onImport, filterBar }: {
+  title: string; count: number; filteredCount?: number; onAdd: () => void; search: string; onSearch: (v: string) => void;
+  onExport?: () => void; onImport?: (file: File) => void; filterBar?: React.ReactNode;
 }) {
+  const fileRef = useRef<HTMLInputElement>(null);
   return (
     <div className="mb-5">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold text-gray-900">{title} <span className="text-gray-400 text-lg font-normal">({count})</span></h2>
-        <button onClick={onAdd} className="px-4 py-2.5 bg-[#1B2A5B] text-white rounded-xl text-sm font-semibold hover:bg-[#253672] transition-colors flex items-center gap-2">
-          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-          Ajouter
-        </button>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">{title} <span className="text-gray-400 text-lg font-normal">({filteredCount !== undefined && filteredCount !== count ? `${filteredCount}/` : ""}{count})</span></h2>
+        </div>
+        <div className="flex items-center gap-2">
+          {onImport && (
+            <>
+              <input type="file" ref={fileRef} accept=".xlsx,.xls,.csv" className="hidden" onChange={(e) => { if (e.target.files?.[0]) onImport(e.target.files[0]); e.target.value = ""; }} />
+              <button onClick={() => fileRef.current?.click()} className="px-3 py-2 border border-gray-200 text-gray-600 rounded-xl text-xs font-medium hover:bg-gray-50 transition-colors flex items-center gap-1.5" title="Importer Excel">
+                <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                Importer
+              </button>
+            </>
+          )}
+          {onExport && (
+            <button onClick={onExport} className="px-3 py-2 border border-gray-200 text-gray-600 rounded-xl text-xs font-medium hover:bg-gray-50 transition-colors flex items-center gap-1.5" title="Exporter Excel">
+              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Exporter
+            </button>
+          )}
+          <button onClick={onAdd} className="px-4 py-2 bg-[#1B2A5B] text-white rounded-xl text-xs font-semibold hover:bg-[#253672] transition-colors flex items-center gap-1.5">
+            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Ajouter
+          </button>
+        </div>
       </div>
-      <div className="relative">
-        <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
-          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-        </svg>
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => onSearch(e.target.value)}
-          placeholder="Rechercher..."
-          className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5B]/20 focus:border-[#1B2A5B]"
-        />
+      <div className="flex gap-2 items-center">
+        <div className="relative flex-1">
+          <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => onSearch(e.target.value)}
+            placeholder="Rechercher..."
+            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1B2A5B]/20 focus:border-[#1B2A5B]"
+          />
+        </div>
+        {filterBar}
       </div>
     </div>
   );
@@ -736,13 +761,61 @@ function EstablishmentsTab({
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [filterType, setFilterType] = useState("");
+  const [filterRegion, setFilterRegion] = useState("");
   const [form, setForm] = useState({
     name: "", city: "", lat: "", lng: "", typeId: "", regionId: "", website: "", address: "",
   });
 
-  const filtered = establishments.filter(
-    (e) => e.name.toLowerCase().includes(search.toLowerCase()) || e.city.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = establishments.filter((e) => {
+    const matchSearch = !search || e.name.toLowerCase().includes(search.toLowerCase()) || e.city.toLowerCase().includes(search.toLowerCase());
+    const matchType = !filterType || e.type.id === filterType;
+    const matchRegion = !filterRegion || e.region.id === filterRegion;
+    return matchSearch && matchType && matchRegion;
+  });
+
+  const handleExport = () => {
+    const data = filtered.map((e) => ({
+      Nom: e.name, Ville: e.city, Region: e.region.name, Type: e.type.nameFr,
+      Latitude: e.lat, Longitude: e.lng, Site_web: e.website || "", Adresse: e.address || "",
+      Nb_formations: e.formations.length,
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Etablissements");
+    XLSX.writeFile(wb, "etablissements.xlsx");
+  };
+
+  const handleImport = async (file: File) => {
+    try {
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: "array" });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json<Record<string, string | number>>(ws);
+      let created = 0;
+      for (const row of rows) {
+        const name = String(row["Nom"] || "").trim();
+        const city = String(row["Ville"] || "").trim();
+        const lat = String(row["Latitude"] || "");
+        const lng = String(row["Longitude"] || "");
+        if (!name || !city || !lat || !lng) continue;
+        const typeName = String(row["Type"] || "").trim();
+        const regionName = String(row["Region"] || "").trim();
+        const matchedType = types.find((t) => t.nameFr.toLowerCase() === typeName.toLowerCase());
+        const matchedRegion = regions.find((r) => r.name.toLowerCase() === regionName.toLowerCase());
+        if (!matchedType || !matchedRegion) continue;
+        try {
+          const res = await fetch("/api/admin/establishments", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, city, lat, lng, typeId: matchedType.id, regionId: matchedRegion.id, website: String(row["Site_web"] || "") || null, address: String(row["Adresse"] || "") || null }),
+          });
+          if (res.ok) created++;
+        } catch { /* skip duplicates */ }
+      }
+      onMessage("success", `${created} etablissement(s) importe(s)`);
+      onRefresh();
+    } catch { onMessage("error", "Erreur lors de l'import"); }
+  };
 
   const resetForm = () => { setForm({ name: "", city: "", lat: "", lng: "", typeId: "", regionId: "", website: "", address: "" }); setEditId(null); setShowForm(false); };
 
@@ -773,7 +846,23 @@ function EstablishmentsTab({
 
   return (
     <div>
-      <SectionHeader title="Etablissements" count={establishments.length} onAdd={() => { resetForm(); setShowForm(true); }} search={search} onSearch={setSearch} />
+      <SectionHeader
+        title="Etablissements" count={establishments.length} filteredCount={filtered.length}
+        onAdd={() => { resetForm(); setShowForm(true); }} search={search} onSearch={setSearch}
+        onExport={handleExport} onImport={handleImport}
+        filterBar={
+          <div className="flex gap-2">
+            <select value={filterType} onChange={(e) => setFilterType(e.target.value)} className={`py-2.5 px-3 border border-gray-200 rounded-xl text-xs bg-white ${filterType ? "border-blue-300 bg-blue-50 text-blue-700" : "text-gray-500"}`}>
+              <option value="">Tous les types</option>
+              {types.map((t) => <option key={t.id} value={t.id}>{t.nameFr}</option>)}
+            </select>
+            <select value={filterRegion} onChange={(e) => setFilterRegion(e.target.value)} className={`py-2.5 px-3 border border-gray-200 rounded-xl text-xs bg-white ${filterRegion ? "border-green-300 bg-green-50 text-green-700" : "text-gray-500"}`}>
+              <option value="">Toutes les regions</option>
+              {regions.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
+            </select>
+          </div>
+        }
+      />
 
       {showForm && (
         <FormModal title={editId ? "Modifier l'etablissement" : "Ajouter un etablissement"} onClose={resetForm} onSubmit={handleSubmit} submitLabel={editId ? "Sauvegarder" : "Creer"}>
@@ -874,11 +963,60 @@ function FormationsTab({
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [filterLevel, setFilterLevel] = useState("");
+  const [filterDomain, setFilterDomain] = useState("");
   const [form, setForm] = useState({
     nameFr: "", nameEn: "", rncpCode: "", levelId: "", domainId: "", jobTarget: "", onisepUrl: "",
   });
 
-  const filtered = formations.filter((f) => f.nameFr.toLowerCase().includes(search.toLowerCase()) || (f.rncpCode && f.rncpCode.includes(search)));
+  const filtered = formations.filter((f) => {
+    const matchSearch = !search || f.nameFr.toLowerCase().includes(search.toLowerCase()) || (f.rncpCode && f.rncpCode.includes(search));
+    const matchLevel = !filterLevel || f.level.id === filterLevel;
+    const matchDomain = !filterDomain || f.domain.id === filterDomain;
+    return matchSearch && matchLevel && matchDomain;
+  });
+
+  const handleExport = () => {
+    const data = filtered.map((f) => ({
+      Nom: f.nameFr, Nom_EN: f.nameEn || "", Code_RNCP: f.rncpCode || "",
+      Niveau: f.level.nameFr, Domaine: f.domain.nameFr,
+      Metier_vise: f.jobTarget || "", URL_ONISEP: f.onisepUrl || "",
+      Nb_etablissements: f.establishments.length, Nb_metiers: f.metiers.length,
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Formations");
+    XLSX.writeFile(wb, "formations.xlsx");
+  };
+
+  const handleImport = async (file: File) => {
+    try {
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: "array" });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json<Record<string, string | number>>(ws);
+      let created = 0;
+      for (const row of rows) {
+        const nameFr = String(row["Nom"] || "").trim();
+        if (!nameFr) continue;
+        const levelName = String(row["Niveau"] || "").trim();
+        const domainName = String(row["Domaine"] || "").trim();
+        const matchedLevel = levels.find((l) => l.nameFr.toLowerCase() === levelName.toLowerCase());
+        const matchedDomain = domains.find((d) => d.nameFr.toLowerCase() === domainName.toLowerCase());
+        if (!matchedLevel || !matchedDomain) continue;
+        try {
+          const res = await fetch("/api/admin/formations", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nameFr, nameEn: String(row["Nom_EN"] || "") || null, rncpCode: String(row["Code_RNCP"] || "") || null, levelId: matchedLevel.id, domainId: matchedDomain.id, jobTarget: String(row["Metier_vise"] || "") || null, onisepUrl: String(row["URL_ONISEP"] || "") || null }),
+          });
+          if (res.ok) created++;
+        } catch { /* skip */ }
+      }
+      onMessage("success", `${created} formation(s) importee(s)`);
+      onRefresh();
+    } catch { onMessage("error", "Erreur lors de l'import"); }
+  };
+
   const resetForm = () => { setForm({ nameFr: "", nameEn: "", rncpCode: "", levelId: "", domainId: "", jobTarget: "", onisepUrl: "" }); setEditId(null); setShowForm(false); };
 
   const startEdit = (f: Formation) => {
@@ -908,7 +1046,23 @@ function FormationsTab({
 
   return (
     <div>
-      <SectionHeader title="Formations" count={formations.length} onAdd={() => { resetForm(); setShowForm(true); }} search={search} onSearch={setSearch} />
+      <SectionHeader
+        title="Formations" count={formations.length} filteredCount={filtered.length}
+        onAdd={() => { resetForm(); setShowForm(true); }} search={search} onSearch={setSearch}
+        onExport={handleExport} onImport={handleImport}
+        filterBar={
+          <div className="flex gap-2">
+            <select value={filterLevel} onChange={(e) => setFilterLevel(e.target.value)} className={`py-2.5 px-3 border border-gray-200 rounded-xl text-xs bg-white ${filterLevel ? "border-indigo-300 bg-indigo-50 text-indigo-700" : "text-gray-500"}`}>
+              <option value="">Tous les niveaux</option>
+              {levels.map((l) => <option key={l.id} value={l.id}>{l.nameFr}</option>)}
+            </select>
+            <select value={filterDomain} onChange={(e) => setFilterDomain(e.target.value)} className={`py-2.5 px-3 border border-gray-200 rounded-xl text-xs bg-white ${filterDomain ? "border-purple-300 bg-purple-50 text-purple-700" : "text-gray-500"}`}>
+              <option value="">Tous les domaines</option>
+              {domains.map((d) => <option key={d.id} value={d.id}>{d.nameFr}</option>)}
+            </select>
+          </div>
+        }
+      />
 
       {showForm && (
         <FormModal title={editId ? "Modifier la formation" : "Ajouter une formation"} onClose={resetForm} onSubmit={handleSubmit} submitLabel={editId ? "Sauvegarder" : "Creer"}>
@@ -1014,10 +1168,55 @@ function MetiersTab({
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [filterFamily, setFilterFamily] = useState("");
+  const [filterSource, setFilterSource] = useState("");
   const [form, setForm] = useState({ nameFr: "", nameEn: "", family: "", source: "futurentrain", level: "" });
 
   const families = Array.from(new Set(metiers.map((m) => m.family))).sort();
-  const filtered = metiers.filter((m) => m.nameFr.toLowerCase().includes(search.toLowerCase()) || m.family.toLowerCase().includes(search.toLowerCase()));
+  const sources = Array.from(new Set(metiers.map((m) => m.source))).sort();
+  const filtered = metiers.filter((m) => {
+    const matchSearch = !search || m.nameFr.toLowerCase().includes(search.toLowerCase()) || m.family.toLowerCase().includes(search.toLowerCase());
+    const matchFamily = !filterFamily || m.family === filterFamily;
+    const matchSource = !filterSource || m.source === filterSource;
+    return matchSearch && matchFamily && matchSource;
+  });
+
+  const handleExport = () => {
+    const data = filtered.map((m) => ({
+      Nom: m.nameFr, Nom_EN: m.nameEn || "", Famille: m.family,
+      Source: m.source, Niveau: m.level || "", Nb_formations: m.formations.length,
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Metiers");
+    XLSX.writeFile(wb, "metiers.xlsx");
+  };
+
+  const handleImport = async (file: File) => {
+    try {
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, { type: "array" });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json<Record<string, string | number>>(ws);
+      let created = 0;
+      for (const row of rows) {
+        const nameFr = String(row["Nom"] || "").trim();
+        const family = String(row["Famille"] || "").trim();
+        const source = String(row["Source"] || "futurentrain").trim();
+        if (!nameFr || !family) continue;
+        try {
+          const res = await fetch("/api/admin/metiers", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ nameFr, nameEn: String(row["Nom_EN"] || "") || null, family, source, level: String(row["Niveau"] || "") || null }),
+          });
+          if (res.ok) created++;
+        } catch { /* skip */ }
+      }
+      onMessage("success", `${created} metier(s) importe(s)`);
+      onRefresh();
+    } catch { onMessage("error", "Erreur lors de l'import"); }
+  };
+
   const resetForm = () => { setForm({ nameFr: "", nameEn: "", family: "", source: "futurentrain", level: "" }); setEditId(null); setShowForm(false); };
 
   const startEdit = (m: Metier) => {
@@ -1047,7 +1246,23 @@ function MetiersTab({
 
   return (
     <div>
-      <SectionHeader title="Metiers" count={metiers.length} onAdd={() => { resetForm(); setShowForm(true); }} search={search} onSearch={setSearch} />
+      <SectionHeader
+        title="Metiers" count={metiers.length} filteredCount={filtered.length}
+        onAdd={() => { resetForm(); setShowForm(true); }} search={search} onSearch={setSearch}
+        onExport={handleExport} onImport={handleImport}
+        filterBar={
+          <div className="flex gap-2">
+            <select value={filterFamily} onChange={(e) => setFilterFamily(e.target.value)} className={`py-2.5 px-3 border border-gray-200 rounded-xl text-xs bg-white ${filterFamily ? "border-amber-300 bg-amber-50 text-amber-700" : "text-gray-500"}`}>
+              <option value="">Toutes les familles</option>
+              {families.map((f) => <option key={f} value={f}>{f}</option>)}
+            </select>
+            <select value={filterSource} onChange={(e) => setFilterSource(e.target.value)} className={`py-2.5 px-3 border border-gray-200 rounded-xl text-xs bg-white ${filterSource ? "border-cyan-300 bg-cyan-50 text-cyan-700" : "text-gray-500"}`}>
+              <option value="">Toutes les sources</option>
+              {sources.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+        }
+      />
 
       {showForm && (
         <FormModal title={editId ? "Modifier le metier" : "Ajouter un metier"} onClose={resetForm} onSubmit={handleSubmit} submitLabel={editId ? "Sauvegarder" : "Creer"}>
