@@ -1,11 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: "standalone",
-  webpack: (config) => {
-    // Disable persistent cache (OneDrive compatibility)
-    config.cache = false;
-    return config;
-  },
-};
+const nextConfig = {};
 
 export default nextConfig;
