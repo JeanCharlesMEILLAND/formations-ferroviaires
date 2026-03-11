@@ -261,20 +261,58 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-[#1B2A5B] text-white flex flex-col min-h-screen shrink-0">
+      {/* Sidebar - sticky */}
+      <aside className="w-64 bg-[#1B2A5B] text-white flex flex-col h-screen sticky top-0 shrink-0">
         <div className="p-5 border-b border-white/10">
-          <h1 className="font-bold text-lg">Admin</h1>
-          <p className="text-blue-300 text-xs mt-0.5">Formations Ferroviaires</p>
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
+              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <div>
+              <h1 className="font-bold text-sm leading-tight">Administration</h1>
+              <p className="text-blue-300 text-[11px]">Formations Ferroviaires</p>
+            </div>
+          </div>
         </div>
-        <nav className="flex-1 p-3 space-y-1">
-          {sidebarItems.map((item) => (
+        <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
+          <p className="px-3 pt-2 pb-1.5 text-[10px] font-semibold text-blue-400 uppercase tracking-wider">General</p>
+          {sidebarItems.slice(0, 1).map((item) => (
             <button
               key={item.key}
               onClick={() => setTab(item.key)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 tab === item.key
-                  ? "bg-white/15 text-white"
+                  ? "bg-white/15 text-white shadow-sm"
+                  : "text-blue-200 hover:bg-white/5 hover:text-white"
+              }`}
+            >
+              {item.icon}
+              {item.label}
+            </button>
+          ))}
+          <p className="px-3 pt-4 pb-1.5 text-[10px] font-semibold text-blue-400 uppercase tracking-wider">Donnees</p>
+          {sidebarItems.slice(1, 4).map((item) => (
+            <button
+              key={item.key}
+              onClick={() => setTab(item.key)}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                tab === item.key
+                  ? "bg-white/15 text-white shadow-sm"
+                  : "text-blue-200 hover:bg-white/5 hover:text-white"
+              }`}
+            >
+              {item.icon}
+              {item.label}
+            </button>
+          ))}
+          <p className="px-3 pt-4 pb-1.5 text-[10px] font-semibold text-blue-400 uppercase tracking-wider">Relations</p>
+          {sidebarItems.slice(4).map((item) => (
+            <button
+              key={item.key}
+              onClick={() => setTab(item.key)}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                tab === item.key
+                  ? "bg-white/15 text-white shadow-sm"
                   : "text-blue-200 hover:bg-white/5 hover:text-white"
               }`}
             >
@@ -283,7 +321,7 @@ export default function AdminPage() {
             </button>
           ))}
         </nav>
-        <div className="p-3 border-t border-white/10 space-y-2">
+        <div className="p-3 border-t border-white/10 space-y-1">
           <a
             href="/fr"
             className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-blue-200 hover:bg-white/5 hover:text-white transition-colors"
@@ -302,7 +340,7 @@ export default function AdminPage() {
       </aside>
 
       {/* Main */}
-      <main className="flex-1 min-h-screen overflow-auto">
+      <main className="flex-1 min-w-0 overflow-auto">
         {/* Toast */}
         {message && (
           <div className={`fixed top-4 right-4 z-50 px-5 py-3 rounded-xl shadow-lg text-white text-sm font-medium flex items-center gap-2 ${
@@ -369,12 +407,63 @@ function DashboardTab({
   const orphanFormations = formations.filter((f) => f.establishments.length === 0);
   const orphanMetiers = metiers.filter((m) => m.formations.length === 0);
   const formationsNoMetier = formations.filter((f) => f.metiers.length === 0);
+  const alertCount = orphanFormations.length + orphanMetiers.length + formationsNoMetier.length;
+
+  // Coverage stats
+  const avgFormPerEst = establishments.length > 0 ? (totalLinksEF / establishments.length).toFixed(1) : "0";
+  const avgMetPerForm = formations.length > 0 ? (totalLinksMF / formations.length).toFixed(1) : "0";
+
+  // Top formations by number of establishments
+  const topFormations = [...formations]
+    .sort((a, b) => b.establishments.length - a.establishments.length)
+    .slice(0, 5);
+
+  // Repartition by type
+  const byType: Record<string, { count: number; color: string }> = {};
+  establishments.forEach((e) => {
+    if (!byType[e.type.nameFr]) byType[e.type.nameFr] = { count: 0, color: e.type.color };
+    byType[e.type.nameFr].count++;
+  });
+  const typeEntries = Object.entries(byType).sort((a, b) => b[1].count - a[1].count);
+
+  // Repartition by region
+  const byRegion: Record<string, number> = {};
+  establishments.forEach((e) => {
+    byRegion[e.region.name] = (byRegion[e.region.name] || 0) + 1;
+  });
+  const regionEntries = Object.entries(byRegion).sort((a, b) => b[1] - a[1]);
+  const maxRegionCount = regionEntries[0]?.[1] || 1;
+
+  // Metiers by family
+  const byFamily: Record<string, number> = {};
+  metiers.forEach((m) => {
+    byFamily[m.family] = (byFamily[m.family] || 0) + 1;
+  });
+  const familyEntries = Object.entries(byFamily).sort((a, b) => b[1] - a[1]);
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Tableau de bord</h2>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Tableau de bord</h2>
+          <p className="text-sm text-gray-500 mt-0.5">Vue d&apos;ensemble des donnees</p>
+        </div>
+        {alertCount === 0 ? (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200">
+            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+            Tout est OK
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold border border-amber-200">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
+            {alertCount} alerte{alertCount > 1 ? "s" : ""}
+          </span>
+        )}
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
+      {/* Main stat cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
         <StatCard label="Etablissements" value={establishments.length} color="bg-blue-50 text-blue-600"
           icon={<svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>} />
         <StatCard label="Formations" value={formations.length} color="bg-emerald-50 text-emerald-600"
@@ -387,20 +476,130 @@ function DashboardTab({
           icon={<svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>} />
       </div>
 
+      {/* Coverage indicators */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Moy. formations / etab.</p>
+          <p className="text-3xl font-bold text-gray-900">{avgFormPerEst}</p>
+          <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-full bg-blue-500 rounded-full" style={{ width: `${Math.min(Number(avgFormPerEst) * 20, 100)}%` }} />
+          </div>
+        </div>
+        <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Moy. metiers / formation</p>
+          <p className="text-3xl font-bold text-gray-900">{avgMetPerForm}</p>
+          <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-full bg-amber-500 rounded-full" style={{ width: `${Math.min(Number(avgMetPerForm) * 15, 100)}%` }} />
+          </div>
+        </div>
+        <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Taux de couverture</p>
+          <p className="text-3xl font-bold text-gray-900">
+            {formations.length > 0 ? Math.round(((formations.length - orphanFormations.length) / formations.length) * 100) : 100}%
+          </p>
+          <div className="mt-2 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${formations.length > 0 ? ((formations.length - orphanFormations.length) / formations.length) * 100 : 100}%` }} />
+          </div>
+        </div>
+      </div>
+
+      {/* Two-column layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Top formations */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-50">
+            <h3 className="font-bold text-gray-800 text-sm">Top formations par etablissements</h3>
+          </div>
+          <div className="p-2">
+            {topFormations.map((f, i) => (
+              <div key={f.id} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors">
+                <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold ${
+                  i === 0 ? "bg-amber-100 text-amber-700" : i === 1 ? "bg-gray-100 text-gray-600" : i === 2 ? "bg-orange-50 text-orange-600" : "bg-gray-50 text-gray-400"
+                }`}>{i + 1}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-800 truncate">{f.nameFr}</p>
+                  <p className="text-[11px] text-gray-400">{f.level.nameFr}</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 text-xs font-bold">{f.establishments.length}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* By type */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-50">
+            <h3 className="font-bold text-gray-800 text-sm">Repartition par type</h3>
+          </div>
+          <div className="p-4 space-y-3">
+            {typeEntries.map(([name, { count, color }]) => (
+              <div key={name} className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                <span className="text-sm text-gray-700 flex-1 min-w-0 truncate">{name}</span>
+                <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden shrink-0">
+                  <div className="h-full rounded-full" style={{ backgroundColor: color, width: `${(count / establishments.length) * 100}%` }} />
+                </div>
+                <span className="text-xs font-bold text-gray-600 w-8 text-right">{count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* By region */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-50">
+            <h3 className="font-bold text-gray-800 text-sm">Repartition par region</h3>
+          </div>
+          <div className="p-4 space-y-2 max-h-[320px] overflow-y-auto">
+            {regionEntries.map(([name, count]) => (
+              <div key={name} className="flex items-center gap-3">
+                <span className="text-xs text-gray-600 flex-1 min-w-0 truncate">{name}</span>
+                <div className="w-32 h-2 bg-gray-100 rounded-full overflow-hidden shrink-0">
+                  <div className="h-full bg-[#1B2A5B] rounded-full" style={{ width: `${(count / maxRegionCount) * 100}%` }} />
+                </div>
+                <span className="text-xs font-bold text-gray-600 w-6 text-right">{count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Metiers by family */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-50">
+            <h3 className="font-bold text-gray-800 text-sm">Metiers par famille</h3>
+          </div>
+          <div className="p-4">
+            <div className="flex flex-wrap gap-2">
+              {familyEntries.map(([family, count]) => (
+                <span key={family} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 text-xs font-medium text-gray-700 hover:bg-gray-100 transition-colors">
+                  {family}
+                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-amber-100 text-amber-700 text-[10px] font-bold">{count}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Alerts */}
       {(orphanFormations.length > 0 || orphanMetiers.length > 0 || formationsNoMetier.length > 0) && (
         <div className="space-y-4">
-          <h3 className="font-bold text-gray-800 text-lg">Alertes qualite</h3>
+          <h3 className="font-bold text-gray-800 text-sm flex items-center gap-2">
+            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-amber-500"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"/></svg>
+            Alertes qualite
+          </h3>
 
           {orphanFormations.length > 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-              <h4 className="font-semibold text-amber-800 text-sm mb-2 flex items-center gap-2">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" className="text-amber-500"><path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
-                {orphanFormations.length} formation(s) sans etablissement
+              <h4 className="font-semibold text-amber-800 text-xs mb-2.5 flex items-center gap-2">
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-amber-200 text-amber-800 text-[10px] font-bold">{orphanFormations.length}</span>
+                formation(s) sans etablissement
               </h4>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {orphanFormations.map((f) => (
-                  <span key={f.id} className="px-2.5 py-1 bg-white rounded-lg text-xs text-amber-700 border border-amber-200">{f.nameFr}</span>
+                  <span key={f.id} className="px-2 py-1 bg-white rounded-lg text-[11px] text-amber-700 border border-amber-200">{f.nameFr}</span>
                 ))}
               </div>
             </div>
@@ -408,13 +607,13 @@ function DashboardTab({
 
           {formationsNoMetier.length > 0 && (
             <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
-              <h4 className="font-semibold text-orange-800 text-sm mb-2 flex items-center gap-2">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" className="text-orange-500"><path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
-                {formationsNoMetier.length} formation(s) sans metier
+              <h4 className="font-semibold text-orange-800 text-xs mb-2.5 flex items-center gap-2">
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-orange-200 text-orange-800 text-[10px] font-bold">{formationsNoMetier.length}</span>
+                formation(s) sans metier
               </h4>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {formationsNoMetier.map((f) => (
-                  <span key={f.id} className="px-2.5 py-1 bg-white rounded-lg text-xs text-orange-700 border border-orange-200">{f.nameFr}</span>
+                  <span key={f.id} className="px-2 py-1 bg-white rounded-lg text-[11px] text-orange-700 border border-orange-200">{f.nameFr}</span>
                 ))}
               </div>
             </div>
@@ -422,13 +621,13 @@ function DashboardTab({
 
           {orphanMetiers.length > 0 && (
             <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-              <h4 className="font-semibold text-red-800 text-sm mb-2 flex items-center gap-2">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" className="text-red-500"><path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
-                {orphanMetiers.length} metier(s) sans formation
+              <h4 className="font-semibold text-red-800 text-xs mb-2.5 flex items-center gap-2">
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-red-200 text-red-800 text-[10px] font-bold">{orphanMetiers.length}</span>
+                metier(s) sans formation
               </h4>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5">
                 {orphanMetiers.map((m) => (
-                  <span key={m.id} className="px-2.5 py-1 bg-white rounded-lg text-xs text-red-700 border border-red-200">{m.nameFr}</span>
+                  <span key={m.id} className="px-2 py-1 bg-white rounded-lg text-[11px] text-red-700 border border-red-200">{m.nameFr}</span>
                 ))}
               </div>
             </div>
@@ -436,7 +635,7 @@ function DashboardTab({
         </div>
       )}
 
-      {orphanFormations.length === 0 && orphanMetiers.length === 0 && formationsNoMetier.length === 0 && (
+      {alertCount === 0 && (
         <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 flex items-center gap-3">
           <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-emerald-500"><path d="M20 6L9 17l-5-5"/></svg>
           <p className="text-emerald-800 font-medium text-sm">Toutes les donnees sont correctement reliees. Aucune alerte.</p>
