@@ -636,6 +636,8 @@ const establishmentFormations: Array<{ establishment: string; formation: string 
   // Ingénieur Ferroviaire ESTACA
   { establishment: "estaca-paris", formation: "ingenieur-ferroviaire-estaca" },
   { establishment: "estaca-laval", formation: "ingenieur-ferroviaire-estaca" },
+  { establishment: "estaca-bordeaux", formation: "master-transports-mobilites" },
+  { establishment: "estaca-bordeaux", formation: "ingenieur-ferroviaire-estaca" },
 
   // Ingénieur Infra Ferro IMT
   { establishment: "imt-nord-europe", formation: "ingenieur-infra-ferro-imt" },

@@ -238,7 +238,7 @@ export default async function EstablishmentPage({
               className="inline-flex items-center gap-3 px-4 py-3 bg-white border border-navy-200 rounded-lg text-sm text-navy-700 font-semibold hover:shadow-md transition-all"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logos/futur-en-train.png" alt="Futur en Train" width={28} height={28} className="rounded" />
+              <img src="/logos/futur-en-train.svg" alt="Futur en Train" width={28} height={28} className="rounded" />
               Futur en Train
               <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" className="text-navy-400">
                 <path d="M4 8l4-4M4 4h4v4" />
