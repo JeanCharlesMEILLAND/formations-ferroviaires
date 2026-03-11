@@ -18,9 +18,12 @@ export async function getEstablishments(filters?: {
     where.region = { code: filters.region };
   }
   if (filters?.search) {
+    const q = filters.search.trim();
     where.OR = [
-      { name: { contains: filters.search } },
-      { city: { contains: filters.search } },
+      { name: { contains: q, mode: "insensitive" } },
+      { city: { contains: q, mode: "insensitive" } },
+      { slug: { contains: q.toLowerCase().replace(/\s+/g, "-") } },
+      { formations: { some: { formation: { nameFr: { contains: q, mode: "insensitive" } } } } },
     ];
   }
 

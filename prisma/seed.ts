@@ -190,16 +190,42 @@ const establishments: Array<{
 
   // === NOUVELLE-AQUITAINE ===
   { slug: "cfa-ferroviaire-begles", name: "CFA Ferroviaire - Bègles", city: "Bègles", region: "NAQ", type: "cfa", lat: 44.8056, lng: -0.5486 },
+  { slug: "ferrocampus-saintes", name: "Ferrocampus - Campus des métiers du ferroviaire", city: "Saintes", region: "NAQ", type: "cfa", lat: 45.7461, lng: -0.6320, website: "https://www.ferrocampus.fr" },
+  { slug: "fma-formation-agen", name: "FMA Formation - Centre de Formation Ferroviaire", city: "Agen", region: "NAQ", type: "cfa", lat: 44.203, lng: 0.617, website: "https://formationferroviaire.fr/" },
   { slug: "estaca-bordeaux", name: "ESTACA Bordeaux", city: "Bordeaux", region: "NAQ", type: "ecole-ingenieur", lat: 44.8275, lng: -0.5560, website: "https://www.estaca.fr/" },
 
   // === PAYS DE LA LOIRE ===
   { slug: "cfa-ferroviaire-le-mans", name: "CFA Ferroviaire - Le Mans", city: "Le Mans", region: "PDL", type: "cfa", lat: 47.9960, lng: 0.1930 },
+  { slug: "omnifer-saint-laurent", name: "OMNIFER - Formations Ferroviaires", city: "Saint-Laurent-sur-Sèvre", region: "PDL", type: "cfa", lat: 46.959, lng: -0.893, website: "https://www.omnifer.fr/" },
+
+  // === HAUTS-DE-FRANCE ===
+  { slug: "ciffco-coquelles", name: "CIFFCO - Centre International de Formation Ferroviaire", city: "Coquelles", region: "HDF", type: "cfa", lat: 50.928, lng: 1.806, website: "https://ciffco.com/" },
+  { slug: "cmq-fiaem-valenciennes", name: "CMQ FIAEM - Campus des Métiers Ferroviaire et Écomobilité", city: "Valenciennes", region: "HDF", type: "cfa", lat: 50.358, lng: 3.523 },
+  { slug: "railenium-valenciennes", name: "Railenium - Institut de Recherche Technologique Ferroviaire", city: "Valenciennes", region: "HDF", type: "ecole-ingenieur", lat: 50.313, lng: 3.514, website: "https://railenium.eu/" },
+  { slug: "campusfer-hazebrouck", name: "CampusFER Hazebrouck", city: "Hazebrouck", region: "HDF", type: "cfa", lat: 50.725, lng: 2.539, website: "https://www.campusfer.com/" },
+
+  // === ÎLE-DE-FRANCE ===
+  { slug: "etf-academy-beauchamp", name: "ETF Academy (VINCI)", city: "Beauchamp", region: "IDF", type: "cfa", lat: 49.012, lng: 2.190, website: "https://www.etf.fr/" },
+  { slug: "lea-itedec-aubergenville", name: "L'EA-ITEDEC - Plateforme ferroviaire", city: "Aubergenville", region: "IDF", type: "cfa", lat: 48.960, lng: 1.854, website: "https://www.ecole-lea.fr/" },
 
   // === ARTS ET MÉTIERS (MULTI-SITES) ===
   { slug: "arts-metiers-paris", name: "Arts et Métiers (ENSAM)", city: "Paris", region: "IDF", type: "grande-ecole", lat: 48.8382, lng: 2.3620 },
 
   // === SNCF ===
   { slug: "universite-traction-sncf", name: "Université Traction - SNCF Voyageurs", city: "Paris", region: "IDF", type: "autre", lat: 48.8410, lng: 2.3599 },
+
+  // === BOURGOGNE-FRANCHE-COMTÉ ===
+  { slug: "sferis-formation-autun", name: "SFERIS Formation", city: "Autun", region: "BFC", type: "cfa", lat: 46.951, lng: 4.299, website: "https://www.sferis.fr/formation/" },
+
+  // === GRAND EST ===
+  { slug: "captrain-formation-creutzwald", name: "Captrain Formation", city: "Creutzwald", region: "GES", type: "cfa", lat: 49.069, lng: 6.694, website: "https://www.captrain.fr/" },
+
+  // === CENTRE-VAL DE LOIRE ===
+  { slug: "formarail-ballan-mire", name: "Forma'Rail", city: "Ballan-Miré", region: "CVL", type: "cfa", lat: 47.347, lng: 0.614, website: "https://forma-rail.com/" },
+
+  // === OCCITANIE ===
+  { slug: "efmo-perols", name: "EFMO - École du Ferroviaire et des Mobilités d'Occitanie", city: "Pérols", region: "OCC", type: "cfa", lat: 43.529, lng: 3.956 },
+  { slug: "campusfer-nimes", name: "CampusFER Nîmes", city: "Nîmes", region: "OCC", type: "cfa", lat: 43.837, lng: 4.360, website: "https://www.campusfer.com/" },
 
   // === NEW - CFA FERROVIAIRE PARTNER LYCEES ===
   { slug: "lp-chenneviere-malezieux-paris", name: "LP Chennevière Malézieux", city: "Paris 12e", region: "IDF", type: "lycee", lat: 48.849, lng: 2.372 },
