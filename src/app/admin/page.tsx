@@ -911,8 +911,8 @@ function EstablishmentsTab({
                   <td className="px-4 py-3 text-gray-500">{est.city}</td>
                   <td className="px-4 py-3 text-gray-500">{est.region.name}</td>
                   <td className="px-4 py-3">
-                    <span className="px-2.5 py-1 rounded-lg text-xs text-white font-medium" style={{ backgroundColor: est.type.color }}>
-                      {est.type.nameFr}
+                    <span className="px-2 py-0.5 rounded-md text-[11px] text-white font-medium whitespace-nowrap" style={{ backgroundColor: est.type.color }}>
+                      {est.type.nameFr.replace(" / Centre de formation", "").replace("École d'ingénieurs", "Ingénieur")}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-center">
