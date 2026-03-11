@@ -127,7 +127,7 @@ export default async function EstablishmentPage({
                 </h3>
                 <div className="grid gap-3">
                   {formations.map((ef) => {
-                    const linkedMetiers = (ef.formation as unknown as { metiers?: Array<{ metier: { slug: string; nameFr: string; family: string } }> }).metiers || [];
+                    const linkedMetiers = (ef.formation as unknown as { metiers?: Array<{ metier: { slug: string; nameFr: string; family: string; source: string } }> }).metiers || [];
                     return (
                     <div
                       key={ef.formation.id}
@@ -157,15 +157,38 @@ export default async function EstablishmentPage({
                           )}
                           {/* Métiers liés */}
                           {linkedMetiers.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 mt-3">
+                            <div className="mt-3 space-y-1.5">
                               {linkedMetiers.map((mf) => (
-                                <span
-                                  key={mf.metier.slug}
-                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-800 font-medium"
-                                >
-                                  <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>
-                                  {mf.metier.nameFr}
-                                </span>
+                                <div key={mf.metier.slug} className="flex flex-wrap items-center gap-1.5">
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-800 font-medium">
+                                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>
+                                    {mf.metier.nameFr}
+                                  </span>
+                                  <a
+                                    href="https://www.futurentrain.fr/metiers/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 transition-colors"
+                                    title="Futur en Train"
+                                  >
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src="/logos/futur-en-train.svg" alt="" width={13} height={13} className="rounded-sm" />
+                                    Futur en Train
+                                    <svg width="9" height="9" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40"><path d="M3 6l3-3M3 3h3v3" /></svg>
+                                  </a>
+                                  <a
+                                    href="https://www.aveclindustrieferroviaire.fr/metiers"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 transition-colors"
+                                    title="Avec l'Industrie Ferroviaire"
+                                  >
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src="/logos/avec-industrie-ferroviaire.svg" alt="" width={13} height={13} className="rounded-sm" />
+                                    Industrie Ferro.
+                                    <svg width="9" height="9" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40"><path d="M3 6l3-3M3 3h3v3" /></svg>
+                                  </a>
+                                </div>
                               ))}
                             </div>
                           )}

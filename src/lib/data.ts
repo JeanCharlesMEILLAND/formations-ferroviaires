@@ -78,7 +78,7 @@ export async function getEstablishmentBySlug(slug: string) {
               domain: true,
               metiers: {
                 include: {
-                  metier: { select: { slug: true, nameFr: true, family: true } },
+                  metier: { select: { slug: true, nameFr: true, family: true, source: true } },
                 },
               },
             },
