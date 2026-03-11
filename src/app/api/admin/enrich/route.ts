@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyAuth, unauthorizedResponse } from "@/lib/admin-auth";
 
+export const maxDuration = 300; // 5 minutes timeout for Vercel Pro
+
 // Geographic points to cover all metropolitan France with radius 200km
 const GEO_POINTS = [
   { lat: 48.8566, lng: 2.3522, label: "Paris" },
