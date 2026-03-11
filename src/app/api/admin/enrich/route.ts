@@ -250,6 +250,7 @@ export async function POST(request: NextRequest) {
                 regionId,
                 typeId,
                 uaiCode: uai || null,
+                source: "api",
                 onisepUrl: result.onisepUrl || null,
               },
             });

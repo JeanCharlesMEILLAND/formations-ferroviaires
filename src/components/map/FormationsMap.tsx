@@ -68,6 +68,7 @@ interface Establishment {
   lng: number;
   website: string | null;
   onisepUrl: string | null;
+  source: string;
   type: EstablishmentType;
   region: Region;
   formations: Array<{ formation: Formation }>;
@@ -168,8 +169,10 @@ function MarkerClusterLayer({
     clusterRef.current = cluster;
 
     establishments.forEach((est) => {
-      const icon =
-        markerIcons[est.type.slug] || createMarkerIcon("#607D8B");
+      const isApi = est.source === "api";
+      const icon = isApi
+        ? createMarkerIcon(est.type.color, true)
+        : (markerIcons[est.type.slug] || createMarkerIcon("#607D8B"));
 
       const marker = L.marker([est.lat, est.lng], { icon });
 
@@ -192,10 +195,11 @@ function MarkerClusterLayer({
 
       const popupContent = `
         <div style="padding:16px;font-family:var(--font-inter),system-ui,sans-serif;">
-          <div style="margin-bottom:8px;">
+          <div style="margin-bottom:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
             <span style="display:inline-block;padding:2px 8px;border-radius:20px;color:white;font-size:10px;font-weight:500;background:${est.type.color};">
               ${locale === "fr" ? est.type.nameFr : est.type.nameEn}
             </span>
+            ${isApi ? `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;background:#FFF3E0;color:#E65100;border:1px solid #FFE0B2;">Passerelle ferroviaire</span>` : ""}
           </div>
           <h3 style="font-weight:700;color:#1B2A5B;font-size:15px;margin:0 0 4px;">${est.name}</h3>
           <p style="font-size:12px;color:#596794;margin:0 0 12px;">${est.city} — ${est.region.name}</p>
@@ -242,7 +246,20 @@ function MarkerClusterLayer({
 // Marker icon factory
 // ============================================================
 
-function createMarkerIcon(color: string): L.DivIcon {
+function createMarkerIcon(color: string, isApi = false): L.DivIcon {
+  if (isApi) {
+    return L.divIcon({
+      className: "custom-marker",
+      html: `<div style="background-color: ${color}; opacity: 0.6; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px dashed white; box-shadow: 0 1px 4px rgba(0,0,0,0.2);">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
+          <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/>
+        </svg>
+      </div>`,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12],
+      popupAnchor: [0, -12],
+    });
+  }
   return L.divIcon({
     className: "custom-marker",
     html: `<div class="establishment-marker" style="background-color: ${color}; width: 32px; height: 32px;">
@@ -420,6 +437,15 @@ export default function FormationsMap({
   }, [filterData]);
 
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [showApiEstablishments, setShowApiEstablishments] = useState(true);
+
+  // Filter out API establishments if toggle is off
+  const displayedEstablishments = useMemo(() => {
+    if (showApiEstablishments) return establishments;
+    return establishments.filter(e => e.source !== "api");
+  }, [establishments, showApiEstablishments]);
+
+  const apiCount = useMemo(() => establishments.filter(e => e.source === "api").length, [establishments]);
 
   const hasFilters =
     searchQuery || selectedType || selectedRegion || selectedDomain || selectedLevel || selectedMetier || selectedFormation;
@@ -444,7 +470,7 @@ export default function FormationsMap({
         </svg>
         {sidebarOpen
           ? "Voir la carte"
-          : `Filtres & Liste (${establishments.length})`}
+          : `Filtres & Liste (${displayedEstablishments.length})`}
       </button>
 
       {/* =============== SIDEBAR =============== */}
@@ -686,7 +712,7 @@ export default function FormationsMap({
           <div className="px-4 py-3">
             <div className="flex rounded-xl bg-navy-900/5 p-1 gap-1">
               {([
-                { key: "establishments" as const, label: "Etablissements", count: establishments.length, color: "bg-blue-500", icon: <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg> },
+                { key: "establishments" as const, label: "Etablissements", count: displayedEstablishments.length, color: "bg-blue-500", icon: <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg> },
                 { key: "formations" as const, label: "Formations", count: formationsInResults.length, color: "bg-electric-500", icon: <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg> },
                 { key: "metiers" as const, label: "Metiers", count: metiersGrouped.length, color: "bg-amber-500", icon: <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10h20V9a2 2 0 00-2-2zM16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg> },
               ]).map((v) => (
@@ -707,6 +733,25 @@ export default function FormationsMap({
                 </button>
               ))}
             </div>
+            {/* Passerelle toggle */}
+            {apiCount > 0 && (
+              <button
+                onClick={() => setShowApiEstablishments(!showApiEstablishments)}
+                className={`mt-2 w-full flex items-center justify-between px-3 py-2 rounded-lg text-[11px] font-medium transition-all ${
+                  showApiEstablishments
+                    ? "bg-amber-50 text-amber-800 border border-amber-200"
+                    : "bg-navy-50 text-navy-400 border border-navy-100"
+                }`}
+              >
+                <span className="flex items-center gap-2">
+                  <span className={`w-2.5 h-2.5 rounded-full border-2 border-dashed ${showApiEstablishments ? "bg-amber-400 border-amber-600" : "bg-navy-200 border-navy-300"}`} />
+                  Passerelles ({apiCount})
+                </span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full ${showApiEstablishments ? "bg-amber-200 text-amber-800" : "bg-navy-100 text-navy-400"}`}>
+                  {showApiEstablishments ? "ON" : "OFF"}
+                </span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -737,7 +782,7 @@ export default function FormationsMap({
             </div>
           ) : listView === "establishments" ? (
             /* === ESTABLISHMENTS LIST === */
-            establishments.length === 0 ? (
+            displayedEstablishments.length === 0 ? (
               <div className="text-center py-16 px-4">
                 <p className="text-navy-400 text-body-sm mb-3">
                   {dict.map.noResults}
@@ -750,7 +795,7 @@ export default function FormationsMap({
                 </button>
               </div>
             ) : (
-              establishments.map((est) => (
+              displayedEstablishments.map((est) => (
                 <button
                   key={est.id}
                   onClick={() => handleEstablishmentClick(est)}
@@ -779,6 +824,11 @@ export default function FormationsMap({
                         >
                           {locale === "fr" ? est.type.nameFr : est.type.nameEn}
                         </span>
+                        {est.source === "api" && (
+                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                            Passerelle
+                          </span>
+                        )}
                         <span className="text-[10px] text-navy-400 py-0.5">
                           {est.formations.length}{" "}
                           {est.formations.length <= 1
@@ -942,7 +992,7 @@ export default function FormationsMap({
           />
           <MapController center={flyTo} zoom={flyZoom} />
           <MarkerClusterLayer
-            establishments={establishments}
+            establishments={displayedEstablishments}
             markerIcons={markerIcons}
             locale={locale}
             dict={dict}
