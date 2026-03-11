@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <rect width="80" height="80" rx="8" fill="#fff"/>
+  <path d="M12 58 L28 38 L40 50 L40 30 L56 50 L56 30 L68 50" fill="none" stroke="#1B1BB3" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12 58 L28 38 L40 50" fill="none" stroke="#3CB43C" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="40" y="72" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" font-weight="bold" fill="#1B1BB3">AIF</text>
+</svg>

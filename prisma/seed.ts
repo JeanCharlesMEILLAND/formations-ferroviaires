@@ -436,47 +436,113 @@ const metierFormations: Array<{ metier: string; formation: string }> = [
   { metier: "peintre-industriel-ferro", formation: "cap-maintenance-vehicules" },
   // Agent de manoeuvre
   { metier: "agent-manoeuvre", formation: "titre-pro-conducteur-train" },
-  // Ingénieur conception matériel roulant
+  // Ingénieur conception matériel roulant (BAC+5 - mécanique, systèmes, transport)
   { metier: "ingenieur-conception-materiel", formation: "ingenieur-ferroviaire-estaca" },
   { metier: "ingenieur-conception-materiel", formation: "ingenieur-transports-ensam" },
   { metier: "ingenieur-conception-materiel", formation: "master-transports-mobilites" },
+  { metier: "ingenieur-conception-materiel", formation: "ingenieur-gc-ge-insa" },
+  { metier: "ingenieur-conception-materiel", formation: "ingenieur-transports-entpe" },
+  { metier: "ingenieur-conception-materiel", formation: "mastere-stfu" },
+  { metier: "ingenieur-conception-materiel", formation: "mastere-smart-mobility" },
   // Technicien d'essais
   { metier: "technicien-essais", formation: "bts-maintenance-systemes" },
   { metier: "technicien-essais", formation: "but-mesures-physiques" },
-  // Ingénieur signalisation
+  { metier: "technicien-essais", formation: "but-geii" },
+  { metier: "technicien-essais", formation: "bts-electrotechnique" },
+  // Ingénieur signalisation (BAC+5 - électronique, automatique, informatique)
   { metier: "ingenieur-signalisation", formation: "ingenieur-gc-ge-insa" },
   { metier: "ingenieur-signalisation", formation: "ingenieur-infra-ferro-imt" },
   { metier: "ingenieur-signalisation", formation: "but-geii" },
-  // Ingénieur travaux ferro
+  { metier: "ingenieur-signalisation", formation: "ingenieur-ferroviaire-estaca" },
+  { metier: "ingenieur-signalisation", formation: "ingenieur-transports-ensam" },
+  { metier: "ingenieur-signalisation", formation: "mastere-stfu" },
+  // Ingénieur travaux ferro (BAC+5 - génie civil, infrastructure)
   { metier: "ingenieur-travaux-ferro", formation: "ingenieur-infra-ferro-imt" },
   { metier: "ingenieur-travaux-ferro", formation: "ingenieur-transports-entpe" },
   { metier: "ingenieur-travaux-ferro", formation: "bts-travaux-publics" },
-  // Chef de projet ferro
+  { metier: "ingenieur-travaux-ferro", formation: "ingenieur-gc-ge-insa" },
+  { metier: "ingenieur-travaux-ferro", formation: "ingenieur-transports-ensam" },
+  { metier: "ingenieur-travaux-ferro", formation: "mastere-ifrdd" },
+  // Chef de projet ferro (BAC+5 - toute école d'ingénieur + management)
   { metier: "chef-projet-ferro", formation: "ingenieur-ferroviaire-estaca" },
   { metier: "chef-projet-ferro", formation: "mastere-stfu" },
   { metier: "chef-projet-ferro", formation: "master-transports-mobilites" },
-  // Ingénieur commercial ferro
+  { metier: "chef-projet-ferro", formation: "ingenieur-transports-ensam" },
+  { metier: "chef-projet-ferro", formation: "ingenieur-gc-ge-insa" },
+  { metier: "chef-projet-ferro", formation: "ingenieur-infra-ferro-imt" },
+  { metier: "chef-projet-ferro", formation: "ingenieur-transports-entpe" },
+  { metier: "chef-projet-ferro", formation: "mastere-smart-mobility" },
+  // Ingénieur commercial ferro (BAC+5 - ingénieur généraliste + transport)
   { metier: "ingenieur-commercial-ferro", formation: "master-transports-mobilites" },
   { metier: "ingenieur-commercial-ferro", formation: "master-tlic" },
+  { metier: "ingenieur-commercial-ferro", formation: "ingenieur-ferroviaire-estaca" },
+  { metier: "ingenieur-commercial-ferro", formation: "ingenieur-transports-ensam" },
+  { metier: "ingenieur-commercial-ferro", formation: "ingenieur-gc-ge-insa" },
+  { metier: "ingenieur-commercial-ferro", formation: "ingenieur-transports-entpe" },
+  { metier: "ingenieur-commercial-ferro", formation: "ingenieur-infra-ferro-imt" },
+  { metier: "ingenieur-commercial-ferro", formation: "mastere-stfu" },
   // Designer transport
   { metier: "designer-transport-metier", formation: "bachelor-design-transport" },
   { metier: "designer-transport-metier", formation: "designer-transport" },
-  // Ingénieur systèmes ferro
+  // Ingénieur systèmes ferro (BAC+5 - systèmes, électronique, automatique)
   { metier: "ingenieur-systemes-ferro", formation: "ingenieur-ferroviaire-estaca" },
   { metier: "ingenieur-systemes-ferro", formation: "ingenieur-gc-ge-insa" },
   { metier: "ingenieur-systemes-ferro", formation: "mastere-stfu" },
-  // Responsable production
+  { metier: "ingenieur-systemes-ferro", formation: "ingenieur-transports-ensam" },
+  { metier: "ingenieur-systemes-ferro", formation: "ingenieur-infra-ferro-imt" },
+  { metier: "ingenieur-systemes-ferro", formation: "master-transports-mobilites" },
+  { metier: "ingenieur-systemes-ferro", formation: "mastere-smart-mobility" },
+  // Responsable production (BAC+5 - industrie, mécanique, management)
   { metier: "responsable-production", formation: "bts-maintenance-systemes" },
   { metier: "responsable-production", formation: "but-gim" },
   { metier: "responsable-production", formation: "ingenieur-transports-ensam" },
+  { metier: "responsable-production", formation: "ingenieur-gc-ge-insa" },
+  { metier: "responsable-production", formation: "ingenieur-ferroviaire-estaca" },
+  { metier: "responsable-production", formation: "lp-maintenance-transports-guides" },
   // Technicien bureau d'études
   { metier: "technicien-bureau-etudes", formation: "bts-electrotechnique" },
   { metier: "technicien-bureau-etudes", formation: "but-geii" },
   { metier: "technicien-bureau-etudes", formation: "but-rt" },
+  { metier: "technicien-bureau-etudes", formation: "bts-maintenance-systemes" },
   // Chef de chantier voie ferrée
   { metier: "chef-chantier-voie", formation: "bac-pro-travaux-publics" },
   { metier: "chef-chantier-voie", formation: "bts-travaux-publics" },
   { metier: "chef-chantier-voie", formation: "ingenieur-infra-ferro-imt" },
+  { metier: "chef-chantier-voie", formation: "ingenieur-transports-entpe" },
+  { metier: "chef-chantier-voie", formation: "ingenieur-gc-ge-insa" },
+
+  // === BTM/BM installateur électrique ===
+  { metier: "electricien-industriel-ferro", formation: "btm-installateur-electrique" },
+  { metier: "technicien-catenaire", formation: "btm-installateur-electrique" },
+  { metier: "electricien-industriel-ferro", formation: "bm-installateur-electrique" },
+  { metier: "technicien-catenaire", formation: "bm-installateur-electrique" },
+
+  // === FIX - formations sans métier ===
+  // LP Exploitation Ferroviaire CNAM
+  { metier: "agent-circulation", formation: "lp-exploitation-ferroviaire-cnam" },
+  { metier: "regulateur-transports", formation: "lp-exploitation-ferroviaire-cnam" },
+  // LP GRF (Gestion des Réseaux Ferrés)
+  { metier: "agent-circulation", formation: "lp-grf" },
+  { metier: "chef-chantier-voie", formation: "lp-grf" },
+  // LP MSTV (Management Services Transport Voyageurs)
+  { metier: "regulateur-transports", formation: "lp-mstv" },
+  { metier: "agent-escale", formation: "lp-mstv" },
+  // Master TER (Transport, Espace, Réseau)
+  { metier: "chef-projet-ferro", formation: "master-ter" },
+  { metier: "ingenieur-commercial-ferro", formation: "master-ter" },
+  // Master TURP (Transports Urbains et Régionaux)
+  { metier: "regulateur-transports", formation: "master-turp" },
+  { metier: "chef-projet-ferro", formation: "master-turp" },
+  // Master 3ET (Économie, Énergie, Transports)
+  { metier: "ingenieur-commercial-ferro", formation: "master-3et" },
+  { metier: "chef-projet-ferro", formation: "master-3et" },
+  // Licence EEA
+  { metier: "technicien-signalisation", formation: "licence-eea" },
+  { metier: "electricien-industriel-ferro", formation: "licence-eea" },
+  // BUT RT
+  { metier: "technicien-signalisation", formation: "but-rt" },
+  // BUT Mesures Physiques
+  { metier: "technicien-signalisation", formation: "but-mesures-physiques" },
 ];
 
 // Mapping of formations to establishments
@@ -694,6 +760,33 @@ const establishmentFormations: Array<{ establishment: string; formation: string 
   { establishment: "iut-lyon1-villeurbanne", formation: "but-geii" },
   { establishment: "iut-rennes", formation: "but-geii" },
   { establishment: "iut-belfort", formation: "but-geii" },
+
+  // === BUT Mesures Physiques ===
+  { establishment: "iut-lyon1-villeurbanne", formation: "but-mesures-physiques" },
+  { establishment: "iut-saint-denis", formation: "but-mesures-physiques" },
+  { establishment: "iut-bordeaux", formation: "but-mesures-physiques" },
+
+  // === BUT RT (Réseaux et Télécommunications) ===
+  { establishment: "iut-ville-avray", formation: "but-rt" },
+  { establishment: "iut-valenciennes", formation: "but-rt" },
+  { establishment: "iut-belfort", formation: "but-rt" },
+
+  // === Licence EEA ===
+  { establishment: "universite-lille", formation: "licence-eea" },
+  { establishment: "universite-paris-saclay", formation: "licence-eea" },
+  { establishment: "universite-lyon-2", formation: "licence-eea" },
+
+  // === BTM installateur en équipement électrique ===
+  { establishment: "compagnons-devoir-rennes", formation: "btm-installateur-electrique" },
+  { establishment: "compagnons-devoir-tours", formation: "btm-installateur-electrique" },
+
+  // === BM installateur en équipements électriques ===
+  { establishment: "compagnons-devoir-rennes", formation: "bm-installateur-electrique" },
+  { establishment: "compagnons-devoir-tours", formation: "bm-installateur-electrique" },
+
+  // === Bac Pro Traction Électrique ===
+  { establishment: "cfa-ferroviaire-saint-denis", formation: "bac-pro-traction-electrique" },
+  { establishment: "cfa-ferroviaire-lyon", formation: "bac-pro-traction-electrique" },
 
   // === LP Exploitation Ferroviaire CNAM ===
   { establishment: "cnam-hauts-de-france", formation: "lp-exploitation-ferroviaire-cnam" },

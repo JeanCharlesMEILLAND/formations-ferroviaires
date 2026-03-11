@@ -232,13 +232,15 @@ export default async function EstablishmentPage({
               </a>
             )}
             <a
-              href="https://www.futurentrain.fr/formations/"
+              href="https://www.futurentrain.fr/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-electric-500 text-white rounded-lg text-sm font-semibold hover:bg-electric-600 transition-colors"
+              className="inline-flex items-center gap-3 px-4 py-3 bg-white border border-navy-200 rounded-lg text-sm text-navy-700 font-semibold hover:shadow-md transition-all"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logos/futur-en-train.png" alt="Futur en Train" width={28} height={28} className="rounded" />
               Futur en Train
-              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" className="text-navy-400">
                 <path d="M4 8l4-4M4 4h4v4" />
               </svg>
             </a>
@@ -246,10 +248,12 @@ export default async function EstablishmentPage({
               href="https://www.aveclindustrieferroviaire.fr"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-lg text-sm font-semibold hover:bg-amber-600 transition-colors"
+              className="inline-flex items-center gap-3 px-4 py-3 bg-white border border-navy-200 rounded-lg text-sm text-navy-700 font-semibold hover:shadow-md transition-all"
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logos/avec-industrie-ferroviaire.svg" alt="Avec l'Industrie Ferroviaire" width={28} height={28} className="rounded" />
               Avec l&apos;Industrie Ferroviaire
-              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" className="text-navy-400">
                 <path d="M4 8l4-4M4 4h4v4" />
               </svg>
             </a>
