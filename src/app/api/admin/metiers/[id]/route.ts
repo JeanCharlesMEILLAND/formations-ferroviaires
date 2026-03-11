@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verifyAuth, unauthorizedResponse } from "@/lib/admin-auth";
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  if (!verifyAuth()) return unauthorizedResponse();
   try {
     const body = await request.json();
     const metier = await prisma.metier.update({
@@ -31,6 +33,7 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  if (!verifyAuth()) return unauthorizedResponse();
   try {
     await prisma.metierFormation.deleteMany({
       where: { metierId: params.id },

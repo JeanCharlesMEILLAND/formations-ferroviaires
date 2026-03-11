@@ -27,21 +27,19 @@ export default async function MapPage({
   return (
     <div className="h-screen flex flex-col">
       {/* Hero */}
-      <section className="bg-gradient-to-r from-navy-900 via-navy-800 to-navy-900 text-white py-3 lg:py-4">
-        <div className="max-w-content mx-auto px-container flex items-center justify-between">
-          <div className="flex-1 text-center">
-            <h1 className="font-heading text-lg lg:text-xl font-bold mb-1">{dict.hero.title}</h1>
-            <p className="text-sm text-navy-200 max-w-2xl mx-auto">
-              {dict.hero.subtitle}
-            </p>
-          </div>
-          <a
-            href="/admin"
-            className="ml-4 shrink-0 px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-colors"
-          >
-            Admin
-          </a>
+      <section className="bg-gradient-to-r from-navy-900 via-navy-800 to-navy-900 text-white py-3 lg:py-4 relative">
+        <div className="max-w-content mx-auto px-container text-center">
+          <h1 className="font-heading text-lg lg:text-xl font-bold mb-1">{dict.hero.title}</h1>
+          <p className="text-sm text-navy-200 max-w-2xl mx-auto">
+            {dict.hero.subtitle}
+          </p>
         </div>
+        <a
+          href="/admin"
+          className="absolute right-4 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-colors"
+        >
+          Admin
+        </a>
       </section>
 
       {/* Map */}

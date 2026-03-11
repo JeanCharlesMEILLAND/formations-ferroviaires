@@ -208,8 +208,8 @@ function MarkerClusterLayer({
           <div style="display:flex;gap:8px;">
             <a href="/${locale}/etablissement/${est.slug}" style="font-size:11px;background:#1B2A5B;color:white;padding:6px 12px;border-radius:6px;text-decoration:none;font-weight:500;">${dict.map.seeDetails}</a>
             ${
-              est.formations[0]?.formation.onisepUrl
-                ? `<a href="${est.formations[0].formation.onisepUrl}" target="_blank" rel="noopener noreferrer" style="font-size:11px;border:1px solid #C5CAD9;color:#344479;padding:6px 12px;border-radius:6px;text-decoration:none;font-weight:500;">ONISEP</a>`
+              est.onisepUrl
+                ? `<a href="${est.onisepUrl}" target="_blank" rel="noopener noreferrer" style="font-size:11px;border:1px solid #C5CAD9;color:#344479;padding:6px 12px;border-radius:6px;text-decoration:none;font-weight:500;">ONISEP</a>`
                 : ""
             }
           </div>

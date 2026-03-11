@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verifyAuth, unauthorizedResponse } from "@/lib/admin-auth";
 
 export async function GET() {
+  if (!verifyAuth()) return unauthorizedResponse();
   const establishments = await prisma.establishment.findMany({
     include: {
       type: true,
@@ -20,6 +22,7 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  if (!verifyAuth()) return unauthorizedResponse();
   try {
     const body = await request.json();
     const slug = body.name

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verifyAuth, unauthorizedResponse } from "@/lib/admin-auth";
 
 export async function POST(request: NextRequest) {
+  if (!verifyAuth()) return unauthorizedResponse();
   try {
     const body = await request.json();
     const link = await prisma.establishmentFormation.create({
@@ -21,6 +23,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  if (!verifyAuth()) return unauthorizedResponse();
   try {
     const { searchParams } = new URL(request.url);
     const establishmentId = searchParams.get("establishmentId");
