@@ -2,26 +2,99 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  color: #1a1a2e;
+  background: #f8fafc;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Leaflet CSS overrides */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  border-radius: 0.75rem;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(27, 42, 91, 0.12);
+  padding: 0;
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  min-width: 280px;
+  max-width: 320px;
+}
+
+.leaflet-popup-close-button {
+  top: 8px !important;
+  right: 8px !important;
+  color: #596794 !important;
+  font-size: 20px !important;
+  width: 24px !important;
+  height: 24px !important;
+}
+
+/* Cluster marker styles */
+.marker-cluster-small {
+  background-color: rgba(0, 188, 212, 0.3);
+}
+.marker-cluster-small div {
+  background-color: rgba(0, 188, 212, 0.6);
+  color: #fff;
+  font-weight: 700;
+}
+
+.marker-cluster-medium {
+  background-color: rgba(59, 76, 129, 0.3);
+}
+.marker-cluster-medium div {
+  background-color: rgba(59, 76, 129, 0.6);
+  color: #fff;
+  font-weight: 700;
+}
+
+.marker-cluster-large {
+  background-color: rgba(27, 42, 91, 0.3);
+}
+.marker-cluster-large div {
+  background-color: rgba(27, 42, 91, 0.6);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* Custom establishment marker */
+.establishment-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-size: 14px;
+  color: white;
+  font-weight: 700;
+  transition: transform 0.2s;
+}
+
+.establishment-marker:hover {
+  transform: scale(1.2);
+}
+
+/* Scrollbar styling */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }

@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Region {
+  id             String          @id @default(cuid())
+  name           String          @unique
+  code           String          @unique
+  lat            Float
+  lng            Float
+  establishments Establishment[]
+}
+
+model EstablishmentType {
+  id             String          @id @default(cuid())
+  slug           String          @unique
+  nameFr         String
+  nameEn         String
+  color          String
+  establishments Establishment[]
+}
+
+model Establishment {
+  id         String                   @id @default(cuid())
+  slug       String                   @unique
+  name       String
+  type       EstablishmentType        @relation(fields: [typeId], references: [id])
+  typeId     String
+  region     Region                   @relation(fields: [regionId], references: [id])
+  regionId   String
+  city       String
+  address    String?
+  lat        Float
+  lng        Float
+  website    String?
+  onisepUrl  String?
+  formations EstablishmentFormation[]
+
+  @@index([typeId])
+  @@index([regionId])
+  @@index([city])
+}
+
+model FormationLevel {
+  id         String      @id @default(cuid())
+  slug       String      @unique
+  nameFr     String
+  nameEn     String
+  order      Int
+  formations Formation[]
+}
+
+model FormationDomain {
+  id         String      @id @default(cuid())
+  slug       String      @unique
+  nameFr     String
+  nameEn     String
+  color      String
+  formations Formation[]
+}
+
+model Formation {
+  id             String                   @id @default(cuid())
+  slug           String                   @unique
+  nameFr         String
+  nameEn         String?
+  rncpCode       String?
+  onisepUrl      String?
+  level          FormationLevel           @relation(fields: [levelId], references: [id])
+  levelId        String
+  domain         FormationDomain          @relation(fields: [domainId], references: [id])
+  domainId       String
+  jobTarget      String?
+  establishments EstablishmentFormation[]
+  metiers        MetierFormation[]
+
+  @@index([levelId])
+  @@index([domainId])
+  @@index([rncpCode])
+}
+
+model Metier {
+  id         String           @id @default(cuid())
+  slug       String           @unique
+  nameFr     String
+  nameEn     String?
+  family     String
+  source     String           // "futurentrain" or "aveclindustrieferroviaire"
+  level      String?          // niveau requis: "CAP", "BAC+2", etc.
+  formations MetierFormation[]
+
+  @@index([family])
+  @@index([source])
+}
+
+model MetierFormation {
+  id          String    @id @default(cuid())
+  metier      Metier    @relation(fields: [metierId], references: [id], onDelete: Cascade)
+  metierId    String
+  formation   Formation @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  formationId String
+
+  @@unique([metierId, formationId])
+  @@index([metierId])
+  @@index([formationId])
+}
+
+model EstablishmentFormation {
+  id              String        @id @default(cuid())
+  establishment   Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+  establishmentId String
+  formation       Formation     @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  formationId     String
+
+  @@unique([establishmentId, formationId])
+  @@index([establishmentId])
+  @@index([formationId])
+}

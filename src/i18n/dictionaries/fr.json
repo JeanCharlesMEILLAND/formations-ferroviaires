@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "siteName": "Formations Ferroviaires",
+    "siteDescription": "Cartographie des formations ferroviaires en France - Trouvez les établissements qui proposent des formations dans le secteur ferroviaire",
+    "ogTitle": "Formations Ferroviaires en France"
+  },
+  "nav": {
+    "home": "Cartographie",
+    "about": "A propos",
+    "switchLang": "EN",
+    "backToFif": "Retour FIF"
+  },
+  "hero": {
+    "title": "Cartographie des Formations Ferroviaires",
+    "subtitle": "Trouvez les établissements qui forment aux métiers du ferroviaire partout en France",
+    "description": "Explorez la carte interactive pour découvrir les écoles, universités, lycées et centres de formation qui proposent des cursus dans le secteur ferroviaire."
+  },
+  "map": {
+    "searchPlaceholder": "Rechercher un établissement ou une formation...",
+    "filterByLevel": "Niveau de diplôme",
+    "filterByDomain": "Domaine",
+    "filterByRegion": "Région",
+    "filterByType": "Type d'établissement",
+    "allLevels": "Tous les niveaux",
+    "allDomains": "Tous les domaines",
+    "allRegions": "Toutes les régions",
+    "allTypes": "Tous les types",
+    "allMetiers": "Tous les métiers",
+    "allFormations": "Toutes les formations",
+    "results": "résultats",
+    "result": "résultat",
+    "noResults": "Aucun établissement trouvé pour ces critères",
+    "resetFilters": "Réinitialiser les filtres",
+    "formations": "formations",
+    "formation": "formation",
+    "seeDetails": "Voir la fiche",
+    "legend": "Légende",
+    "trainMore": "Où se former",
+    "externalLinks": "Liens utiles"
+  },
+  "establishment": {
+    "title": "Fiche établissement",
+    "formations": "Formations proposées",
+    "contact": "Contact",
+    "website": "Site web",
+    "address": "Adresse",
+    "region": "Région",
+    "type": "Type",
+    "backToMap": "Retour à la carte",
+    "onisep": "Voir sur ONISEP",
+    "futurentrain": "Voir sur Futur en Train",
+    "otherEstablishments": "Autres établissements proposant cette formation"
+  },
+  "formation": {
+    "title": "Fiche formation",
+    "level": "Niveau",
+    "domain": "Domaine",
+    "rncp": "Code RNCP",
+    "duration": "Durée",
+    "alternance": "Alternance disponible",
+    "description": "Description",
+    "establishments": "Établissements proposant cette formation",
+    "backToMap": "Retour à la carte",
+    "jobTarget": "Métier visé"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "noData": "Aucune donnée disponible",
+    "close": "Fermer",
+    "open": "Ouvrir",
+    "search": "Rechercher",
+    "viewAll": "Voir tout"
+  },
+  "footer": {
+    "projectBy": "Un projet de la",
+    "fif": "Fédération des Industries Ferroviaires",
+    "usefulLinks": "Liens utiles",
+    "legal": "Mentions légales",
+    "rights": "Tous droits réservés"
+  }
+}

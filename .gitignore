@@ -26,7 +26,16 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
 .env*.local
+
+# prisma sqlite
+prisma/dev.db
+prisma/dev.db-journal
+
+# research files
+*.output
+group3-master-ingenieur-results.md
 
 # vercel
 .vercel

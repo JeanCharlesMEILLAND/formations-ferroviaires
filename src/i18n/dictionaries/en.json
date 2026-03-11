@@ -1,0 +1,82 @@
+{
+  "meta": {
+    "siteName": "Railway Training",
+    "siteDescription": "Railway training map in France - Find institutions offering railway sector training programs",
+    "ogTitle": "Railway Training in France"
+  },
+  "nav": {
+    "home": "Map",
+    "about": "About",
+    "switchLang": "FR",
+    "backToFif": "Back to FIF"
+  },
+  "hero": {
+    "title": "Railway Training Map",
+    "subtitle": "Find institutions training for railway professions across France",
+    "description": "Explore the interactive map to discover schools, universities, and training centers offering railway sector programs."
+  },
+  "map": {
+    "searchPlaceholder": "Search for an institution or training program...",
+    "filterByLevel": "Diploma level",
+    "filterByDomain": "Domain",
+    "filterByRegion": "Region",
+    "filterByType": "Institution type",
+    "allLevels": "All levels",
+    "allDomains": "All domains",
+    "allRegions": "All regions",
+    "allTypes": "All types",
+    "allMetiers": "All professions",
+    "allFormations": "All programs",
+    "results": "results",
+    "result": "result",
+    "noResults": "No institutions found for these criteria",
+    "resetFilters": "Reset filters",
+    "formations": "programs",
+    "formation": "program",
+    "seeDetails": "View details",
+    "legend": "Legend",
+    "trainMore": "Where to train",
+    "externalLinks": "Useful links"
+  },
+  "establishment": {
+    "title": "Institution details",
+    "formations": "Training programs offered",
+    "contact": "Contact",
+    "website": "Website",
+    "address": "Address",
+    "region": "Region",
+    "type": "Type",
+    "backToMap": "Back to map",
+    "onisep": "View on ONISEP",
+    "futurentrain": "View on Futur en Train",
+    "otherEstablishments": "Other institutions offering this program"
+  },
+  "formation": {
+    "title": "Program details",
+    "level": "Level",
+    "domain": "Domain",
+    "rncp": "RNCP Code",
+    "duration": "Duration",
+    "alternance": "Apprenticeship available",
+    "description": "Description",
+    "establishments": "Institutions offering this program",
+    "backToMap": "Back to map",
+    "jobTarget": "Target profession"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "noData": "No data available",
+    "close": "Close",
+    "open": "Open",
+    "search": "Search",
+    "viewAll": "View all"
+  },
+  "footer": {
+    "projectBy": "A project by the",
+    "fif": "Federation of Railway Industries",
+    "usefulLinks": "Useful links",
+    "legal": "Legal notice",
+    "rights": "All rights reserved"
+  }
+}
