@@ -192,6 +192,7 @@ const establishments: Array<{
   { slug: "cfa-ferroviaire-begles", name: "CFA Ferroviaire - Bègles", city: "Bègles", region: "NAQ", type: "cfa", lat: 44.8056, lng: -0.5486 },
   { slug: "ferrocampus-saintes", name: "Ferrocampus - Campus des métiers du ferroviaire", city: "Saintes", region: "NAQ", type: "cfa", lat: 45.7461, lng: -0.6320, website: "https://www.ferrocampus.fr" },
   { slug: "fma-formation-agen", name: "FMA Formation - Centre de Formation Ferroviaire", city: "Agen", region: "NAQ", type: "cfa", lat: 44.203, lng: 0.617, website: "https://formationferroviaire.fr/" },
+  { slug: "ikn-formation-biard", name: "IKN Formation", city: "Biard", region: "NAQ", type: "cfa", lat: 46.5864, lng: 0.3132, website: "https://www.ikn-ferro.com/" },
   { slug: "estaca-bordeaux", name: "ESTACA Bordeaux", city: "Bordeaux", region: "NAQ", type: "ecole-ingenieur", lat: 44.8275, lng: -0.5560, website: "https://www.estaca.fr/" },
 
   // === PAYS DE LA LOIRE ===
@@ -207,6 +208,15 @@ const establishments: Array<{
   // === ÎLE-DE-FRANCE ===
   { slug: "etf-academy-beauchamp", name: "ETF Academy (VINCI)", city: "Beauchamp", region: "IDF", type: "cfa", lat: 49.012, lng: 2.190, website: "https://www.etf.fr/" },
   { slug: "lea-itedec-aubergenville", name: "L'EA-ITEDEC - Plateforme ferroviaire", city: "Aubergenville", region: "IDF", type: "cfa", lat: 48.960, lng: 1.854, website: "https://www.ecole-lea.fr/" },
+  { slug: "academie-transdev-issy", name: "Académie by Transdev", city: "Issy-les-Moulineaux", region: "IDF", type: "cfa", lat: 48.8235, lng: 2.2615 },
+  { slug: "alstom-training-saint-ouen", name: "Alstom Training & Simulation", city: "Saint-Ouen-sur-Seine", region: "IDF", type: "cfa", lat: 48.9118, lng: 2.3340, website: "https://www.alstom.com/" },
+  { slug: "ca2p-quincy-sous-senart", name: "CA2P", city: "Quincy-sous-Sénart", region: "IDF", type: "cfa", lat: 48.6712, lng: 2.5283 },
+  { slug: "db-cargo-france-aubervilliers", name: "DB Cargo France", city: "Aubervilliers", region: "IDF", type: "cfa", lat: 48.9176, lng: 2.3833, website: "https://fr.dbcargo.com/" },
+  { slug: "egr-buc", name: "École de Gestion des Risques (EGR)", city: "Buc", region: "IDF", type: "cfa", lat: 48.7730, lng: 2.1230, website: "https://www.ecoledegestiondesrisques.fr/" },
+  { slug: "ferrotrainjob-paris", name: "FerroTrainJob", city: "Paris 8e", region: "IDF", type: "cfa", lat: 48.8740, lng: 2.3170, website: "https://www.ferrotrainjob.fr/" },
+  { slug: "hexafret-campus-saint-ouen", name: "Hexafret - Campus Hexafret", city: "Saint-Ouen-sur-Seine", region: "IDF", type: "cfa", lat: 48.9083, lng: 2.3320, website: "https://www.hexafret.com/" },
+  { slug: "ratp-formation-paris", name: "RATP - Formation Conduite", city: "Paris 20e", region: "IDF", type: "cfa", lat: 48.8530, lng: 2.4050, website: "https://www.ratp.fr/" },
+  { slug: "sncf-voyageurs-unft-saint-denis", name: "SNCF Voyageurs UNFT - Campus Campra", city: "La Plaine Saint-Denis", region: "IDF", type: "cfa", lat: 48.9170, lng: 2.3580, website: "https://www.sncf.com/" },
 
   // === ARTS ET MÉTIERS (MULTI-SITES) ===
   { slug: "arts-metiers-paris", name: "Arts et Métiers (ENSAM)", city: "Paris", region: "IDF", type: "grande-ecole", lat: 48.8382, lng: 2.3620 },
@@ -214,18 +224,26 @@ const establishments: Array<{
   // === SNCF ===
   { slug: "universite-traction-sncf", name: "Université Traction - SNCF Voyageurs", city: "Paris", region: "IDF", type: "autre", lat: 48.8410, lng: 2.3599 },
 
+  // === NORMANDIE ===
+  { slug: "digirail-le-havre", name: "DigiRail - Formation et Expertise Ferroviaire", city: "Le Havre", region: "NOR", type: "cfa", lat: 49.4944, lng: 0.1079, website: "https://www.digirail.fr" },
+
   // === BOURGOGNE-FRANCHE-COMTÉ ===
   { slug: "sferis-formation-autun", name: "SFERIS Formation", city: "Autun", region: "BFC", type: "cfa", lat: 46.951, lng: 4.299, website: "https://www.sferis.fr/formation/" },
+  { slug: "formafer-chevigny", name: "FORM@FER", city: "Chevigny-Saint-Sauveur", region: "BFC", type: "cfa", lat: 47.300, lng: 5.136 },
 
   // === GRAND EST ===
   { slug: "captrain-formation-creutzwald", name: "Captrain Formation", city: "Creutzwald", region: "GES", type: "cfa", lat: 49.069, lng: 6.694, website: "https://www.captrain.fr/" },
 
   // === CENTRE-VAL DE LOIRE ===
   { slug: "formarail-ballan-mire", name: "Forma'Rail", city: "Ballan-Miré", region: "CVL", type: "cfa", lat: 47.347, lng: 0.614, website: "https://forma-rail.com/" },
+  { slug: "gtif-saint-pierre-des-corps", name: "GTIF - Gestion des Techniques d'Ingénierie et de Formation", city: "Saint-Pierre-des-Corps", region: "CVL", type: "cfa", lat: 47.3861, lng: 0.7236, website: "https://gtif.fr/" },
 
   // === OCCITANIE ===
   { slug: "efmo-perols", name: "EFMO - École du Ferroviaire et des Mobilités d'Occitanie", city: "Pérols", region: "OCC", type: "cfa", lat: 43.529, lng: 3.956 },
   { slug: "campusfer-nimes", name: "CampusFER Nîmes", city: "Nîmes", region: "OCC", type: "cfa", lat: 43.837, lng: 4.360, website: "https://www.campusfer.com/" },
+
+  // === PROVENCE-ALPES-CÔTE D'AZUR ===
+  { slug: "plate-forme-nge-tarascon", name: "PLATE FORME (Groupe NGE)", city: "Tarascon", region: "PAC", type: "cfa", lat: 43.798, lng: 4.653, website: "https://plateforme.nge.fr/" },
 
   // === NEW - CFA FERROVIAIRE PARTNER LYCEES ===
   { slug: "lp-chenneviere-malezieux-paris", name: "LP Chennevière Malézieux", city: "Paris 12e", region: "IDF", type: "lycee", lat: 48.849, lng: 2.372 },
