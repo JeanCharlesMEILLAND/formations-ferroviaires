@@ -204,6 +204,7 @@ const establishments: Array<{
   { slug: "cmq-fiaem-valenciennes", name: "CMQ FIAEM - Campus des Métiers Ferroviaire et Écomobilité", city: "Valenciennes", region: "HDF", type: "cfa", lat: 50.358, lng: 3.523 },
   { slug: "railenium-valenciennes", name: "Railenium - Institut de Recherche Technologique Ferroviaire", city: "Valenciennes", region: "HDF", type: "ecole-ingenieur", lat: 50.313, lng: 3.514, website: "https://railenium.eu/" },
   { slug: "campusfer-hazebrouck", name: "CampusFER Hazebrouck", city: "Hazebrouck", region: "HDF", type: "cfa", lat: 50.725, lng: 2.539, website: "https://www.campusfer.com/" },
+  { slug: "lineas-academy-lille", name: "Lineas Academy", city: "Lille", region: "HDF", type: "cfa", lat: 50.6292, lng: 3.0573, website: "https://lineasacademy.net/fr/" },
 
   // === ÎLE-DE-FRANCE ===
   { slug: "etf-academy-beauchamp", name: "ETF Academy (VINCI)", city: "Beauchamp", region: "IDF", type: "cfa", lat: 49.012, lng: 2.190, website: "https://www.etf.fr/" },
