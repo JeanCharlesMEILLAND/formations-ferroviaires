@@ -303,6 +303,7 @@ export default function FormationsMap({
   const [selectedEstablishment, setSelectedEstablishment] = useState<
     string | null
   >(null);
+  const [showLegend, setShowLegend] = useState(true);
 
   // Sidebar view mode: establishments, formations, or metiers
   const [listView, setListView] = useState<"establishments" | "formations" | "metiers">("establishments");
@@ -1000,24 +1001,50 @@ export default function FormationsMap({
         </MapContainer>
 
         {/* Legend overlay */}
-        <div className="absolute bottom-4 right-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-card p-3 shadow-card">
-          <p className="text-[10px] font-heading font-semibold text-navy-700 mb-2">
-            {dict.map.legend}
-          </p>
-          <div className="space-y-1">
-            {filterData?.types.map((t) => (
-              <div key={t.slug} className="flex items-center gap-2">
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: t.color }}
-                />
-                <span className="text-[10px] text-navy-600">
-                  {locale === "fr" ? t.nameFr : t.nameEn}
-                </span>
-              </div>
-            ))}
+        {showLegend ? (
+          <div className="absolute bottom-4 right-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-card p-3 shadow-card">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-[10px] font-heading font-semibold text-navy-700">
+                {dict.map.legend}
+              </p>
+              <button
+                onClick={() => setShowLegend(false)}
+                className="text-navy-400 hover:text-navy-700 transition-colors ml-3"
+                aria-label="Fermer la légende"
+              >
+                <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M3 3l8 8M11 3l-8 8" />
+                </svg>
+              </button>
+            </div>
+            <div className="space-y-1">
+              {filterData?.types.map((t) => (
+                <div key={t.slug} className="flex items-center gap-2">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: t.color }}
+                  />
+                  <span className="text-[10px] text-navy-600">
+                    {locale === "fr" ? t.nameFr : t.nameEn}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        ) : (
+          <button
+            onClick={() => setShowLegend(true)}
+            className="absolute bottom-4 right-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-card p-2.5 shadow-card text-navy-600 hover:text-navy-800 transition-colors"
+            aria-label="Afficher la légende"
+            title={dict.map.legend}
+          >
+            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="4" cy="4" r="2" /><line x1="8" y1="4" x2="14" y2="4" />
+              <circle cx="4" cy="8" r="2" /><line x1="8" y1="8" x2="14" y2="8" />
+              <circle cx="4" cy="12" r="2" /><line x1="8" y1="12" x2="14" y2="12" />
+            </svg>
+          </button>
+        )}
       </div>
     </div>
   );
