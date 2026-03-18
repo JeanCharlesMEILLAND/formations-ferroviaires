@@ -33,6 +33,7 @@ const establishmentTypes = [
 ];
 
 const formationLevels = [
+  { slug: "certification-pro", nameFr: "Certification professionnelle", nameEn: "Professional Certification", order: 0 },
   { slug: "cap-niv3", nameFr: "CAP (Niveau 3)", nameEn: "CAP (Level 3)", order: 1 },
   { slug: "bac-niv4", nameFr: "BAC / Bac Pro (Niveau 4)", nameEn: "BAC / Bac Pro (Level 4)", order: 2 },
   { slug: "bac1-cs", nameFr: "Bac +1 (CS)", nameEn: "Bac +1 (CS)", order: 3 },
@@ -50,10 +51,19 @@ const formationDomains = [
   { slug: "transport-mobilite", nameFr: "Transport & Mobilité", nameEn: "Transport & Mobility", color: "#4CAF50" },
   { slug: "electrotechnique", nameFr: "Électrotechnique & Électronique", nameEn: "Electrotechnics & Electronics", color: "#F44336" },
   { slug: "industrie-production", nameFr: "Industrie & Production", nameEn: "Industry & Production", color: "#607D8B" },
+  { slug: "securite-reglementation", nameFr: "Sécurité & Réglementation Ferroviaire", nameEn: "Railway Safety & Regulation", color: "#D32F2F" },
 ];
 
 // Formations from the Assemblage sheet
 const formations = [
+  // === CERTIFICATIONS PROFESSIONNELLES (Formation continue) ===
+  { slug: "secufer", nameFr: "SECUFER - Sécurité des personnels en environnement ferroviaire", rncpCode: null, romeCode: null, level: "certification-pro", domain: "securite-reglementation", jobTarget: "Formation obligatoire pour intervenir à proximité des voies ferrées. Prévention des risques ferroviaires.", onisepUrl: null },
+  { slug: "tes-conduite-train", nameFr: "TES Conduite de train (catégories A/B)", rncpCode: null, romeCode: "N4301", level: "certification-pro", domain: "securite-reglementation", jobTarget: "Formation aux Tâches Essentielles de Sécurité pour la conduite de trains sur le Réseau Ferré National.", onisepUrl: null },
+  { slug: "licence-europeenne-conducteur", nameFr: "Licence européenne de conducteur de train", rncpCode: null, romeCode: "N4301", level: "certification-pro", domain: "securite-reglementation", jobTarget: "Certification européenne obligatoire pour conduire des trains. Délivrée par l'EPSF.", onisepUrl: null },
+  { slug: "tes-agent-sol", nameFr: "TES Agent au sol (catégories C/D)", rncpCode: null, romeCode: null, level: "certification-pro", domain: "securite-reglementation", jobTarget: "Opérateur au sol, formation des trains, manœuvres ferroviaires.", onisepUrl: null },
+  { slug: "tes-signalisation", nameFr: "TES Signalisation (catégories E/F)", rncpCode: null, romeCode: null, level: "certification-pro", domain: "securite-reglementation", jobTarget: "Gestion de la signalisation ferroviaire, aiguillage, régulation.", onisepUrl: null },
+  { slug: "tes-maintenance-infra", nameFr: "TES Maintenance infrastructure (catégories G à M)", rncpCode: null, romeCode: null, level: "certification-pro", domain: "securite-reglementation", jobTarget: "Annonceur/sentinelle, travaux sur voie, maintenance caténaire, ouvrages d'art.", onisepUrl: null },
+
   // === NIVEAU 3 (CAP) ===
   { slug: "cap-maintenance-vehicules", nameFr: "CAP Maintenance des véhicules", rncpCode: "38337", romeCode: "I1310", level: "cap-niv3", domain: "maintenance-technique", jobTarget: "Souvent utilisé comme base avant une spécialisation interne SNCF/RATP.", onisepUrl: "https://www.onisep.fr/ressources/univers-formation/formations/lycees/cap-maintenance-des-vehicules-option-vehicules-legers" },
   { slug: "cap-ctm-installateur-electrique", nameFr: "CAP CTM installateur en équipements électriques", rncpCode: "35955", romeCode: "I1309", level: "cap-niv3", domain: "electrotechnique", jobTarget: null, onisepUrl: null },
@@ -938,6 +948,132 @@ const establishmentFormations: Array<{ establishment: string; formation: string 
   { establishment: "iut-mantes", formation: "but-gim" },
   { establishment: "iut-bethune", formation: "but-gim" },
   { establishment: "iut-bethune", formation: "but-geii" },
+
+  // === CERTIFICATIONS PROFESSIONNELLES (Formation continue EPSF) ===
+  // CIFFCO Coquelles
+  { establishment: "ciffco-coquelles", formation: "secufer" },
+  { establishment: "ciffco-coquelles", formation: "tes-conduite-train" },
+  { establishment: "ciffco-coquelles", formation: "licence-europeenne-conducteur" },
+  { establishment: "ciffco-coquelles", formation: "tes-agent-sol" },
+  { establishment: "ciffco-coquelles", formation: "tes-maintenance-infra" },
+  // OMNIFER
+  { establishment: "omnifer-saint-laurent", formation: "secufer" },
+  { establishment: "omnifer-saint-laurent", formation: "tes-conduite-train" },
+  { establishment: "omnifer-saint-laurent", formation: "licence-europeenne-conducteur" },
+  { establishment: "omnifer-saint-laurent", formation: "tes-agent-sol" },
+  { establishment: "omnifer-saint-laurent", formation: "tes-maintenance-infra" },
+  // IKN Formation
+  { establishment: "ikn-formation-biard", formation: "secufer" },
+  { establishment: "ikn-formation-biard", formation: "tes-agent-sol" },
+  { establishment: "ikn-formation-biard", formation: "tes-maintenance-infra" },
+  // GTIF
+  { establishment: "gtif-saint-pierre-des-corps", formation: "secufer" },
+  { establishment: "gtif-saint-pierre-des-corps", formation: "tes-conduite-train" },
+  { establishment: "gtif-saint-pierre-des-corps", formation: "licence-europeenne-conducteur" },
+  { establishment: "gtif-saint-pierre-des-corps", formation: "tes-agent-sol" },
+  { establishment: "gtif-saint-pierre-des-corps", formation: "tes-signalisation" },
+  { establishment: "gtif-saint-pierre-des-corps", formation: "tes-maintenance-infra" },
+  // DigiRail
+  { establishment: "digirail-le-havre", formation: "secufer" },
+  { establishment: "digirail-le-havre", formation: "tes-conduite-train" },
+  { establishment: "digirail-le-havre", formation: "licence-europeenne-conducteur" },
+  { establishment: "digirail-le-havre", formation: "tes-maintenance-infra" },
+  // ETF Academy
+  { establishment: "etf-academy-beauchamp", formation: "secufer" },
+  { establishment: "etf-academy-beauchamp", formation: "tes-conduite-train" },
+  { establishment: "etf-academy-beauchamp", formation: "licence-europeenne-conducteur" },
+  { establishment: "etf-academy-beauchamp", formation: "tes-maintenance-infra" },
+  // Captrain
+  { establishment: "captrain-formation-creutzwald", formation: "secufer" },
+  { establishment: "captrain-formation-creutzwald", formation: "tes-conduite-train" },
+  { establishment: "captrain-formation-creutzwald", formation: "licence-europeenne-conducteur" },
+  { establishment: "captrain-formation-creutzwald", formation: "tes-agent-sol" },
+  // SFERIS
+  { establishment: "sferis-formation-autun", formation: "secufer" },
+  { establishment: "sferis-formation-autun", formation: "tes-signalisation" },
+  { establishment: "sferis-formation-autun", formation: "tes-maintenance-infra" },
+  // CampusFER Nîmes
+  { establishment: "campusfer-nimes", formation: "secufer" },
+  { establishment: "campusfer-nimes", formation: "tes-conduite-train" },
+  { establishment: "campusfer-nimes", formation: "licence-europeenne-conducteur" },
+  { establishment: "campusfer-nimes", formation: "tes-maintenance-infra" },
+  // CampusFER Hazebrouck
+  { establishment: "campusfer-hazebrouck", formation: "secufer" },
+  { establishment: "campusfer-hazebrouck", formation: "tes-conduite-train" },
+  { establishment: "campusfer-hazebrouck", formation: "licence-europeenne-conducteur" },
+  { establishment: "campusfer-hazebrouck", formation: "tes-maintenance-infra" },
+  // FerroTrainJob
+  { establishment: "ferrotrainjob-paris", formation: "secufer" },
+  { establishment: "ferrotrainjob-paris", formation: "tes-conduite-train" },
+  { establishment: "ferrotrainjob-paris", formation: "licence-europeenne-conducteur" },
+  // FORM@FER
+  { establishment: "formafer-chevigny", formation: "secufer" },
+  { establishment: "formafer-chevigny", formation: "tes-conduite-train" },
+  { establishment: "formafer-chevigny", formation: "licence-europeenne-conducteur" },
+  // EGR
+  { establishment: "egr-buc", formation: "secufer" },
+  { establishment: "egr-buc", formation: "tes-conduite-train" },
+  { establishment: "egr-buc", formation: "licence-europeenne-conducteur" },
+  { establishment: "egr-buc", formation: "tes-agent-sol" },
+  { establishment: "egr-buc", formation: "tes-signalisation" },
+  { establishment: "egr-buc", formation: "tes-maintenance-infra" },
+  // CA2P
+  { establishment: "ca2p-quincy-sous-senart", formation: "secufer" },
+  { establishment: "ca2p-quincy-sous-senart", formation: "tes-conduite-train" },
+  { establishment: "ca2p-quincy-sous-senart", formation: "licence-europeenne-conducteur" },
+  // Lineas Academy
+  { establishment: "lineas-academy-lille", formation: "secufer" },
+  { establishment: "lineas-academy-lille", formation: "tes-conduite-train" },
+  { establishment: "lineas-academy-lille", formation: "licence-europeenne-conducteur" },
+  // Hexafret
+  { establishment: "hexafret-campus-saint-ouen", formation: "secufer" },
+  { establishment: "hexafret-campus-saint-ouen", formation: "tes-conduite-train" },
+  { establishment: "hexafret-campus-saint-ouen", formation: "licence-europeenne-conducteur" },
+  { establishment: "hexafret-campus-saint-ouen", formation: "tes-agent-sol" },
+  // PLATE FORME (NGE)
+  { establishment: "plate-forme-nge-tarascon", formation: "secufer" },
+  { establishment: "plate-forme-nge-tarascon", formation: "tes-conduite-train" },
+  { establishment: "plate-forme-nge-tarascon", formation: "licence-europeenne-conducteur" },
+  { establishment: "plate-forme-nge-tarascon", formation: "tes-maintenance-infra" },
+  // DB Cargo France
+  { establishment: "db-cargo-france-aubervilliers", formation: "secufer" },
+  { establishment: "db-cargo-france-aubervilliers", formation: "tes-conduite-train" },
+  { establishment: "db-cargo-france-aubervilliers", formation: "licence-europeenne-conducteur" },
+  { establishment: "db-cargo-france-aubervilliers", formation: "tes-agent-sol" },
+  // Alstom Training
+  { establishment: "alstom-training-saint-ouen", formation: "secufer" },
+  { establishment: "alstom-training-saint-ouen", formation: "tes-conduite-train" },
+  { establishment: "alstom-training-saint-ouen", formation: "licence-europeenne-conducteur" },
+  // Académie Transdev
+  { establishment: "academie-transdev-issy", formation: "secufer" },
+  { establishment: "academie-transdev-issy", formation: "tes-conduite-train" },
+  { establishment: "academie-transdev-issy", formation: "licence-europeenne-conducteur" },
+  // RATP
+  { establishment: "ratp-formation-paris", formation: "secufer" },
+  { establishment: "ratp-formation-paris", formation: "tes-conduite-train" },
+  { establishment: "ratp-formation-paris", formation: "licence-europeenne-conducteur" },
+  // SNCF Voyageurs UNFT
+  { establishment: "sncf-voyageurs-unft-saint-denis", formation: "secufer" },
+  { establishment: "sncf-voyageurs-unft-saint-denis", formation: "tes-conduite-train" },
+  { establishment: "sncf-voyageurs-unft-saint-denis", formation: "licence-europeenne-conducteur" },
+  { establishment: "sncf-voyageurs-unft-saint-denis", formation: "tes-agent-sol" },
+  { establishment: "sncf-voyageurs-unft-saint-denis", formation: "tes-signalisation" },
+  { establishment: "sncf-voyageurs-unft-saint-denis", formation: "tes-maintenance-infra" },
+  // Forma'Rail
+  { establishment: "formarail-ballan-mire", formation: "secufer" },
+  { establishment: "formarail-ballan-mire", formation: "tes-maintenance-infra" },
+  // FMA Formation
+  { establishment: "fma-formation-agen", formation: "secufer" },
+  { establishment: "fma-formation-agen", formation: "tes-conduite-train" },
+  { establishment: "fma-formation-agen", formation: "licence-europeenne-conducteur" },
+  { establishment: "fma-formation-agen", formation: "tes-maintenance-infra" },
+  // CampusFER Grenay
+  { establishment: "campus-fer-grenay", formation: "secufer" },
+  { establishment: "campus-fer-grenay", formation: "tes-conduite-train" },
+  { establishment: "campus-fer-grenay", formation: "licence-europeenne-conducteur" },
+  { establishment: "campus-fer-grenay", formation: "tes-agent-sol" },
+  { establishment: "campus-fer-grenay", formation: "tes-signalisation" },
+  { establishment: "campus-fer-grenay", formation: "tes-maintenance-infra" },
 ];
 
 // ============================================================
