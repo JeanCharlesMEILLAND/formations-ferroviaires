@@ -56,6 +56,7 @@ export default async function CartePage({ params, searchParams }: { params: { lo
     type: one(searchParams.type),
     family: one(searchParams.family),
     near: one(searchParams.near) === "1",
+    establishment: one(searchParams.etablissement),
     view: view === "formations" || view === "metiers" ? view : undefined,
   };
 

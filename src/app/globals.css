@@ -207,3 +207,21 @@ section[id] { scroll-margin-top: 5rem; } /* la barre de navigation collante ne c
 .kind-card:focus-within { outline: 3px solid rgba(12, 31, 44, .18); outline-offset: 2px; }
 .kind-icon { width: 36px; height: 36px; border-radius: 10px; background: #E4ECEF; color: #0C1F2C; display: grid; place-items: center; flex-shrink: 0; transition: background .18s, color .18s; }
 .kind-card.is-on .kind-icon { background: #0C1F2C; color: #FFD84D; }
+
+/* Suggestions sous le champ de recherche */
+.search-field .sug { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 40; margin: 0; padding: 6px; list-style: none; background: #fff; border-radius: 16px; border: 1px solid rgba(12, 31, 44, .08); box-shadow: 0 18px 50px rgba(12, 31, 44, .22); max-height: 380px; overflow-y: auto; animation: rise .18s ease-out both; }
+.search-field.is-hero .sug { left: -8px; right: -8px; top: calc(100% + 14px); }
+.sug-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; cursor: pointer; }
+.sug-item.is-active { background: #F1F3F2; }
+.sug-item.has-kind:not(:first-child) { margin-top: 4px; border-top: 1px solid #EEF2F4; padding-top: 10px; border-radius: 0 0 10px 10px; }
+.sug-icon { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; flex-shrink: 0; background: #E4ECEF; color: #0C1F2C; }
+.sug-icon svg { width: 15px; height: 15px; }
+.sug-icon.is-formation { background: #FFEDE8; color: #C23B1E; }
+.sug-icon.is-metier { background: #FFF7D6; color: #A67D0A; }
+.sug-icon.is-city { background: #DDF3EA; color: #13634E; }
+.sug-label { display: block; font-family: var(--font-heading), system-ui, sans-serif; font-weight: 700; font-size: 14px; color: #0C1F2C; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sug-sub { display: block; font-size: 11px; color: #6C7C88; margin-top: 1px; }
+.sug-kind { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #B7C6CE; white-space: nowrap; }
+
+.result-link { font-size: 11px; font-weight: 800; color: #E84A28; white-space: nowrap; margin-left: 8px; }
+.result-link:hover { text-decoration: underline; }

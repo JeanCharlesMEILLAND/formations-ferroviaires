@@ -137,3 +137,19 @@ export function UserDot({ position }: { position: [number, number] | null }) {
   }, [map, position]);
   return null;
 }
+
+/** Cadre la carte sur les résultats (un point : vol direct ; plusieurs : vol vers l'emprise). */
+export function BoundsController({ target, desktop }: { target: { points: Array<[number, number]>; tick: number } | null; desktop: boolean }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!target || target.points.length === 0) return;
+    if (target.points.length === 1) { map.flyTo(target.points[0], 12, { duration: 0.9 }); return; }
+    map.flyToBounds(L.latLngBounds(target.points), {
+      paddingTopLeft: desktop ? [56, 56] : [36, 136],
+      paddingBottomRight: desktop ? [420, 56] : [36, 120],
+      maxZoom: 12,
+      duration: 0.9,
+    });
+  }, [map, target, desktop]);
+  return null;
+}

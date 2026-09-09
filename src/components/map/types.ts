@@ -13,12 +13,20 @@ export interface Establishment {
   type: EstablishmentType; region: Region; formations: Array<{ formation: Formation }>;
 }
 export interface Metier { id: string; slug: string; nameFr: string; nameEn: string | null; family: string; source: string; level: string | null }
-export interface FormationOption { slug: string; nameFr: string; nameEn: string | null; level: { nameFr: string; nameEn: string; order: number } }
 export interface MetierFormationLink { metier: { slug: string; nameFr: string; family: string }; formation: { slug: string } }
 export interface FilterData {
   regions: Region[]; types: EstablishmentType[]; levels: FormationLevel[]; domains: FormationDomain[];
-  metiers: Metier[]; formations: FormationOption[]; metierFormationLinks: MetierFormationLink[];
+  metiers: Metier[]; formations: Formation[]; metierFormationLinks: MetierFormationLink[];
 }
+
+/** Forme compacte servie par /api/establishments (types et formations par slug, à reconstituer avec /api/filters). */
+export interface SlimEstablishment {
+  id: string; slug: string; name: string; city: string; lat: number; lng: number;
+  website: string | null; onisepUrl: string | null; source: string; type: string; region: string; formations: string[];
+}
+
+/** Établissement reconstitué, avec son texte de recherche normalisé. */
+export interface IndexedEstablishment extends Establishment { n: string }
 
 export const FRANCE_CENTER: [number, number] = [46.6, 2.5];
 export const FRANCE_ZOOM = 6;

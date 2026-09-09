@@ -94,7 +94,15 @@
     "genHiddenOne": "generalist institution hidden",
     "genHiddenMany": "generalist institutions hidden",
     "genShownOne": "generalist institution shown",
-    "genShownMany": "generalist institutions shown"
+    "genShownMany": "generalist institutions shown",
+    "kinds": {
+      "establishment": "Institution",
+      "formation": "Program",
+      "metier": "Profession",
+      "city": "City"
+    },
+    "suggestionsHint": "Suggestions",
+    "noSuggestion": "No suggestion, search as typed"
   },
   "establishment": {
     "title": "Institution details",
@@ -230,5 +238,33 @@
       "Your institution shows as “verified” on the map, with up-to-date programs."
     ],
     "fields": "Your details"
+  },
+  "fiches": {
+    "formationKicker": "Program",
+    "metierKicker": "Profession",
+    "whereToTrain": "Where to train",
+    "verifiedCount": "{n} verified institutions",
+    "verifiedOne": "1 verified institution",
+    "alsoGeneralists": "plus {n} generalist institutions, shown on the map",
+    "targetJobs": "Target professions",
+    "leadsTo": "Programs leading to it",
+    "seeOnMap": "See on the map",
+    "rncpLink": "RNCP record on France compétences",
+    "onisep": "See on ONISEP",
+    "relatedJobs": "Professions in the same family",
+    "externalSheets": "Detailed job sheets",
+    "levelRequired": "Entry level",
+    "levelWord": "Level",
+    "noEstablishment": "No verified institution yet. Do you know one?",
+    "propose": "Suggest an institution",
+    "breadcrumbHome": "Home",
+    "breadcrumbMap": "Map",
+    "formationsOf": "{n} programs",
+    "formationOne": "1 program",
+    "whereJobs": "Where to train for this profession",
+    "moreOnMap": "All institutions on the map",
+    "metaFormation": "{name}: where to train, verified institutions, target professions.",
+    "metaMetier": "{name}: programs leading to it and institutions where to train.",
+    "noFormation": "No linked program yet."
   }
 }

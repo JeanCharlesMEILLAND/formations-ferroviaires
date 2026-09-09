@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
+import { getPublicSlugs } from "@/lib/data";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = process.env.NEXT_PUBLIC_SITE_URL || "https://formations-ferroviaires.vercel.app";
@@ -18,6 +19,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const e of establishments) {
       pages.push({ url: `${base}/fr/etablissement/${e.slug}`, lastModified: now, changeFrequency: "monthly", priority: 0.6 });
     }
+    const { formations, metiers } = await getPublicSlugs();
+    for (const slug of formations) pages.push({ url: `${base}/fr/formation/${slug}`, lastModified: now, changeFrequency: "monthly", priority: 0.7 });
+    for (const slug of metiers) pages.push({ url: `${base}/fr/metier/${slug}`, lastModified: now, changeFrequency: "monthly", priority: 0.7 });
   } catch {
     // base indisponible : on livre au moins les pages principales
   }

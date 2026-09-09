@@ -9,9 +9,10 @@ import type { Locale } from "@/i18n/config";
 import { displayName } from "@/lib/format";
 import SearchField from "./SearchField";
 import EstablishmentCard from "./EstablishmentCard";
-import { MarkerClusterLayer, MapController, UserDot } from "./markers";
+import { MarkerClusterLayer, MapController, UserDot, BoundsController } from "./markers";
 import { useCountUp, useDesktop } from "./hooks";
-import { distanceKm, FRANCE_CENTER, FRANCE_ZOOM, type Establishment, type FilterData, type Formation, type Metier } from "./types";
+import { buildSuggestionItems, expandQuery, matchesAll, normalize, suggest, type SuggestionItem } from "@/lib/search";
+import { distanceKm, FRANCE_CENTER, FRANCE_ZOOM, type Establishment, type FilterData, type Formation, type IndexedEstablishment, type Metier, type SlimEstablishment } from "./types";
 
 /** Filtres reçus de l'adresse (page /carte?q=…&family=…), pour des recherches partageables. */
 export interface InitialFilters {
@@ -25,6 +26,7 @@ export interface InitialFilters {
   family?: string;
   near?: boolean;
   view?: "establishments" | "formations" | "metiers";
+  establishment?: string;
 }
 
 type View = "establishments" | "formations" | "metiers";
@@ -39,10 +41,10 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
   const desktop = useDesktop();
 
   // ------------------------------------------------------------------ données
-  const [establishments, setEstablishments] = useState<Establishment[]>([]);
+  const [slim, setSlim] = useState<SlimEstablishment[] | null>(null);
   const [filterData, setFilterData] = useState<FilterData | null>(null);
-  const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const loading = !loadError && (slim === null || filterData === null);
   const [retryTick, setRetryTick] = useState(0);
 
   // ------------------------------------------------------------------ filtres
@@ -70,44 +72,94 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
 
   const flyTo = useCallback((center: [number, number], zoom?: number) => setFly({ center, zoom, tick: Date.now() }), []);
 
-  // Référentiels (deux nouvelles tentatives : la base gratuite se réveille en quelques secondes)
+  // Référentiels et établissements, chargés une fois (réponses en cache au CDN) ; deux nouvelles tentatives si la base se réveille.
   useEffect(() => {
     let cancelled = false;
-    const load = async (attempt: number): Promise<void> => {
+    const load = async (url: string, attempt: number): Promise<unknown> => {
       try {
-        const r = await fetch("/api/filters");
-        const data = r.ok ? await r.json() : null;
-        if (!data || !Array.isArray(data.types)) throw new Error("filtres indisponibles");
-        if (!cancelled) { setFilterData(data); setLoadError(null); }
+        const r = await fetch(url);
+        if (!r.ok) throw new Error(`${url} : HTTP ${r.status}`);
+        return await r.json();
       } catch (err) {
-        if (attempt < 3 && !cancelled) { await new Promise((res) => setTimeout(res, 2500)); return load(attempt + 1); }
-        if (!cancelled) setLoadError(m.dbWaking);
-        console.error(err);
+        if (attempt < 3 && !cancelled) { await new Promise((res) => setTimeout(res, 2500)); return load(url, attempt + 1); }
+        throw err;
       }
     };
-    load(1);
+    Promise.all([load("/api/filters", 1), load("/api/establishments", 1)])
+      .then(([f, e]) => {
+        if (cancelled) return;
+        if (!f || !Array.isArray((f as FilterData).types) || !Array.isArray(e)) throw new Error("données indisponibles");
+        setFilterData(f as FilterData);
+        setSlim(e as SlimEstablishment[]);
+        setLoadError(null);
+      })
+      .catch((err) => { console.error(err); if (!cancelled) setLoadError(m.dbWaking); });
     return () => { cancelled = true; };
   }, [m.dbWaking, retryTick]);
 
-  // Établissements (recherche différée de 300 ms)
-  useEffect(() => {
-    setLoading(true);
-    const params = new URLSearchParams();
-    if (selectedType) params.set("type", selectedType);
-    if (selectedRegion) params.set("region", selectedRegion);
-    if (selectedDomain) params.set("domain", selectedDomain);
-    if (selectedLevel) params.set("level", selectedLevel);
-    if (selectedMetier) params.set("metier", selectedMetier);
-    if (selectedFormation) params.set("formation", selectedFormation);
-    if (searchQuery.trim().length >= 2) params.set("search", searchQuery.trim());
-    const timeout = setTimeout(() => {
-      fetch(`/api/establishments?${params.toString()}`)
-        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-        .then((data) => { setEstablishments(Array.isArray(data) ? data : []); setLoadError(null); setLoading(false); })
-        .catch((err) => { console.error(err); setEstablishments([]); setLoadError(m.dbWaking); setLoading(false); });
-    }, searchQuery ? 300 : 0);
-    return () => clearTimeout(timeout);
-  }, [selectedType, selectedRegion, selectedDomain, selectedLevel, selectedMetier, selectedFormation, searchQuery, m.dbWaking, retryTick]);
+  const metiersByFormationSlug = useMemo(() => {
+    const index: Record<string, Array<{ slug: string; nameFr: string; family: string }>> = {};
+    for (const link of filterData?.metierFormationLinks ?? []) (index[link.formation.slug] ??= []).push(link.metier);
+    return index;
+  }, [filterData]);
+
+  // Établissements reconstitués avec leurs objets type, région et formations, plus leur texte de recherche
+  const establishments = useMemo<IndexedEstablishment[]>(() => {
+    if (!slim || !filterData) return [];
+    const types = new Map(filterData.types.map((t) => [t.slug, t]));
+    const regions = new Map(filterData.regions.map((r) => [r.code, r]));
+    const formations = new Map(filterData.formations.map((f) => [f.slug, f]));
+    const fallbackType = filterData.types.find((t) => t.slug === "autre") ?? filterData.types[0];
+    return slim.map((e) => {
+      const fs = e.formations.map((slug) => formations.get(slug)).filter((f): f is Formation => Boolean(f));
+      const metierNames = fs.flatMap((f) => (metiersByFormationSlug[f.slug] ?? []).map((mt) => mt.nameFr));
+      return {
+        ...e,
+        type: types.get(e.type) ?? fallbackType,
+        region: regions.get(e.region) ?? { id: "", code: e.region, name: e.region, lat: 0, lng: 0 },
+        formations: fs.map((formation) => ({ formation })),
+        n: normalize([e.name, e.city, ...fs.map((f) => f.nameFr), ...metierNames].join(" ")),
+      };
+    });
+  }, [slim, filterData, metiersByFormationSlug]);
+
+  // Filtres et recherche appliqués dans le navigateur : aucun aller-retour, résultat immédiat
+  const filtered = useMemo(() => {
+    const groups = searchQuery.trim().length >= 2 ? expandQuery(searchQuery) : [];
+    const metierSlugs = selectedMetier && filterData
+      ? new Set(filterData.metierFormationLinks.filter((l) => l.metier.slug === selectedMetier).map((l) => l.formation.slug))
+      : null;
+    const byFormation = Boolean(selectedLevel || selectedDomain || selectedFormation || metierSlugs);
+    return establishments.filter((e) => {
+      if (selectedType && e.type.slug !== selectedType) return false;
+      if (selectedRegion && e.region.code !== selectedRegion) return false;
+      if (byFormation && !e.formations.some(({ formation: f }) =>
+        (!selectedLevel || f.level.slug === selectedLevel) &&
+        (!selectedDomain || f.domain.slug === selectedDomain) &&
+        (!selectedFormation || f.slug === selectedFormation) &&
+        (!metierSlugs || metierSlugs.has(f.slug)))) return false;
+      if (groups.length && !matchesAll(e.n, groups)) return false;
+      return true;
+    });
+  }, [establishments, filterData, searchQuery, selectedType, selectedRegion, selectedLevel, selectedDomain, selectedFormation, selectedMetier]);
+
+  // Suggestions : établissements vérifiés, formations, métiers et villes présents dans les données chargées
+  const suggestionItems = useMemo<SuggestionItem[]>(() => {
+    if (!filterData) return [];
+    const verified = establishments.filter((e) => e.source !== "api");
+    const cities = new Map<string, number>();
+    const perFormation = new Map<string, number>();
+    for (const e of verified) {
+      cities.set(e.city, (cities.get(e.city) ?? 0) + 1);
+      for (const { formation } of e.formations) perFormation.set(formation.slug, (perFormation.get(formation.slug) ?? 0) + 1);
+    }
+    return buildSuggestionItems({
+      establishments: verified.map((e) => ({ slug: e.slug, name: e.name, city: e.city, lat: e.lat, lng: e.lng, count: e.formations.length })),
+      formations: filterData.formations.map((f) => ({ slug: f.slug, nameFr: f.nameFr, level: fr ? f.level.nameFr : f.level.nameEn, count: perFormation.get(f.slug) ?? 0 })),
+      metiers: filterData.metiers.map((mt) => ({ slug: mt.slug, nameFr: mt.nameFr, family: mt.family, count: filterData.metierFormationLinks.filter((l) => l.metier.slug === mt.slug).length })),
+      cities: Array.from(cities.entries()).map(([name, count]) => ({ name, count })),
+    }, displayName);
+  }, [establishments, filterData, fr]);
 
   // « Près de moi »
   const locate = useCallback(() => {
@@ -153,13 +205,13 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
   }, [selectedFamily, filterData]);
 
   const displayed = useMemo(() => {
-    let list = showApi ? establishments : establishments.filter((e) => e.source !== "api");
+    let list = showApi ? filtered : filtered.filter((e) => e.source !== "api");
     if (familyFormationSlugs) list = list.filter((e) => e.formations.some((ef) => familyFormationSlugs.has(ef.formation.slug)));
     if (userPos) list = [...list].sort((a, b) => distanceKm(userPos, [a.lat, a.lng]) - distanceKm(userPos, [b.lat, b.lng]));
     return list;
-  }, [establishments, showApi, familyFormationSlugs, userPos]);
+  }, [filtered, showApi, familyFormationSlugs, userPos]);
 
-  const apiCount = useMemo(() => establishments.filter((e) => e.source === "api").length, [establishments]);
+  const apiCount = useMemo(() => filtered.filter((e) => e.source === "api").length, [filtered]);
 
   const formationsInResults = useMemo(() => {
     const map = new Map<string, { formation: Formation; count: number }>();
@@ -169,12 +221,6 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
     }
     return Array.from(map.values()).sort((a, b) => a.formation.level.order - b.formation.level.order || a.formation.nameFr.localeCompare(b.formation.nameFr));
   }, [displayed]);
-
-  const metiersByFormationSlug = useMemo(() => {
-    const index: Record<string, Array<{ slug: string; nameFr: string; family: string }>> = {};
-    for (const link of filterData?.metierFormationLinks ?? []) (index[link.formation.slug] ??= []).push(link.metier);
-    return index;
-  }, [filterData]);
 
   const metiersInResults = useMemo(() => {
     if (!filterData) return [] as Metier[];
@@ -228,7 +274,36 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
     setSelected(est);
     flyTo([est.lat, est.lng], zoom);
     if (!desktop) setSheet("peek");
+    requestAnimationFrame(() => document.getElementById(`row-${est.id}`)?.scrollIntoView({ block: "nearest", behavior: "smooth" }));
   }, [flyTo, desktop]);
+
+  // La carte cadre les résultats dès qu'un filtre ou une recherche est actif, et revient sur la France quand tout est effacé
+  const [fit, setFit] = useState<{ points: Array<[number, number]>; tick: number } | null>(null);
+  const wasFiltered = useRef(false);
+  useEffect(() => {
+    const active = hasFilters && !userPos;
+    if (active && displayed.length > 0) setFit({ points: displayed.slice(0, 500).map((e) => [e.lat, e.lng] as [number, number]), tick: Date.now() });
+    else if (!active && wasFiltered.current && !userPos) flyTo(FRANCE_CENTER, FRANCE_ZOOM);
+    wasFiltered.current = active;
+  }, [displayed, hasFilters, userPos, flyTo]);
+
+  // Arrivée depuis une fiche : la carte s'ouvre sur l'établissement demandé
+  const openedRef = useRef(false);
+  useEffect(() => {
+    if (openedRef.current || !initial?.establishment || establishments.length === 0) return;
+    const est = establishments.find((e) => e.slug === initial.establishment);
+    if (est) { openedRef.current = true; setTimeout(() => select(est, 13), 300); }
+  }, [initial?.establishment, establishments, select]);
+
+  const pickSuggestion = (item: SuggestionItem) => {
+    if (item.kind === "establishment") {
+      setSearchQuery(item.label);
+      const est = establishments.find((e) => e.slug === item.slug);
+      if (est) setTimeout(() => select(est, 13), 50);
+    } else if (item.kind === "formation") { setSelectedFormation(item.slug); setSearchQuery(""); }
+    else if (item.kind === "metier") { setSelectedMetier(item.slug); setSearchQuery(""); }
+    else setSearchQuery(item.label);
+  };
 
   const pickFormation = (slug: string) => { setSelectedFormation(slug); setView("establishments"); listRef.current?.scrollTo({ top: 0 }); };
   const pickMetier = (slug: string) => { setSelectedMetier(slug); setView("establishments"); listRef.current?.scrollTo({ top: 0 }); };
@@ -279,7 +354,7 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
 
   const searchBlock = (
     <div className="flex flex-col gap-2.5">
-      <SearchField value={searchQuery} onChange={setSearchQuery} label={m.searchLabel} suggestions={m.suggestions} compact={!desktop} />
+      <SearchField value={searchQuery} onChange={setSearchQuery} label={m.searchLabel} suggestions={m.suggestions} compact={!desktop} suggest={(q) => suggest(suggestionItems, q, 9)} onPick={pickSuggestion} kindLabels={m.kinds} />
       <div className="chip-row" role="group" aria-label={m.family}>
         <button type="button" onClick={locate} disabled={locating} className={`chip ${userPos ? "is-on" : ""}`}>
           <span aria-hidden="true">◎</span> {locating ? m.locating : userPos ? m.sortedByDistance : dict.nav.near}
@@ -433,7 +508,7 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
                   {items.map((est, i) => {
                     const active = selected?.id === est.id;
                     return (
-                      <li key={est.id} className="animate-rise" style={{ animationDelay: `${Math.min(g * 2 + i, 14) * 30}ms` }}>
+                      <li key={est.id} id={`row-${est.id}`} className="animate-rise" style={{ animationDelay: `${Math.min(g * 2 + i, 14) * 30}ms` }}>
                         <button
                           type="button"
                           onClick={() => select(est, 12)}
@@ -476,6 +551,7 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
                     <span className="result-icon" style={{ background: f.domain.color }} aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round" aria-hidden="true"><path d="M12 3L3 8l9 5 9-5-9-5zM3 13l9 5 9-5M3 18l9 5 9-5" /></svg></span>
                     <div className="min-w-0 flex-1">
                       <button type="button" onClick={() => pickFormation(f.slug)} className="result-title text-left hover:text-electric-600 transition-colors">{f.nameFr}</button>
+                      <a href={`/${locale}/formation/${f.slug}`} className="result-link">{m.seeDetails} →</a>
                       <p className="result-sub">
                         {fr ? f.level.nameFr : f.level.nameEn} · {fr ? f.domain.nameFr : f.domain.nameEn}
                         {f.rncpCode && <span className="font-mono"> · RNCP {f.rncpCode}</span>}
@@ -513,6 +589,7 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
                           <span className="result-title">{mt.nameFr}</span>
                           {mt.level && <span className="result-sub">{mt.level}</span>}
                         </span>
+                        <a href={`/${locale}/metier/${mt.slug}`} onClick={(e) => e.stopPropagation()} className="result-link self-center">{m.seeDetails} →</a>
                         <svg className="result-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
                       </button>
                     </li>
@@ -608,6 +685,7 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
           />
           {desktop && <ZoomControl position="bottomright" />}
           <MapController target={fly} />
+          <BoundsController target={fit} desktop={desktop} />
           <UserDot position={userPos} />
           <MarkerClusterLayer establishments={displayed} selectedId={selected?.id ?? null} hotId={hotId} onSelect={(est) => select(est)} />
         </MapContainer>

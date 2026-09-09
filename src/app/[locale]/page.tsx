@@ -83,7 +83,7 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
             </h1>
             <p className="text-body-lg text-navy-300 max-w-[56ch] mb-6">{dict.home.lead}</p>
 
-            <HeroSearch action={carte} label={dict.map.searchLabel} suggestions={dict.map.suggestions} nearHref={`${carte}?near=1`} nearLabel={dict.home.nearButton} submitLabel={dict.home.searchButton} />
+            <HeroSearch action={carte} label={dict.map.searchLabel} suggestions={dict.map.suggestions} nearHref={`${carte}?near=1`} nearLabel={dict.home.nearButton} submitLabel={dict.home.searchButton} kindLabels={dict.map.kinds} />
 
             <div className="flex flex-wrap gap-2 mt-4" aria-label={dict.home.frequent}>
               {CHIPS.map((c) => (

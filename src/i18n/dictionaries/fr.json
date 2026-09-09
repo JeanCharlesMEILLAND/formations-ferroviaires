@@ -94,7 +94,15 @@
     "genHiddenOne": "établissement généraliste masqué",
     "genHiddenMany": "établissements généralistes masqués",
     "genShownOne": "établissement généraliste affiché",
-    "genShownMany": "établissements généralistes affichés"
+    "genShownMany": "établissements généralistes affichés",
+    "kinds": {
+      "establishment": "Établissement",
+      "formation": "Formation",
+      "metier": "Métier",
+      "city": "Ville"
+    },
+    "suggestionsHint": "Suggestions",
+    "noSuggestion": "Aucune suggestion, lancez la recherche telle quelle"
   },
   "establishment": {
     "title": "Fiche établissement",
@@ -230,5 +238,33 @@
       "Votre établissement apparaît « vérifié » sur la carte, avec les formations à jour."
     ],
     "fields": "Vos coordonnées"
+  },
+  "fiches": {
+    "formationKicker": "Formation",
+    "metierKicker": "Métier",
+    "whereToTrain": "Où se former",
+    "verifiedCount": "{n} établissements vérifiés",
+    "verifiedOne": "1 établissement vérifié",
+    "alsoGeneralists": "et {n} établissements généralistes, visibles sur la carte",
+    "targetJobs": "Métiers visés",
+    "leadsTo": "Les formations qui y mènent",
+    "seeOnMap": "Voir sur la carte",
+    "rncpLink": "Fiche RNCP sur France compétences",
+    "onisep": "Voir sur ONISEP",
+    "relatedJobs": "Métiers de la même famille",
+    "externalSheets": "Fiches métier détaillées",
+    "levelRequired": "Niveau d'entrée",
+    "levelWord": "Niveau",
+    "noEstablishment": "Aucun établissement vérifié pour l'instant. Vous en connaissez un ?",
+    "propose": "Proposer un établissement",
+    "breadcrumbHome": "Accueil",
+    "breadcrumbMap": "Carte",
+    "formationsOf": "{n} formations",
+    "formationOne": "1 formation",
+    "whereJobs": "Où se former à ce métier",
+    "moreOnMap": "Tous les établissements sur la carte",
+    "metaFormation": "{name} : où se former, établissements vérifiés, métiers visés.",
+    "metaMetier": "{name} : formations qui y mènent et établissements où se former.",
+    "noFormation": "Aucune formation reliée pour l'instant."
   }
 }

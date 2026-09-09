@@ -30,7 +30,7 @@ interface Metier {
   formations: Array<{ formation: { id: string; nameFr: string; slug: string } }>;
 }
 
-type Tab = "dashboard" | "establishments" | "formations" | "metiers" | "links-ef" | "links-mf" | "enrich" | "messages";
+type Tab = "dashboard" | "establishments" | "formations" | "metiers" | "links-ef" | "links-mf" | "enrich" | "messages" | "quality";
 
 // ============================================================
 // Login Screen
@@ -244,6 +244,7 @@ export default function AdminPage() {
     { key: "links-mf", label: `Liens Met-Form (${totalLinksMF})` },
     { key: "enrich", label: "Enrichir (API)" },
     { key: "messages", label: pendingMessages ? `Messages (${pendingMessages} à traiter)` : "Messages" },
+    { key: "quality", label: "Qualité des données" },
   ];
 
   return (
@@ -383,6 +384,7 @@ export default function AdminPage() {
               {tab === "messages" && (
                 <MessagesTab onMessage={showMessage} onPending={setPendingMessages} />
               )}
+              {tab === "quality" && <QualityTab />}
             </>
           )}
         </div>
@@ -1823,6 +1825,94 @@ function MessagesTab({ onMessage, onPending }: { onMessage: (type: "success" | "
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+// ============================================================
+// Qualité des données
+// ============================================================
+
+interface QRow { slug: string; name: string; city?: string; detail?: string }
+interface QualityReport {
+  totals: { establishments: number; verified: number; formations: number; metiers: number };
+  checks: {
+    identicalSets: Array<{ count: number; establishments: QRow[] }>;
+    manyFormations: QRow[]; noFormation: QRow[]; noWebsite: QRow[]; badCoords: QRow[]; capsNames: QRow[];
+    duplicates: Array<{ count: number; establishments: QRow[] }>;
+    orphanFormations: QRow[]; formationsNoMetier: QRow[]; metiersNoFormation: QRow[];
+  };
+}
+
+const QUALITY_CHECKS: Array<{ key: keyof QualityReport["checks"]; title: string; why: string; kind: "establishment" | "formation" | "metier"; grouped?: boolean; severity: "high" | "medium" | "low" }> = [
+  { key: "identicalSets", title: "Jeux de formations identiques", why: "Plusieurs établissements portent exactement la même liste de formations : liens posés en bloc, à vérifier un par un.", kind: "establishment", grouped: true, severity: "high" },
+  { key: "manyFormations", title: "Plus de 20 formations", why: "Un centre propose rarement plus de vingt formations ferroviaires distinctes.", kind: "establishment", severity: "high" },
+  { key: "badCoords", title: "Coordonnées hors de France", why: "Le marqueur n'apparaît pas au bon endroit sur la carte.", kind: "establishment", severity: "high" },
+  { key: "duplicates", title: "Doublons probables", why: "Même nom et même ville parmi les établissements vérifiés.", kind: "establishment", grouped: true, severity: "medium" },
+  { key: "noFormation", title: "Établissements vérifiés sans formation", why: "Ils n'apparaissent dans aucune recherche par formation ou métier.", kind: "establishment", severity: "medium" },
+  { key: "orphanFormations", title: "Formations sans établissement", why: "La page formation n'a aucun lieu à proposer.", kind: "formation", severity: "medium" },
+  { key: "formationsNoMetier", title: "Formations sans métier visé", why: "Invisibles depuis les familles de métiers de l'accueil.", kind: "formation", severity: "low" },
+  { key: "metiersNoFormation", title: "Métiers sans formation", why: "La page métier ne mène nulle part.", kind: "metier", severity: "low" },
+  { key: "noWebsite", title: "Établissements vérifiés sans site web", why: "Le visiteur n'a pas de lien pour aller plus loin.", kind: "establishment", severity: "low" },
+  { key: "capsNames", title: "Noms tout en capitales", why: "Le site les remet en forme automatiquement, mais la base reste à corriger.", kind: "establishment", severity: "low" },
+];
+
+function QualityTab() {
+  const [report, setReport] = useState<QualityReport | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [openKey, setOpenKey] = useState<string | null>(null);
+  useEffect(() => {
+    fetch("/api/admin/quality").then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))).then(setReport).catch((e) => setError(String(e.message)));
+  }, []);
+  if (error) return <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm">{error}</div>;
+  if (!report) return <div className="flex items-center justify-center h-40"><div className="w-8 h-8 border-2 border-gray-200 border-t-[#1B2A5B] rounded-full animate-spin" /></div>;
+  const href = (kind: string, slug: string) => `/fr/${kind === "establishment" ? "etablissement" : kind}/${slug}`;
+  const sev = { high: "bg-red-100 text-red-800", medium: "bg-amber-100 text-amber-800", low: "bg-gray-100 text-gray-700" };
+  const total = QUALITY_CHECKS.reduce((n, c) => n + (report.checks[c.key] as unknown[]).length, 0);
+  return (
+    <div>
+      <div className="mb-5">
+        <h2 className="text-xl font-bold text-gray-900">Qualité des données</h2>
+        <p className="text-sm text-gray-500">{report.totals.verified} établissements vérifiés sur {report.totals.establishments}, {report.totals.formations} formations, {report.totals.metiers} métiers · {total} points à relire.</p>
+      </div>
+      <div className="space-y-3">
+        {QUALITY_CHECKS.map((c) => {
+          const items = report.checks[c.key] as unknown[];
+          const open = openKey === c.key;
+          return (
+            <section key={c.key} className="bg-white border border-gray-200 rounded-xl">
+              <button onClick={() => setOpenKey(open ? null : c.key)} className="w-full flex items-center justify-between gap-3 p-4 text-left">
+                <span className="min-w-0">
+                  <span className="flex items-center gap-2">
+                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${sev[c.severity]}`}>{items.length}</span>
+                    <span className="font-semibold text-gray-900">{c.title}</span>
+                  </span>
+                  <span className="block text-xs text-gray-500 mt-1">{c.why}</span>
+                </span>
+                <span className="text-gray-400 text-sm shrink-0">{items.length === 0 ? "✓" : open ? "Replier" : "Voir"}</span>
+              </button>
+              {open && items.length > 0 && (
+                <ul className="border-t border-gray-100 divide-y divide-gray-100 max-h-[480px] overflow-y-auto">
+                  {c.grouped
+                    ? (items as Array<{ count: number; establishments: QRow[] }>).map((g, i) => (
+                        <li key={i} className="p-4 text-sm">
+                          <p className="text-xs font-semibold text-gray-500 mb-1.5">{c.key === "identicalSets" ? `${g.count} formations en commun` : `${g.count} fiches`}</p>
+                          <ul className="flex flex-wrap gap-x-4 gap-y-1">{g.establishments.map((e) => <li key={e.slug}><a href={href("establishment", e.slug)} target="_blank" rel="noopener noreferrer" className="text-[#1B2A5B] underline">{e.name}</a> <span className="text-gray-400">{e.city}</span></li>)}</ul>
+                        </li>
+                      ))
+                    : (items as QRow[]).map((e) => (
+                        <li key={e.slug} className="px-4 py-2.5 text-sm flex flex-wrap items-center gap-x-3">
+                          <a href={href(c.kind, e.slug)} target="_blank" rel="noopener noreferrer" className="text-[#1B2A5B] underline">{e.name}</a>
+                          {e.city && <span className="text-gray-400">{e.city}</span>}
+                          {e.detail && <span className="text-xs text-amber-700">{e.detail}</span>}
+                        </li>
+                      ))}
+                </ul>
+              )}
+            </section>
+          );
+        })}
+      </div>
     </div>
   );
 }
