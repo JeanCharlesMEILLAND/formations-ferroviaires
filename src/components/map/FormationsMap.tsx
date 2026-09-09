@@ -9,11 +9,12 @@ import type { Locale } from "@/i18n/config";
 import { displayName } from "@/lib/format";
 import SearchField from "./SearchField";
 import EstablishmentCard from "./EstablishmentCard";
-import { MarkerClusterLayer, MapController, UserDot, BoundsController } from "./markers";
+import { MarkerClusterLayer, MapController, UserDot, BoundsController, FranceView } from "./markers";
+import ExportPdfButton from "./ExportPdfButton";
 import { useCountUp, useDesktop } from "./hooks";
 import { useSelection } from "@/lib/selection";
 import SelectionButton from "@/components/selection/SelectionButton";
-import { buildSuggestionItems, expandQuery, matchesAll, normalize, suggest, type SuggestionItem } from "@/lib/search";
+import { buildSuggestionItems, expandQuery, matchesFields, normalize, suggest, type SuggestionItem } from "@/lib/search";
 import { distanceKm, FRANCE_CENTER, FRANCE_ZOOM, type Establishment, type FilterData, type Formation, type IndexedEstablishment, type Metier, type SlimEstablishment } from "./types";
 
 /** Filtres reçus de l'adresse (page /carte?q=…&family=…), pour des recherches partageables. */
@@ -67,7 +68,9 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
   const [fly, setFly] = useState<FlyTarget | null>(null);
   const [selected, setSelected] = useState<Establishment | null>(null);
   const [hotId, setHotId] = useState<string | null>(null);
-  const [showLegend, setShowLegend] = useState(true);
+  const [showLegend, setShowLegendState] = useState(false);
+  useEffect(() => { try { setShowLegendState(localStorage.getItem("ff-legend") === "1"); } catch { /* stockage indisponible */ } }, []);
+  const setShowLegend = (v: boolean) => { setShowLegendState(v); try { localStorage.setItem("ff-legend", v ? "1" : "0"); } catch { /* ignoré */ } };
   const [view, setView] = useState<View>(initial?.view ?? "establishments");
   const [sheet, setSheet] = useState<Sheet>("peek");
   const listRef = useRef<HTMLDivElement>(null);
@@ -75,6 +78,8 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
   const sel = useSelection();
   const selLabels = { add: dict.selection.add, added: dict.selection.added, full: dict.selection.full };
   const flyTo = useCallback((center: [number, number], zoom?: number) => setFly({ center, zoom, tick: Date.now() }), []);
+  const [franceTick, setFranceTick] = useState(0);
+  const recenter = useCallback(() => setFranceTick((t) => t + 1), []);
 
   // Référentiels et établissements, chargés une fois (réponses en cache au CDN) ; deux nouvelles tentatives si la base se réveille.
   useEffect(() => {
@@ -116,13 +121,14 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
     const fallbackType = filterData.types.find((t) => t.slug === "autre") ?? filterData.types[0];
     return slim.map((e) => {
       const fs = e.formations.map((slug) => formations.get(slug)).filter((f): f is Formation => Boolean(f));
-      const metierNames = fs.flatMap((f) => (metiersByFormationSlug[f.slug] ?? []).map((mt) => mt.nameFr));
+      const metierNames = Array.from(new Set(fs.flatMap((f) => (metiersByFormationSlug[f.slug] ?? []).map((mt) => mt.nameFr))));
       return {
         ...e,
         type: types.get(e.type) ?? fallbackType,
         region: regions.get(e.region) ?? { id: "", code: e.region, name: e.region, lat: 0, lng: 0 },
         formations: fs.map((formation) => ({ formation })),
-        n: normalize([e.name, e.city, ...fs.map((f) => f.nameFr), ...metierNames].join(" ")),
+        head: normalize(`${e.name} ${e.city}`),
+        items: [...fs.map((f) => normalize(f.nameFr)), ...metierNames.map(normalize)],
       };
     });
   }, [slim, filterData, metiersByFormationSlug]);
@@ -146,9 +152,9 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
       return true;
     });
     if (groups.length === 0) return { filtered: base, fuzzy: false };
-    const exact = base.filter((e) => matchesAll(e.n, groups));
+    const exact = base.filter((e) => matchesFields(e.head, e.items, groups));
     if (exact.length > 0) return { filtered: exact, fuzzy: false };
-    const close = base.filter((e) => matchesAll(e.n, groups, true));
+    const close = base.filter((e) => matchesFields(e.head, e.items, groups, true));
     return { filtered: close, fuzzy: close.length > 0 };
   }, [establishments, filterData, searchQuery, selectedType, selectedRegion, selectedLevel, selectedDomain, selectedFormation, selectedMetier]);
 
@@ -294,8 +300,8 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
   const resetFilters = useCallback(() => {
     setSearchQuery(""); setSelectedType(""); setSelectedRegion(""); setSelectedDomain(""); setSelectedLevel("");
     setSelectedMetier(""); setSelectedFormation(""); setSelectedFamily(""); setUserPos(null); setSelected(null);
-    flyTo(FRANCE_CENTER, FRANCE_ZOOM);
-  }, [flyTo]);
+    recenter();
+  }, [recenter]);
 
   const select = useCallback((est: Establishment, zoom?: number) => {
     setSelected(est);
@@ -310,9 +316,9 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
   useEffect(() => {
     const active = hasFilters && !userPos;
     if (active && displayed.length > 0) setFit({ points: displayed.slice(0, 500).map((e) => [e.lat, e.lng] as [number, number]), tick: Date.now() });
-    else if (!active && wasFiltered.current && !userPos) flyTo(FRANCE_CENTER, FRANCE_ZOOM);
+    else if (!active && wasFiltered.current && !userPos) recenter();
     wasFiltered.current = active;
-  }, [displayed, hasFilters, userPos, flyTo]);
+  }, [displayed, hasFilters, userPos, recenter]);
 
   // Arrivée depuis une fiche : la carte s'ouvre sur l'établissement demandé
   const openedRef = useRef(false);
@@ -422,13 +428,14 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
             {m.filters}{activeChips.length > 0 && <span className="chip-badge">{activeChips.length}</span>}
           </button>
           {hasFilters && <button type="button" onClick={resetFilters} className="chip chip-danger">{m.clear}</button>}
+          {displayed.length > 0 && <ExportPdfButton slugs={displayed.map((e) => e.slug)} locale={locale} title={context ? context.title : m.ctxAll} subtitle={context ? context.kicker : ""} label={m.exportPdf} hint={m.exportHint} busyLabel={m.exportBusy} />}
         </div>
       </div>
 
       {(apiCount > 0 || userPos) && (
         <p className="text-caption text-navy-400 mt-2 flex flex-wrap gap-x-3 gap-y-0.5">
           {userPos && (
-            <span>{m.sortedByDistance} · <button type="button" onClick={() => { setUserPos(null); flyTo(FRANCE_CENTER, FRANCE_ZOOM); }} className="underline font-bold text-navy-600">{m.allFrance}</button></span>
+            <span>{m.sortedByDistance} · <button type="button" onClick={() => { setUserPos(null); recenter(); }} className="underline font-bold text-navy-600">{m.allFrance}</button></span>
           )}
           {apiCount > 0 && (
             <span title={m.generalistsHint}>
@@ -538,7 +545,7 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
   );
 
   const list = (
-    <div ref={listRef} className="flex-1 min-h-0 overflow-y-auto custom-scrollbar overscroll-contain" role="tabpanel">
+    <div ref={listRef} className="flex-1 min-h-0 overflow-y-auto custom-scrollbar overscroll-contain" role="tabpanel" style={desktop ? undefined : { paddingBottom: (dragOffset ?? (sheetH ? offsetFor(sheet, sheetH) : 0)) + 16, WebkitOverflowScrolling: "touch" }}>
       {loading ? (
         <ul className="p-4 space-y-3" aria-label={m.loading}>
           {Array.from({ length: 6 }).map((_, i) => (
@@ -697,7 +704,7 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
       <aside
         ref={sheetRef}
         style={sheetStyle}
-        className="sheet z-[1002] lg:z-auto absolute inset-x-0 bottom-0 top-[118px] lg:static lg:top-auto lg:w-[440px] lg:shrink-0 flex flex-col bg-white lg:border-r border-navy-100 rounded-t-3xl lg:rounded-none shadow-[0_-12px_40px_rgba(12,31,44,.18)] lg:shadow-none"
+        className="sheet z-[1002] lg:z-auto absolute inset-x-0 bottom-0 top-[118px] lg:static lg:top-auto lg:h-full lg:w-[440px] lg:shrink-0 flex flex-col bg-white lg:border-r border-navy-100 rounded-t-3xl lg:rounded-none shadow-[0_-12px_40px_rgba(12,31,44,.18)] lg:shadow-none"
         aria-label={fr ? "Recherche et résultats" : "Search and results"}
       >
         {desktop ? (
@@ -733,6 +740,7 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
           />
           {desktop && <ZoomControl position="bottomright" />}
           <MapController target={fly} />
+          <FranceView tick={franceTick} desktop={desktop} active={!hasFilters && !initial?.near && !initial?.establishment} />
           <BoundsController target={fit} desktop={desktop} />
           <UserDot position={userPos} />
           <MarkerClusterLayer establishments={displayed} selectedId={selected?.id ?? null} hotId={hotId} onSelect={(est) => select(est)} />
@@ -743,7 +751,7 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
         )}
 
         <div className="absolute right-3 top-[124px] lg:right-4 lg:top-4 z-[1000]">
-          <button type="button" onClick={() => flyTo(FRANCE_CENTER, FRANCE_ZOOM)} className="map-btn" aria-label={m.recenter} title={m.recenter}>
+          <button type="button" onClick={() => recenter()} className="map-btn" aria-label={m.recenter} title={m.recenter}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" /><circle cx="12" cy="12" r="3" /></svg>
           </button>
         </div>

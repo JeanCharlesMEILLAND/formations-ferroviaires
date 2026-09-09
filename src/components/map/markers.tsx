@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet.markercluster";
-import type { Establishment } from "./types";
+import { FRANCE_BOUNDS, type Establishment } from "./types";
 
 const CAP_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>`;
 
@@ -144,12 +144,33 @@ export function BoundsController({ target, desktop }: { target: { points: Array<
   useEffect(() => {
     if (!target || target.points.length === 0) return;
     if (target.points.length === 1) { map.flyTo(target.points[0], 12, { duration: 0.9 }); return; }
+    const pad = overlayPadding(desktop);
     map.flyToBounds(L.latLngBounds(target.points), {
-      paddingTopLeft: desktop ? [56, 56] : [36, 136],
-      paddingBottomRight: desktop ? [420, 56] : [36, 120],
+      paddingTopLeft: desktop ? [56, 56] : [36, pad.paddingTopLeft[1] + 8],
+      paddingBottomRight: desktop ? [420, 56] : [36, pad.paddingBottomRight[1] + 8],
       maxZoom: 12,
       duration: 0.9,
     });
   }, [map, target, desktop]);
+  return null;
+}
+
+/** Marges des surcouches : recherche et puces en haut, feuille en bas sur mobile ; fiche flottante à droite sur grand écran. */
+export const overlayPadding = (desktop: boolean) => ({
+  paddingTopLeft: (desktop ? [24, 24] : [8, 130]) as [number, number],
+  paddingBottomRight: (desktop ? [24, 24] : [8, 108]) as [number, number],
+});
+
+/** Vue « toute la France » : au chargement sans animation, puis à chaque demande de recentrage. */
+export function FranceView({ tick, desktop, active }: { tick: number; desktop: boolean; active: boolean }) {
+  const map = useMap();
+  const first = useRef(true);
+  useEffect(() => {
+    if (!active && first.current) { first.current = false; return; }
+    const bounds = L.latLngBounds(FRANCE_BOUNDS);
+    const opts = overlayPadding(desktop);
+    if (first.current) { first.current = false; map.fitBounds(bounds, { ...opts, animate: false }); return; }
+    map.flyToBounds(bounds, { ...opts, duration: 0.9 });
+  }, [map, tick, desktop, active]);
   return null;
 }

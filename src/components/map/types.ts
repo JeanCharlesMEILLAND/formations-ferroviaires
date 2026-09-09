@@ -25,11 +25,13 @@ export interface SlimEstablishment {
   website: string | null; onisepUrl: string | null; source: string; type: string; region: string; formations: string[];
 }
 
-/** Établissement reconstitué, avec son texte de recherche normalisé. */
-export interface IndexedEstablishment extends Establishment { n: string }
+/** Établissement reconstitué, avec ses textes de recherche normalisés : en-tête (nom, ville) et entités (formations, métiers). */
+export interface IndexedEstablishment extends Establishment { head: string; items: string[] }
 
 export const FRANCE_CENTER: [number, number] = [46.6, 2.5];
 export const FRANCE_ZOOM = 6;
+/** Emprise de la France métropolitaine, pour cadrer la carte quel que soit l'écran. */
+export const FRANCE_BOUNDS: [[number, number], [number, number]] = [[41.3, -5.2], [51.1, 9.6]];
 
 /** Distance à vol d'oiseau en kilomètres. */
 export function distanceKm(a: [number, number], b: [number, number]): number {

@@ -9,8 +9,9 @@ test("normalize retire accents, casse et ponctuation", () => {
 
 test("expandQuery élargit avec les synonymes du rail", () => {
   const [g] = expandQuery("conducteur");
-  assert.ok(g.includes("conducteur") && g.includes("conduite") && g.includes("traction"));
-  assert.ok(!g.includes("train"), "« train » seul élargit trop (matériel, transport…), retiré des synonymes");
+  assert.ok(g.includes("conducteur") && g.includes("conduite de train") && g.includes("conductrice"));
+  assert.ok(!g.includes("train") && !g.includes("traction") && !g.includes("tes"), "« train », « traction » et « tes » élargissaient trop");
+  assert.ok(!expandQuery("aiguilleur")[0].includes("signalisation"), "« signalisation » n'est pas un synonyme d'aiguilleur");
   assert.deepEqual(expandQuery("a"), []); // mot trop court ignoré
 });
 
@@ -18,7 +19,7 @@ test("matchesAll exige chaque mot, accepte un synonyme", () => {
   const hay = normalize("Formation TES conduite de train, Lyon");
   assert.equal(matchesAll(hay, expandQuery("conducteur lyon")), true);
   assert.equal(matchesAll(hay, expandQuery("conducteur lille")), false);
-  assert.equal(matchesAll(normalize("Aiguilleur du rail"), expandQuery("circulation")), true);
+  assert.equal(matchesAll(normalize("Agent de circulation ferroviaire"), expandQuery("aiguilleur")), true);
 });
 
 const items = buildSuggestionItems({
@@ -39,7 +40,7 @@ test("suggest classe par qualité de correspondance puis popularité", () => {
   assert.ok(lyon.some((i) => i.kind === "establishment" && i.slug === "cfa-lyon"));
   assert.ok(lyon.some((i) => i.kind === "city"));
   assert.equal(suggest(items, "zzz").length, 0);
-  assert.ok(suggest(items, "circulation").some((i) => i.slug === "aiguilleur"), "synonyme métier");
+  assert.ok(suggest(items, "aiguillage").some((i) => i.slug === "aiguilleur"), "synonyme métier");
 });
 
 test("un synonyme court ne matche qu'en mot entier et les familles suivent la meilleure note", () => {
@@ -51,7 +52,8 @@ test("un synonyme court ne matche qu'en mot entier et les familles suivent la me
   const r = suggest(idx, "conduc");
   assert.equal(r[0].kind, "formation", "la formation bien notée passe devant");
   assert.ok(!r.some((i) => i.slug === "efmo"), "« tes » ne doit pas matcher « mobilités »");
-  assert.equal(matchesAll(normalize("Formation TES conduite"), expandQuery("conducteur")), true);
+  assert.equal(matchesAll(normalize("Formation TES conduite de train"), expandQuery("conducteur")), true, "« conduite de train » vaut conducteur");
+  assert.equal(matchesAll(normalize("TES Maintenance infrastructure"), expandQuery("conducteur")), false, "un autre TES ne vaut pas conducteur");
 });
 
 import { editDistance, fuzzyHit, tolerance } from "../src/lib/search";
@@ -90,4 +92,16 @@ test("suggest tolère une faute mais classe l'exact devant", () => {
   });
   assert.equal(suggest(idx, "aiguileur")[0]?.slug, "aiguilleur");
   assert.equal(suggest(idx, "electrotecnique")[0]?.slug, "bts-electro");
+});
+
+import { matchesFields } from "../src/lib/search";
+
+test("matchesFields : les mots hors nom et ville doivent tenir dans une même formation ou un même métier", () => {
+  const head = normalize("CFA Ferroviaire - Lyon Saint-Priest");
+  const items = [normalize("Bac Pro MELEC"), normalize("Conducteur / Conductrice de RER"), normalize("BTS Électrotechnique")];
+  assert.equal(matchesFields(head, items, expandQuery("electrotechnique lyon")), true, "ville dans l'en-tête, formation dans un item");
+  assert.equal(matchesFields(head, items, expandQuery("conducteur rer")), true, "les deux mots dans le même métier");
+  assert.equal(matchesFields(head, items, expandQuery("conducteur train")), false, "« train » absent de l'item qui contient « conducteur »");
+  assert.equal(matchesFields(head, [...items, normalize("Titre Pro Conducteur de train")], expandQuery("conducteur train")), true);
+  assert.equal(matchesFields(head, items, expandQuery("electrotecnique"), true), true, "faute tolérée dans un item");
 });

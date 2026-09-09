@@ -15,34 +15,37 @@ export function normalize(s: string): string {
 
 /** Vocabulaire du rail : chaque entrée élargit un mot tapé aux termes voisins présents dans les fiches. */
 export const SYNONYMS: Record<string, string[]> = {
-  conducteur: ["conduite", "traction", "tes", "licence europeenne"],
-  conductrice: ["conduite", "traction", "tes"],
-  conduite: ["conducteur", "traction", "tes"],
-  aiguilleur: ["circulation", "trafic", "signalisation", "regulateur"],
-  aiguilleuse: ["circulation", "trafic", "signalisation"],
-  aiguillage: ["circulation", "signalisation"],
-  circulation: ["trafic", "aiguilleur", "regulateur"],
-  catenaire: ["installations fixes", "traction electrique", "electrotechnique", "melec"],
-  signalisation: ["ses", "signalisation", "circulation", "automatismes"],
-  voie: ["travaux publics", "infrastructure", "installations ferroviaires", "chantier"],
-  rails: ["voie", "infrastructure"],
+  // Un synonyme est un équivalent du même métier ou du même diplôme, jamais un domaine voisin :
+  // « signalisation » pour « aiguilleur » ramenait tous les techniciens en signalisation.
+  conducteur: ["conductrice", "conduite de train", "licence europeenne de conducteur"],
+  conductrice: ["conducteur", "conduite de train"],
+  conduite: ["conducteur"],
+  aiguilleur: ["aiguilleuse", "agent de circulation"],
+  aiguilleuse: ["aiguilleur", "agent de circulation"],
+  aiguillage: ["aiguilleur", "agent de circulation"],
+  circulation: ["aiguilleur"],
+  regulateur: ["regulatrice"],
+  regulatrice: ["regulateur"],
   cheminot: ["ferroviaire"],
-  sncf: ["ferroviaire", "campus"],
+  sncf: ["ferroviaire"],
   rail: ["ferroviaire"],
+  rails: ["voie ferree", "infrastructure"],
+  voie: ["voie ferree", "travaux publics"],
   apprentissage: ["cfa", "alternance"],
   alternance: ["cfa", "apprentissage"],
-  ingenieur: ["ingenieurs", "master", "mastere", "ecole"],
-  ingenieure: ["ingenieurs", "master", "mastere"],
+  ingenieur: ["ingenieurs", "ingenieure"],
+  ingenieure: ["ingenieur", "ingenieurs"],
   bac: ["baccalaureat", "bac pro"],
-  electricien: ["electrotechnique", "melec", "electrique"],
-  electricite: ["electrotechnique", "melec", "electrique"],
-  mecanicien: ["maintenance", "mecanique", "mspc"],
-  mecanique: ["maintenance", "mspc"],
-  securite: ["secufer", "securite ferroviaire"],
-  fret: ["marchandises", "manoeuvre", "logistique"],
-  logistique: ["fret", "transport"],
+  electricien: ["electrotechnique", "melec", "electricienne"],
+  electricienne: ["electrotechnique", "melec", "electricien"],
+  electricite: ["electrotechnique", "melec"],
+  mecanicien: ["mecanique", "mspc", "maintenance des vehicules", "maintenance des systemes"],
+  mecanicienne: ["mecanique", "mspc", "maintenance des vehicules"],
+  securite: ["secufer"],
+  fret: ["marchandises", "manoeuvre"],
   soudeur: ["chaudronnier", "soudage"],
-  reconversion: ["certification", "secufer", "tes", "licence"],
+  soudeuse: ["chaudronnier", "soudage"],
+  reconversion: ["certification", "secufer"],
 };
 
 /** Découpe la requête en groupes d'alternatives : [["conduc", "conduite", "traction", …], ["lyon"]]. */
@@ -105,6 +108,17 @@ export function fuzzyHit(haystack: string, token: string): boolean {
 /** Vrai si chaque groupe de la requête trouve au moins une alternative dans le texte normalisé (à une faute près si `fuzzy`). */
 export function matchesAll(haystack: string, groups: string[][], fuzzy = false): boolean {
   return groups.every((alts) => alts.some((a) => hit(haystack, a)) || (fuzzy && fuzzyHit(haystack, alts[0])));
+}
+
+/**
+ * Correspondance par champs : chaque mot doit se trouver dans l'en-tête (nom et ville), et les mots restants
+ * doivent tous figurer dans une même entité (une formation ou un métier). « conducteur train » ne peut donc plus
+ * réunir « conducteur » pris dans un métier et « train » pris dans une autre formation.
+ */
+export function matchesFields(head: string, items: string[], groups: string[][], fuzzy = false): boolean {
+  const rest = groups.filter((alts) => !(alts.some((a) => hit(head, a)) || (fuzzy && fuzzyHit(head, alts[0]))));
+  if (rest.length === 0) return true;
+  return items.some((it) => matchesAll(it, rest, fuzzy));
 }
 
 export type SuggestionKind = "establishment" | "formation" | "metier" | "city";

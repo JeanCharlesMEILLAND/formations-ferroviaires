@@ -113,7 +113,10 @@
     "ctxDomain": "Domain",
     "ctxType": "Institution type",
     "ctxSearch": "Search",
-    "ctxAll": "All verified institutions"
+    "ctxAll": "All verified institutions",
+    "exportPdf": "Take the list away (PDF)",
+    "exportHint": "The first {n} institutions shown, with your filters",
+    "exportBusy": "Preparing…"
   },
   "establishment": {
     "title": "Institution details",
@@ -310,6 +313,8 @@
     "matrix": "Programs offered",
     "allHave": "all",
     "metaDescription": "Compare your selected institutions and take the list away as a PDF.",
-    "loading": "Loading your shortlist…"
+    "loading": "Loading your shortlist…",
+    "listTitle": "List of institutions",
+    "listSub": "Map results"
   }
 }

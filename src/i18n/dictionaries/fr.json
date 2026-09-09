@@ -113,7 +113,10 @@
     "ctxDomain": "Domaine",
     "ctxType": "Type d'établissement",
     "ctxSearch": "Recherche",
-    "ctxAll": "Tous les établissements vérifiés"
+    "ctxAll": "Tous les établissements vérifiés",
+    "exportPdf": "Emporter la liste (PDF)",
+    "exportHint": "Les {n} premiers établissements affichés, avec vos filtres",
+    "exportBusy": "Préparation…"
   },
   "establishment": {
     "title": "Fiche établissement",
@@ -310,6 +313,8 @@
     "matrix": "Formations proposées",
     "allHave": "tous",
     "metaDescription": "Comparez vos établissements sélectionnés et emportez la liste en PDF.",
-    "loading": "Chargement de votre sélection…"
+    "loading": "Chargement de votre sélection…",
+    "listTitle": "Liste d'établissements",
+    "listSub": "Résultats de la carte"
   }
 }

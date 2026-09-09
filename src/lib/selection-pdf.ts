@@ -18,8 +18,8 @@ const SIGNAL50: RGB = [1, 0.97, 0.84];
 const SIGNAL800: RGB = [0.5, 0.37, 0.02];
 
 const T = {
-  fr: { kicker: "FORMATIONS FERROVIAIRES · LE GUIDE DES MÉTIERS DU RAIL", title: "Ma sélection d'établissements", generated: (d: string) => `Liste établie le ${d}`, overview: "Vue d'ensemble", details: "Détail par établissement", cols: ["Établissement", "Ville", "Type", "Niveaux", "Form.", "Site web"], formations: "Formations", metiers: "Métiers visés", more: (n: number) => `… et ${n} autres`, none: "Aucune formation renseignée", page: (i: number, n: number) => `page ${i} sur ${n}`, fiche: "Fiche en ligne", est: (n: number) => `${n} établissement${n > 1 ? "s" : ""}`, verified: "Vérifié", generalist: "Généraliste", footer: "Chaque fiche renvoie à la source officielle · les établissements « vérifiés » ont été relus par l'équipe" },
-  en: { kicker: "FORMATIONS FERROVIAIRES · THE RAIL CAREERS GUIDE", title: "My shortlist of institutions", generated: (d: string) => `List drawn up on ${d}`, overview: "Overview", details: "Details per institution", cols: ["Institution", "City", "Type", "Levels", "Prog.", "Website"], formations: "Programs", metiers: "Target professions", more: (n: number) => `… and ${n} more`, none: "No program recorded", page: (i: number, n: number) => `page ${i} of ${n}`, fiche: "Online listing", est: (n: number) => `${n} institution${n > 1 ? "s" : ""}`, verified: "Verified", generalist: "Generalist", footer: "Each listing links to the official source · “verified” institutions were reviewed by the team" },
+  fr: { kicker: "FORMATIONS FERROVIAIRES · LE GUIDE DES MÉTIERS DU RAIL", title: "Ma sélection d'établissements", listTitle: "Liste d'établissements", byRegion: "Établissements par région", generated: (d: string) => `Liste établie le ${d}`, overview: "Vue d'ensemble", details: "Détail par établissement", cols: ["Établissement", "Ville", "Type", "Niveaux", "Form.", "Site web"], formations: "Formations", metiers: "Métiers visés", more: (n: number) => `… et ${n} autres`, none: "Aucune formation renseignée", page: (i: number, n: number) => `page ${i} sur ${n}`, fiche: "Fiche en ligne", est: (n: number) => `${n} établissement${n > 1 ? "s" : ""}`, verified: "Vérifié", generalist: "Généraliste", footer: "Chaque fiche renvoie à la source officielle · les établissements « vérifiés » ont été relus par l'équipe" },
+  en: { kicker: "FORMATIONS FERROVIAIRES · THE RAIL CAREERS GUIDE", title: "My shortlist of institutions", listTitle: "List of institutions", byRegion: "Institutions by region", generated: (d: string) => `List drawn up on ${d}`, overview: "Overview", details: "Details per institution", cols: ["Institution", "City", "Type", "Levels", "Prog.", "Website"], formations: "Programs", metiers: "Target professions", more: (n: number) => `… and ${n} more`, none: "No program recorded", page: (i: number, n: number) => `page ${i} of ${n}`, fiche: "Online listing", est: (n: number) => `${n} institution${n > 1 ? "s" : ""}`, verified: "Verified", generalist: "Generalist", footer: "Each listing links to the official source · “verified” institutions were reviewed by the team" },
 };
 
 const host = (u: string) => u.replace(/^https?:\/\/(www\.)?/, "").replace(/\/.*$/, "");
@@ -27,9 +27,17 @@ const hex = (h: string): RGB => { const m = /^#?([0-9a-f]{6})$/i.exec(h.trim());
 const shortLevel = (s: string) => s.replace(/\s*\(.*\)$/, "");
 
 /** Liste à emporter à la charte du site : bandeau pétrole, rail jaune, tableau, cartes par établissement. */
-export function buildSelectionPdf(items: SelectionItem[], locale: "fr" | "en", base: string, fonts: Partial<Record<PdfFontKey, EmbeddedFont>> = {}): Buffer {
+export interface PdfOptions {
+  /** « selection » : tableau puis détail par établissement ; « list » : tableau compact groupé par région. */
+  mode?: "selection" | "list";
+  title?: string;
+  subtitle?: string;
+}
+
+export function buildSelectionPdf(items: SelectionItem[], locale: "fr" | "en", base: string, fonts: Partial<Record<PdfFontKey, EmbeddedFont>> = {}, options: PdfOptions = {}): Buffer {
   const t = T[locale];
   const fr = locale === "fr";
+  const mode = options.mode ?? "selection";
   const doc = new PdfDoc(fonts);
   let y = 0;
 
@@ -53,14 +61,19 @@ export function buildSelectionPdf(items: SelectionItem[], locale: "fr" | "en", b
   doc.text(M + 5.5, PAGE.h - 28, "FF", 11, { font: "heading", color: INK });
   doc.text(M + 36, PAGE.h - 22, "Formations ferroviaires", 12, { font: "heading", color: [1, 1, 1] });
   doc.text(M + 36, PAGE.h - 34, t.kicker, 6.5, { font: "bold", color: SIGNAL, charSpacing: 0.9 });
-  doc.text(M, PAGE.h - 84, t.title, 24, { font: "heading", color: [1, 1, 1] });
+  const mainTitle = mode === "list" ? options.title || t.listTitle : t.title;
+  const titleSize = doc.width(mainTitle, 24, "heading") > CW ? 17 : 24;
+  doc.text(M, PAGE.h - 84, mainTitle, titleSize, { font: "heading", color: [1, 1, 1] });
   const date = new Intl.DateTimeFormat(fr ? "fr-FR" : "en-GB", { day: "numeric", month: "long", year: "numeric" }).format(new Date());
-  doc.text(M, PAGE.h - 106, `${t.generated(date)} · ${t.est(items.length)} · ${host(base)}`, 9.5, { color: NAVY300 });
+  const sub = mode === "list" && options.subtitle ? `${options.subtitle} · ` : "";
+  doc.text(M, PAGE.h - 106, `${sub}${t.generated(date)} · ${t.est(items.length)} · ${host(base)}`, 9.5, { color: NAVY300 });
   rail(PAGE.h - BAND - 6);
   y = PAGE.h - BAND - 34;
 
-  // ---- Vue d'ensemble
-  section(t.overview);
+  // ---- Vue d'ensemble (ou liste groupée par région)
+  section(mode === "list" ? t.byRegion : t.overview);
+  const ordered = mode === "list" ? [...items].sort((a, b) => a.region.name.localeCompare(b.region.name) || a.name.localeCompare(b.name)) : items;
+  let currentRegion = "";
   const widths = [140, 70, 82, 116, 32, CW - 440];
   const xs = widths.reduce<number[]>((acc, _, i) => [...acc, i === 0 ? M : acc[i - 1] + widths[i - 1]], []);
   const header = () => {
@@ -69,7 +82,14 @@ export function buildSelectionPdf(items: SelectionItem[], locale: "fr" | "en", b
     y -= 22;
   };
   header();
-  items.forEach((e, idx) => {
+  ordered.forEach((e, idx) => {
+    if (mode === "list" && e.region.name !== currentRegion) {
+      currentRegion = e.region.name;
+      if (y - 22 < M + 30) { newPage(); header(); }
+      doc.text(M + 6, y - 7, currentRegion.toUpperCase(), 7, { font: "bold", color: INK, charSpacing: 0.7 });
+      doc.line(M, y - 12, M + CW, y - 12, 0.6, SIGNAL);
+      y -= 18;
+    }
     const levels = Array.from(new Map(e.formations.map((f) => [f.formation.level.slug, f.formation.level])).values()).sort((a, b) => a.order - b.order).map((l) => shortLevel(fr ? l.nameFr : l.nameEn));
     const cells = [displayName(e.name), e.city, "", levels.join(", ") || "–", String(e.formations.length), e.website ? host(e.website) : "–"];
     const fontOf = (i: number): PdfFontKey => (i === 0 ? "bold" : "regular");
@@ -87,9 +107,10 @@ export function buildSelectionPdf(items: SelectionItem[], locale: "fr" | "en", b
   });
   y -= 18;
 
-  // ---- Détail
-  section(t.details);
-  for (const e of items) {
+  // ---- Détail (sélection seulement)
+  const detailed = mode === "list" ? [] : items;
+  if (detailed.length) section(t.details);
+  for (const e of detailed) {
     const formations = [...e.formations].sort((a, b) => a.formation.level.order - b.formation.level.order || a.formation.nameFr.localeCompare(b.formation.nameFr));
     ensure(84);
     const typeColor = hex(e.type.color);
