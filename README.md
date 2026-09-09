@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Formations ferroviaires
 
-## Getting Started
+Le guide des métiers du rail : où se former, près de chez soi, du CAP à l'ingénieur. Carte interactive des
+établissements, formations et métiers ferroviaires en France, avec un back-office de gestion.
 
-First, run the development server:
+Site : https://formations-ferroviaires.vercel.app · Commanditaire : Objectif OFP, avec l'UTPF et la FIF (programme Transformeurs).
+
+## Pile technique
+
+Next.js 14 (App Router), React 18, Prisma 5 sur PostgreSQL (Neon), Tailwind, Leaflet + markercluster, hébergement Vercel.
+
+## Démarrer
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install                 # lance aussi `prisma generate`
+cp .env.example .env.local  # puis renseigner DATABASE_URL, ADMIN_PASSWORD, ADMIN_SECRET
+npm run db:migrate          # applique les migrations (base vide ou existante)
+npm run db:seed             # charge le jeu de données de référence (prisma/data/*.json)
+npm run dev                 # http://localhost:3000 → redirige vers /fr
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Build de production : `npm run build && npm start`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Pages
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Route | Rôle |
+|---|---|
+| `/fr`, `/en` | Accueil : recherche, familles de métiers, parcours, campus, réseau des régions (rendu serveur, cache 10 min) |
+| `/fr/carte` | Carte et liste. Filtres portés par l'adresse : `q`, `metier`, `formation`, `region` (code), `level`, `domain`, `type`, `family`, `view`, `near=1` |
+| `/fr/etablissement/<slug>` | Fiche établissement |
+| `/admin` | Back-office : établissements, formations, métiers, liens, import/export Excel, enrichissement La Bonne Alternance |
+| `/api/filters`, `/api/establishments` | Données publiques lues par la carte |
 
-## Learn More
+## Données
 
-To learn more about Next.js, take a look at the following resources:
+- **Référence versionnée** : `prisma/data/*.json` (régions, types, niveaux, domaines, formations, métiers, liens, établissements vérifiés).
+  Le seed les recharge de façon idempotente (clé : slug ou code). Pour les régénérer depuis la base après des modifications
+  dans le back-office : `npx tsx scripts/export-reference-data.ts`, puis commit.
+- **Établissements généralistes** (`source = "api"`) : importés depuis l'API La Bonne Alternance par le back-office (onglet
+  Enrichir), masqués par défaut sur la carte. Ils ne font pas partie du seed et se rejouent à la demande.
+- Sources externes : ONISEP (liens), EPSF (organismes agréés), Futur en train et Avec l'industrie ferroviaire (fiches métiers).
+- `scripts/legacy/` : scripts de construction de mars 2026, conservés pour l'historique, à ne plus exécuter.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Variables d'environnement
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Voir `.env.example`. `ADMIN_SECRET` est obligatoire (aucune valeur de repli). La connexion admin est limitée à cinq tentatives
+par adresse puis quinze minutes d'attente.
 
-## Deploy on Vercel
+## Exploitation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- La base Neon gratuite s'endort après inactivité : le code attend jusqu'à 20 s la première connexion et la carte réessaie
+  d'elle-même en affichant un message, au lieu d'un écran blanc.
+- Sécurité : contenu des fenêtres de carte échappé, en-têtes HTTP de sécurité dans `next.config.mjs`, secrets renouvelés en
+  septembre 2026 après l'incident du mois d'août (historique Git purgé).
+- Référencement : métadonnées par page, `robots.txt`, `sitemap.xml` (accueil, carte, fiches vérifiées), image de partage générée.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Suite prévue (palier 2)
+
+Pages formation et métier indexables, recherche floue avec les synonymes du secteur, comparateur et liste à emporter,
+formulaire « mettre à jour ma fiche » relu par l'administrateur, tableau de bord qualité des données.

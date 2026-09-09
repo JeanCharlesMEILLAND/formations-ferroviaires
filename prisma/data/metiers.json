@@ -1,0 +1,258 @@
+[
+  {
+    "slug": "agent-circulation",
+    "nameFr": "Agent de circulation ferroviaire",
+    "nameEn": null,
+    "family": "Gestion du trafic",
+    "source": "futurentrain",
+    "level": "BAC"
+  },
+  {
+    "slug": "agent-escale",
+    "nameFr": "Agent d'escale ferroviaire",
+    "nameEn": null,
+    "family": "Gestion du trafic",
+    "source": "futurentrain",
+    "level": "CAP"
+  },
+  {
+    "slug": "agent-maintenance-installations",
+    "nameFr": "Agent de maintenance des installations ferroviaires",
+    "nameEn": null,
+    "family": "Maintenance",
+    "source": "futurentrain",
+    "level": "BAC"
+  },
+  {
+    "slug": "agent-manoeuvre",
+    "nameFr": "Agent de manœuvre ferroviaire",
+    "nameEn": null,
+    "family": "Maintenance",
+    "source": "futurentrain",
+    "level": "CAP"
+  },
+  {
+    "slug": "aiguilleur",
+    "nameFr": "Aiguilleur / Aiguilleuse",
+    "nameEn": null,
+    "family": "Gestion du trafic",
+    "source": "futurentrain",
+    "level": "BAC"
+  },
+  {
+    "slug": "chaudronnier-ferro",
+    "nameFr": "Chaudronnier ferroviaire",
+    "nameEn": null,
+    "family": "Maintenance",
+    "source": "futurentrain",
+    "level": "CAP"
+  },
+  {
+    "slug": "chef-chantier-voie",
+    "nameFr": "Chef de chantier voie ferrée",
+    "nameEn": null,
+    "family": "Infrastructure",
+    "source": "aveclindustrieferroviaire",
+    "level": "BAC+2"
+  },
+  {
+    "slug": "chef-projet-ferro",
+    "nameFr": "Chef de projet ferroviaire",
+    "nameEn": null,
+    "family": "Ingénierie",
+    "source": "aveclindustrieferroviaire",
+    "level": "BAC+5"
+  },
+  {
+    "slug": "conducteur-metro",
+    "nameFr": "Conducteur / Conductrice de métro",
+    "nameEn": null,
+    "family": "Conduite",
+    "source": "futurentrain",
+    "level": "CAP"
+  },
+  {
+    "slug": "conducteur-rer",
+    "nameFr": "Conducteur / Conductrice de RER",
+    "nameEn": null,
+    "family": "Conduite",
+    "source": "futurentrain",
+    "level": "BAC"
+  },
+  {
+    "slug": "conducteur-train",
+    "nameFr": "Conducteur / Conductrice de train",
+    "nameEn": null,
+    "family": "Conduite",
+    "source": "futurentrain",
+    "level": "BAC"
+  },
+  {
+    "slug": "conducteur-train-fret",
+    "nameFr": "Conducteur / Conductrice de train de fret",
+    "nameEn": null,
+    "family": "Conduite",
+    "source": "futurentrain",
+    "level": "BAC"
+  },
+  {
+    "slug": "conducteur-tramway",
+    "nameFr": "Conducteur / Conductrice de tramway",
+    "nameEn": null,
+    "family": "Conduite",
+    "source": "futurentrain",
+    "level": "CAP"
+  },
+  {
+    "slug": "designer-transport-metier",
+    "nameFr": "Designer transport",
+    "nameEn": null,
+    "family": "Ingénierie",
+    "source": "aveclindustrieferroviaire",
+    "level": "BAC+3"
+  },
+  {
+    "slug": "electricien-industriel-ferro",
+    "nameFr": "Électricien industriel ferroviaire",
+    "nameEn": null,
+    "family": "Maintenance",
+    "source": "futurentrain",
+    "level": "CAP"
+  },
+  {
+    "slug": "ingenieur-commercial-ferro",
+    "nameFr": "Ingénieur commercial ferroviaire",
+    "nameEn": null,
+    "family": "Commercial",
+    "source": "aveclindustrieferroviaire",
+    "level": "BAC+5"
+  },
+  {
+    "slug": "ingenieur-conception-materiel",
+    "nameFr": "Ingénieur conception matériel roulant",
+    "nameEn": null,
+    "family": "Ingénierie",
+    "source": "aveclindustrieferroviaire",
+    "level": "BAC+5"
+  },
+  {
+    "slug": "ingenieur-signalisation",
+    "nameFr": "Ingénieur en signalisation ferroviaire",
+    "nameEn": null,
+    "family": "Ingénierie",
+    "source": "aveclindustrieferroviaire",
+    "level": "BAC+5"
+  },
+  {
+    "slug": "ingenieur-systemes-ferro",
+    "nameFr": "Ingénieur systèmes ferroviaires",
+    "nameEn": null,
+    "family": "Ingénierie",
+    "source": "aveclindustrieferroviaire",
+    "level": "BAC+5"
+  },
+  {
+    "slug": "ingenieur-travaux-ferro",
+    "nameFr": "Ingénieur travaux ferroviaires",
+    "nameEn": null,
+    "family": "Infrastructure",
+    "source": "aveclindustrieferroviaire",
+    "level": "BAC+5"
+  },
+  {
+    "slug": "mecanicien-maintenance-ferro",
+    "nameFr": "Mécanicien de maintenance ferroviaire",
+    "nameEn": null,
+    "family": "Maintenance",
+    "source": "futurentrain",
+    "level": "CAP"
+  },
+  {
+    "slug": "operateur-maintenance-voies",
+    "nameFr": "Opérateur de maintenance des voies",
+    "nameEn": null,
+    "family": "Maintenance",
+    "source": "futurentrain",
+    "level": "CAP"
+  },
+  {
+    "slug": "peintre-industriel-ferro",
+    "nameFr": "Peintre industriel ferroviaire",
+    "nameEn": null,
+    "family": "Maintenance",
+    "source": "futurentrain",
+    "level": "CAP"
+  },
+  {
+    "slug": "regulateur-transports",
+    "nameFr": "Régulateur / Régulatrice des transports",
+    "nameEn": null,
+    "family": "Gestion du trafic",
+    "source": "futurentrain",
+    "level": "BAC+2"
+  },
+  {
+    "slug": "responsable-production",
+    "nameFr": "Responsable production matériel roulant",
+    "nameEn": null,
+    "family": "Production",
+    "source": "aveclindustrieferroviaire",
+    "level": "BAC+5"
+  },
+  {
+    "slug": "soudeur-ferro",
+    "nameFr": "Soudeur ferroviaire",
+    "nameEn": null,
+    "family": "Maintenance",
+    "source": "futurentrain",
+    "level": "CAP"
+  },
+  {
+    "slug": "technicien-bureau-etudes",
+    "nameFr": "Technicien bureau d'études ferroviaire",
+    "nameEn": null,
+    "family": "Ingénierie",
+    "source": "aveclindustrieferroviaire",
+    "level": "BAC+2"
+  },
+  {
+    "slug": "technicien-catenaire",
+    "nameFr": "Technicien caténaire",
+    "nameEn": null,
+    "family": "Maintenance",
+    "source": "futurentrain",
+    "level": "BAC"
+  },
+  {
+    "slug": "technicien-essais",
+    "nameFr": "Technicien d'essais ferroviaire",
+    "nameEn": null,
+    "family": "Ingénierie",
+    "source": "aveclindustrieferroviaire",
+    "level": "BAC+2"
+  },
+  {
+    "slug": "technicien-maintenance-ferro",
+    "nameFr": "Technicien de maintenance des systèmes ferroviaires",
+    "nameEn": null,
+    "family": "Maintenance",
+    "source": "futurentrain",
+    "level": "BAC"
+  },
+  {
+    "slug": "technicien-signalisation",
+    "nameFr": "Technicien en signalisation ferroviaire",
+    "nameEn": null,
+    "family": "Maintenance",
+    "source": "futurentrain",
+    "level": "BAC+2"
+  },
+  {
+    "slug": "technicien-systemes-embarques",
+    "nameFr": "Technicien de maintenance des systèmes embarqués",
+    "nameEn": null,
+    "family": "Maintenance",
+    "source": "futurentrain",
+    "level": "BAC"
+  }
+]

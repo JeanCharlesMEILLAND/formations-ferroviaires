@@ -1,0 +1,514 @@
+[
+  {
+    "metier": "agent-circulation",
+    "formation": "bac-pro-melec"
+  },
+  {
+    "metier": "agent-circulation",
+    "formation": "bts-gtla"
+  },
+  {
+    "metier": "agent-circulation",
+    "formation": "lp-exploitation-ferroviaire-cnam"
+  },
+  {
+    "metier": "agent-circulation",
+    "formation": "lp-gmsf"
+  },
+  {
+    "metier": "agent-circulation",
+    "formation": "lp-grf"
+  },
+  {
+    "metier": "agent-escale",
+    "formation": "bac-pro-otm"
+  },
+  {
+    "metier": "agent-escale",
+    "formation": "cs-accueil-transports"
+  },
+  {
+    "metier": "agent-escale",
+    "formation": "lp-mstv"
+  },
+  {
+    "metier": "agent-maintenance-installations",
+    "formation": "bac-pro-mspc"
+  },
+  {
+    "metier": "agent-maintenance-installations",
+    "formation": "mc4-maintenance-installations-ferro"
+  },
+  {
+    "metier": "agent-manoeuvre",
+    "formation": "titre-pro-conducteur-train"
+  },
+  {
+    "metier": "aiguilleur",
+    "formation": "bac-pro-melec"
+  },
+  {
+    "metier": "aiguilleur",
+    "formation": "cs-accueil-transports"
+  },
+  {
+    "metier": "chaudronnier-ferro",
+    "formation": "bac-pro-mspc"
+  },
+  {
+    "metier": "chaudronnier-ferro",
+    "formation": "cap-maintenance-vehicules"
+  },
+  {
+    "metier": "chef-chantier-voie",
+    "formation": "bac-pro-travaux-publics"
+  },
+  {
+    "metier": "chef-chantier-voie",
+    "formation": "bts-travaux-publics"
+  },
+  {
+    "metier": "chef-chantier-voie",
+    "formation": "ingenieur-gc-ge-insa"
+  },
+  {
+    "metier": "chef-chantier-voie",
+    "formation": "ingenieur-infra-ferro-imt"
+  },
+  {
+    "metier": "chef-chantier-voie",
+    "formation": "ingenieur-transports-entpe"
+  },
+  {
+    "metier": "chef-chantier-voie",
+    "formation": "lp-grf"
+  },
+  {
+    "metier": "chef-projet-ferro",
+    "formation": "ingenieur-ferroviaire-estaca"
+  },
+  {
+    "metier": "chef-projet-ferro",
+    "formation": "ingenieur-gc-ge-insa"
+  },
+  {
+    "metier": "chef-projet-ferro",
+    "formation": "ingenieur-infra-ferro-imt"
+  },
+  {
+    "metier": "chef-projet-ferro",
+    "formation": "ingenieur-transports-ensam"
+  },
+  {
+    "metier": "chef-projet-ferro",
+    "formation": "ingenieur-transports-entpe"
+  },
+  {
+    "metier": "chef-projet-ferro",
+    "formation": "master-3et"
+  },
+  {
+    "metier": "chef-projet-ferro",
+    "formation": "master-ter"
+  },
+  {
+    "metier": "chef-projet-ferro",
+    "formation": "master-transports-mobilites"
+  },
+  {
+    "metier": "chef-projet-ferro",
+    "formation": "master-turp"
+  },
+  {
+    "metier": "chef-projet-ferro",
+    "formation": "mastere-smart-mobility"
+  },
+  {
+    "metier": "chef-projet-ferro",
+    "formation": "mastere-stfu"
+  },
+  {
+    "metier": "conducteur-metro",
+    "formation": "titre-pro-conducteur-train"
+  },
+  {
+    "metier": "conducteur-rer",
+    "formation": "bts-electrotechnique"
+  },
+  {
+    "metier": "conducteur-rer",
+    "formation": "titre-pro-conducteur-train"
+  },
+  {
+    "metier": "conducteur-train-fret",
+    "formation": "bac-pro-otm"
+  },
+  {
+    "metier": "conducteur-train-fret",
+    "formation": "titre-pro-conducteur-train"
+  },
+  {
+    "metier": "conducteur-train",
+    "formation": "bac-pro-melec"
+  },
+  {
+    "metier": "conducteur-train",
+    "formation": "titre-pro-conducteur-train"
+  },
+  {
+    "metier": "conducteur-tramway",
+    "formation": "titre-pro-conducteur-train"
+  },
+  {
+    "metier": "designer-transport-metier",
+    "formation": "bachelor-design-transport"
+  },
+  {
+    "metier": "designer-transport-metier",
+    "formation": "designer-transport"
+  },
+  {
+    "metier": "electricien-industriel-ferro",
+    "formation": "bac-pro-melec"
+  },
+  {
+    "metier": "electricien-industriel-ferro",
+    "formation": "bm-installateur-electrique"
+  },
+  {
+    "metier": "electricien-industriel-ferro",
+    "formation": "btm-installateur-electrique"
+  },
+  {
+    "metier": "electricien-industriel-ferro",
+    "formation": "bts-electrotechnique"
+  },
+  {
+    "metier": "electricien-industriel-ferro",
+    "formation": "cap-ctm-installateur-electrique"
+  },
+  {
+    "metier": "electricien-industriel-ferro",
+    "formation": "licence-eea"
+  },
+  {
+    "metier": "ingenieur-commercial-ferro",
+    "formation": "ingenieur-ferroviaire-estaca"
+  },
+  {
+    "metier": "ingenieur-commercial-ferro",
+    "formation": "ingenieur-gc-ge-insa"
+  },
+  {
+    "metier": "ingenieur-commercial-ferro",
+    "formation": "ingenieur-infra-ferro-imt"
+  },
+  {
+    "metier": "ingenieur-commercial-ferro",
+    "formation": "ingenieur-transports-ensam"
+  },
+  {
+    "metier": "ingenieur-commercial-ferro",
+    "formation": "ingenieur-transports-entpe"
+  },
+  {
+    "metier": "ingenieur-commercial-ferro",
+    "formation": "master-3et"
+  },
+  {
+    "metier": "ingenieur-commercial-ferro",
+    "formation": "master-ter"
+  },
+  {
+    "metier": "ingenieur-commercial-ferro",
+    "formation": "master-tlic"
+  },
+  {
+    "metier": "ingenieur-commercial-ferro",
+    "formation": "master-transports-mobilites"
+  },
+  {
+    "metier": "ingenieur-commercial-ferro",
+    "formation": "mastere-stfu"
+  },
+  {
+    "metier": "ingenieur-conception-materiel",
+    "formation": "ingenieur-ferroviaire-estaca"
+  },
+  {
+    "metier": "ingenieur-conception-materiel",
+    "formation": "ingenieur-gc-ge-insa"
+  },
+  {
+    "metier": "ingenieur-conception-materiel",
+    "formation": "ingenieur-transports-ensam"
+  },
+  {
+    "metier": "ingenieur-conception-materiel",
+    "formation": "ingenieur-transports-entpe"
+  },
+  {
+    "metier": "ingenieur-conception-materiel",
+    "formation": "master-transports-mobilites"
+  },
+  {
+    "metier": "ingenieur-conception-materiel",
+    "formation": "mastere-smart-mobility"
+  },
+  {
+    "metier": "ingenieur-conception-materiel",
+    "formation": "mastere-stfu"
+  },
+  {
+    "metier": "ingenieur-signalisation",
+    "formation": "but-geii"
+  },
+  {
+    "metier": "ingenieur-signalisation",
+    "formation": "ingenieur-ferroviaire-estaca"
+  },
+  {
+    "metier": "ingenieur-signalisation",
+    "formation": "ingenieur-gc-ge-insa"
+  },
+  {
+    "metier": "ingenieur-signalisation",
+    "formation": "ingenieur-infra-ferro-imt"
+  },
+  {
+    "metier": "ingenieur-signalisation",
+    "formation": "ingenieur-transports-ensam"
+  },
+  {
+    "metier": "ingenieur-signalisation",
+    "formation": "mastere-stfu"
+  },
+  {
+    "metier": "ingenieur-systemes-ferro",
+    "formation": "ingenieur-ferroviaire-estaca"
+  },
+  {
+    "metier": "ingenieur-systemes-ferro",
+    "formation": "ingenieur-gc-ge-insa"
+  },
+  {
+    "metier": "ingenieur-systemes-ferro",
+    "formation": "ingenieur-infra-ferro-imt"
+  },
+  {
+    "metier": "ingenieur-systemes-ferro",
+    "formation": "ingenieur-transports-ensam"
+  },
+  {
+    "metier": "ingenieur-systemes-ferro",
+    "formation": "master-transports-mobilites"
+  },
+  {
+    "metier": "ingenieur-systemes-ferro",
+    "formation": "mastere-smart-mobility"
+  },
+  {
+    "metier": "ingenieur-systemes-ferro",
+    "formation": "mastere-stfu"
+  },
+  {
+    "metier": "ingenieur-travaux-ferro",
+    "formation": "bts-travaux-publics"
+  },
+  {
+    "metier": "ingenieur-travaux-ferro",
+    "formation": "ingenieur-gc-ge-insa"
+  },
+  {
+    "metier": "ingenieur-travaux-ferro",
+    "formation": "ingenieur-infra-ferro-imt"
+  },
+  {
+    "metier": "ingenieur-travaux-ferro",
+    "formation": "ingenieur-transports-ensam"
+  },
+  {
+    "metier": "ingenieur-travaux-ferro",
+    "formation": "ingenieur-transports-entpe"
+  },
+  {
+    "metier": "ingenieur-travaux-ferro",
+    "formation": "mastere-ifrdd"
+  },
+  {
+    "metier": "mecanicien-maintenance-ferro",
+    "formation": "bac-pro-mspc"
+  },
+  {
+    "metier": "mecanicien-maintenance-ferro",
+    "formation": "bts-maintenance-systemes"
+  },
+  {
+    "metier": "mecanicien-maintenance-ferro",
+    "formation": "cap-maintenance-vehicules"
+  },
+  {
+    "metier": "operateur-maintenance-voies",
+    "formation": "bac-pro-travaux-publics"
+  },
+  {
+    "metier": "operateur-maintenance-voies",
+    "formation": "bts-travaux-publics"
+  },
+  {
+    "metier": "peintre-industriel-ferro",
+    "formation": "cap-maintenance-vehicules"
+  },
+  {
+    "metier": "regulateur-transports",
+    "formation": "bts-gtla"
+  },
+  {
+    "metier": "regulateur-transports",
+    "formation": "but-mlt"
+  },
+  {
+    "metier": "regulateur-transports",
+    "formation": "lp-exploitation-ferroviaire-cnam"
+  },
+  {
+    "metier": "regulateur-transports",
+    "formation": "lp-gmsf"
+  },
+  {
+    "metier": "regulateur-transports",
+    "formation": "lp-mstv"
+  },
+  {
+    "metier": "regulateur-transports",
+    "formation": "master-turp"
+  },
+  {
+    "metier": "responsable-production",
+    "formation": "bts-maintenance-systemes"
+  },
+  {
+    "metier": "responsable-production",
+    "formation": "but-gim"
+  },
+  {
+    "metier": "responsable-production",
+    "formation": "ingenieur-ferroviaire-estaca"
+  },
+  {
+    "metier": "responsable-production",
+    "formation": "ingenieur-gc-ge-insa"
+  },
+  {
+    "metier": "responsable-production",
+    "formation": "ingenieur-transports-ensam"
+  },
+  {
+    "metier": "responsable-production",
+    "formation": "lp-maintenance-transports-guides"
+  },
+  {
+    "metier": "soudeur-ferro",
+    "formation": "cap-maintenance-vehicules"
+  },
+  {
+    "metier": "technicien-bureau-etudes",
+    "formation": "bts-electrotechnique"
+  },
+  {
+    "metier": "technicien-bureau-etudes",
+    "formation": "bts-maintenance-systemes"
+  },
+  {
+    "metier": "technicien-bureau-etudes",
+    "formation": "but-geii"
+  },
+  {
+    "metier": "technicien-bureau-etudes",
+    "formation": "but-rt"
+  },
+  {
+    "metier": "technicien-catenaire",
+    "formation": "bac-pro-melec"
+  },
+  {
+    "metier": "technicien-catenaire",
+    "formation": "bac-pro-traction-electrique"
+  },
+  {
+    "metier": "technicien-catenaire",
+    "formation": "bm-installateur-electrique"
+  },
+  {
+    "metier": "technicien-catenaire",
+    "formation": "btm-installateur-electrique"
+  },
+  {
+    "metier": "technicien-catenaire",
+    "formation": "bts-electrotechnique"
+  },
+  {
+    "metier": "technicien-essais",
+    "formation": "bts-electrotechnique"
+  },
+  {
+    "metier": "technicien-essais",
+    "formation": "bts-maintenance-systemes"
+  },
+  {
+    "metier": "technicien-essais",
+    "formation": "but-geii"
+  },
+  {
+    "metier": "technicien-essais",
+    "formation": "but-mesures-physiques"
+  },
+  {
+    "metier": "technicien-maintenance-ferro",
+    "formation": "bac-pro-mspc"
+  },
+  {
+    "metier": "technicien-maintenance-ferro",
+    "formation": "bts-maintenance-systemes"
+  },
+  {
+    "metier": "technicien-maintenance-ferro",
+    "formation": "but-gim"
+  },
+  {
+    "metier": "technicien-signalisation",
+    "formation": "bac-pro-melec"
+  },
+  {
+    "metier": "technicien-signalisation",
+    "formation": "bts-electrotechnique"
+  },
+  {
+    "metier": "technicien-signalisation",
+    "formation": "but-geii"
+  },
+  {
+    "metier": "technicien-signalisation",
+    "formation": "but-mesures-physiques"
+  },
+  {
+    "metier": "technicien-signalisation",
+    "formation": "but-rt"
+  },
+  {
+    "metier": "technicien-signalisation",
+    "formation": "licence-eea"
+  },
+  {
+    "metier": "technicien-systemes-embarques",
+    "formation": "bts-maintenance-systemes"
+  },
+  {
+    "metier": "technicien-systemes-embarques",
+    "formation": "but-geii"
+  },
+  {
+    "metier": "technicien-systemes-embarques",
+    "formation": "mc4-maintenance-systemes-embarques"
+  }
+]

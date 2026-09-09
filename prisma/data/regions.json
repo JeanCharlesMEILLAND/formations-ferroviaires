@@ -1,0 +1,86 @@
+[
+  {
+    "code": "ARA",
+    "name": "Auvergne-Rhône-Alpes",
+    "lat": 45.764,
+    "lng": 4.8357
+  },
+  {
+    "code": "BFC",
+    "name": "Bourgogne-Franche-Comté",
+    "lat": 47.2805,
+    "lng": 6.0343
+  },
+  {
+    "code": "BRE",
+    "name": "Bretagne",
+    "lat": 48.1173,
+    "lng": -1.6778
+  },
+  {
+    "code": "COR",
+    "name": "Corse",
+    "lat": 42.15,
+    "lng": 9.1
+  },
+  {
+    "code": "CVL",
+    "name": "Centre-Val de Loire",
+    "lat": 47.9029,
+    "lng": 1.909
+  },
+  {
+    "code": "GES",
+    "name": "Grand Est",
+    "lat": 48.573,
+    "lng": 7.752
+  },
+  {
+    "code": "HDF",
+    "name": "Hauts-de-France",
+    "lat": 49.8941,
+    "lng": 2.2958
+  },
+  {
+    "code": "IDF",
+    "name": "Île-de-France",
+    "lat": 48.8566,
+    "lng": 2.3522
+  },
+  {
+    "code": "MTQ",
+    "name": "Martinique",
+    "lat": 14.6415,
+    "lng": -61.0242
+  },
+  {
+    "code": "NAQ",
+    "name": "Nouvelle-Aquitaine",
+    "lat": 44.8378,
+    "lng": -0.5792
+  },
+  {
+    "code": "NOR",
+    "name": "Normandie",
+    "lat": 49.1829,
+    "lng": -0.3707
+  },
+  {
+    "code": "OCC",
+    "name": "Occitanie",
+    "lat": 43.6047,
+    "lng": 1.4442
+  },
+  {
+    "code": "PAC",
+    "name": "Provence-Alpes-Côte d'Azur",
+    "lat": 43.2965,
+    "lng": 5.3698
+  },
+  {
+    "code": "PDL",
+    "name": "Pays de la Loire",
+    "lat": 47.2184,
+    "lng": -1.5536
+  }
+]

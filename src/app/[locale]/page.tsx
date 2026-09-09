@@ -5,6 +5,7 @@ import { getDictionary } from "@/i18n/get-dictionary";
 import { getHomeData, type FamilyCard } from "@/lib/home";
 import RegionNetwork from "@/components/home/RegionNetwork";
 import { CONTACT_MAILTO } from "@/components/layout/Header";
+import { displayName } from "@/lib/format";
 
 export const revalidate = 600; // dix minutes : la page reste instantanée même quand la base se réveille
 
@@ -208,7 +209,7 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
               <Link key={c.slug} href={`/${L}/etablissement/${c.slug}`} className="bg-navy-50 border border-navy-200 rounded-card p-5 flex flex-col gap-2 hover:border-navy-900 transition-colors">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <h3 className="font-heading text-h4 leading-tight">{c.name}</h3>
+                    <h3 className="font-heading text-h4 leading-tight">{displayName(c.name)}</h3>
                     <p className="text-caption text-navy-600 mt-1">{c.city} · {c.region} · {c.type}</p>
                   </div>
                   <span className="font-heading text-[30px] font-extrabold leading-none text-navy-900 text-right">

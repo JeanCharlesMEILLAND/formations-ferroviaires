@@ -1,0 +1,44 @@
+[
+  {
+    "slug": "autre",
+    "nameFr": "Autre",
+    "nameEn": "Other",
+    "color": "#607D8B"
+  },
+  {
+    "slug": "cfa",
+    "nameFr": "CFA / Centre de formation",
+    "nameEn": "Training Center",
+    "color": "#4CAF50"
+  },
+  {
+    "slug": "ecole-ingenieur",
+    "nameFr": "École d'ingénieurs",
+    "nameEn": "Engineering School",
+    "color": "#FF5722"
+  },
+  {
+    "slug": "grande-ecole",
+    "nameFr": "Grande École",
+    "nameEn": "Grande École",
+    "color": "#FF9800"
+  },
+  {
+    "slug": "iut",
+    "nameFr": "IUT",
+    "nameEn": "IUT",
+    "color": "#9C27B0"
+  },
+  {
+    "slug": "lycee",
+    "nameFr": "Lycée",
+    "nameEn": "High School",
+    "color": "#E91E63"
+  },
+  {
+    "slug": "universite",
+    "nameFr": "Université",
+    "nameEn": "University",
+    "color": "#3F51B5"
+  }
+]

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { displayName } from "@/lib/format";
 import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
@@ -56,7 +57,7 @@ export default async function EstablishmentPage({
             </span>
           </div>
 
-          <h1 className="font-heading text-3xl lg:text-4xl font-bold mb-3 leading-tight">{establishment.name}</h1>
+          <h1 className="font-heading text-3xl lg:text-4xl font-bold mb-3 leading-tight">{displayName(establishment.name)}</h1>
 
           <div className="flex flex-wrap items-center gap-4 text-sm text-navy-200">
             <span className="flex items-center gap-1.5">

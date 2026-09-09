@@ -10,6 +10,7 @@ import L from "leaflet";
 import "leaflet.markercluster";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import type { Locale } from "@/i18n/config";
+import { displayName } from "@/lib/format";
 
 // ============================================================
 // Types matching our Prisma models
@@ -233,7 +234,7 @@ function MarkerClusterLayer({
             </span>
             ${isApi ? `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;background:#FFF7D6;color:#7F5F06;border:1px solid #FFE47A;">Établissement généraliste</span>` : `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;background:#DDF3EA;color:#13634E;">Vérifié</span>`}
           </div>
-          <h3 style="font-weight:700;color:#0C1F2C;font-size:15px;margin:0 0 4px;font-family:var(--font-heading),sans-serif;">${esc(est.name)}</h3>
+          <h3 style="font-weight:700;color:#0C1F2C;font-size:15px;margin:0 0 4px;font-family:var(--font-heading),sans-serif;">${esc(displayName(est.name))}</h3>
           <p style="font-size:12px;color:#6C7C88;margin:0 0 12px;">${esc(est.city)} — ${esc(est.region.name)}</p>
           ${
             est.formations.length > 0
@@ -598,6 +599,7 @@ export default function FormationsMap({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={dict.map.searchPlaceholder}
+                aria-label={dict.map.searchPlaceholder}
                 className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-navy-200 bg-white text-body-sm placeholder-navy-300 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-transparent shadow-sm transition-all"
               />
               {searchQuery && (
@@ -646,6 +648,7 @@ export default function FormationsMap({
               </div>
               <select
                 value={selectedMetier}
+                aria-label={dict.map.allMetiers}
                 onChange={(e) => setSelectedMetier(e.target.value)}
                 className={`w-full py-2.5 pl-11 pr-8 rounded-xl border text-xs font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-electric-500 shadow-sm transition-all cursor-pointer ${
                   selectedMetier ? "border-amber-300 bg-amber-50 text-amber-800" : "border-navy-200 bg-white text-navy-600"
@@ -671,6 +674,7 @@ export default function FormationsMap({
               </div>
               <select
                 value={selectedFormation}
+                aria-label={dict.map.allFormations}
                 onChange={(e) => setSelectedFormation(e.target.value)}
                 className={`w-full py-2.5 pl-11 pr-8 rounded-xl border text-xs font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-electric-500 shadow-sm transition-all cursor-pointer ${
                   selectedFormation ? "border-electric-300 bg-electric-50 text-electric-800" : "border-navy-200 bg-white text-navy-600"
@@ -721,6 +725,7 @@ export default function FormationsMap({
                   <div className="relative">
                     <select
                       value={selectedType}
+                      aria-label={dict.map.filterByType}
                       onChange={(e) => setSelectedType(e.target.value)}
                       className={`w-full py-2 pl-3 pr-7 rounded-lg border text-[11px] font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-electric-500 cursor-pointer ${
                         selectedType ? "border-blue-300 bg-blue-50 text-blue-700" : "border-navy-200 bg-white text-navy-600"
@@ -739,6 +744,7 @@ export default function FormationsMap({
                   <div className="relative">
                     <select
                       value={selectedRegion}
+                      aria-label={dict.map.filterByRegion}
                       onChange={(e) => setSelectedRegion(e.target.value)}
                       className={`w-full py-2 pl-3 pr-7 rounded-lg border text-[11px] font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-electric-500 cursor-pointer ${
                         selectedRegion ? "border-green-300 bg-green-50 text-green-700" : "border-navy-200 bg-white text-navy-600"
@@ -757,6 +763,7 @@ export default function FormationsMap({
                   <div className="relative">
                     <select
                       value={selectedDomain}
+                      aria-label={dict.map.filterByDomain}
                       onChange={(e) => setSelectedDomain(e.target.value)}
                       className={`w-full py-2 pl-3 pr-7 rounded-lg border text-[11px] font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-electric-500 cursor-pointer ${
                         selectedDomain ? "border-purple-300 bg-purple-50 text-purple-700" : "border-navy-200 bg-white text-navy-600"
@@ -775,6 +782,7 @@ export default function FormationsMap({
                   <div className="relative">
                     <select
                       value={selectedLevel}
+                      aria-label={dict.map.filterByLevel}
                       onChange={(e) => setSelectedLevel(e.target.value)}
                       className={`w-full py-2 pl-3 pr-7 rounded-lg border text-[11px] font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-electric-500 cursor-pointer ${
                         selectedLevel ? "border-indigo-300 bg-indigo-50 text-indigo-700" : "border-navy-200 bg-white text-navy-600"
@@ -944,7 +952,7 @@ export default function FormationsMap({
                     />
                     <div className="min-w-0">
                       <h3 className="font-heading font-semibold text-body-sm text-navy-900 truncate">
-                        {est.name}
+                        {displayName(est.name)}
                       </h3>
                       <p className="text-caption text-navy-400 mt-0.5">
                         {est.city} — {est.region.name}

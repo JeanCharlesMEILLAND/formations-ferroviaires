@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "electrotechnique",
+    "nameFr": "Électrotechnique & Électronique",
+    "nameEn": "Electrotechnics & Electronics",
+    "color": "#F44336"
+  },
+  {
+    "slug": "exploitation-circulation",
+    "nameFr": "Exploitation & Circulation",
+    "nameEn": "Operations & Circulation",
+    "color": "#FF9800"
+  },
+  {
+    "slug": "genie-civil-infra",
+    "nameFr": "Génie Civil & Infrastructures",
+    "nameEn": "Civil Engineering & Infrastructure",
+    "color": "#795548"
+  },
+  {
+    "slug": "industrie-production",
+    "nameFr": "Industrie & Production",
+    "nameEn": "Industry & Production",
+    "color": "#607D8B"
+  },
+  {
+    "slug": "ingenierie-conception",
+    "nameFr": "Ingénierie & Conception",
+    "nameEn": "Engineering & Design",
+    "color": "#9C27B0"
+  },
+  {
+    "slug": "maintenance-technique",
+    "nameFr": "Maintenance & Technique",
+    "nameEn": "Maintenance & Technical",
+    "color": "#2196F3"
+  },
+  {
+    "slug": "securite-reglementation",
+    "nameFr": "Sécurité & Réglementation Ferroviaire",
+    "nameEn": "Railway Safety & Regulation",
+    "color": "#D32F2F"
+  },
+  {
+    "slug": "transport-mobilite",
+    "nameFr": "Transport & Mobilité",
+    "nameEn": "Transport & Mobility",
+    "color": "#4CAF50"
+  }
+]

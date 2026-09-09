@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "certification-pro",
+    "nameFr": "Certification professionnelle",
+    "nameEn": "Professional Certification",
+    "order": 0
+  },
+  {
+    "slug": "cap-niv3",
+    "nameFr": "CAP (Niveau 3)",
+    "nameEn": "CAP (Level 3)",
+    "order": 1
+  },
+  {
+    "slug": "bac-niv4",
+    "nameFr": "BAC / Bac Pro (Niveau 4)",
+    "nameEn": "BAC / Bac Pro (Level 4)",
+    "order": 2
+  },
+  {
+    "slug": "bac1-cs",
+    "nameFr": "Bac +1 (CS)",
+    "nameEn": "Bac +1 (CS)",
+    "order": 3
+  },
+  {
+    "slug": "bts-niv5",
+    "nameFr": "BTS / Bac +2 (Niveau 5)",
+    "nameEn": "BTS / Bac +2 (Level 5)",
+    "order": 4
+  },
+  {
+    "slug": "licence-niv6",
+    "nameFr": "Licence / BUT / Bac +3 (Niveau 6)",
+    "nameEn": "Bachelor / Bac +3 (Level 6)",
+    "order": 5
+  },
+  {
+    "slug": "master-niv7",
+    "nameFr": "Master / Ingénieur (Niveau 7)",
+    "nameEn": "Master / Engineer (Level 7)",
+    "order": 6
+  },
+  {
+    "slug": "mastere-niv8",
+    "nameFr": "Mastère Spécialisé (Bac +6)",
+    "nameEn": "Specialized Master (Bac +6)",
+    "order": 7
+  }
+]
