@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSelectionData } from "@/lib/selection-data";
 import { buildSelectionPdf } from "@/lib/selection-pdf";
+import { loadPdfFonts } from "@/lib/pdf-fonts";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export async function GET(request: NextRequest) {
   const items = await getSelectionData(slugs);
   if (items.length === 0) return NextResponse.json({ error: "not found" }, { status: 404 });
   const base = process.env.NEXT_PUBLIC_SITE_URL || "https://formations-ferroviaires.vercel.app";
-  const pdf = buildSelectionPdf(items, locale, base);
+  const pdf = buildSelectionPdf(items, locale, base, loadPdfFonts());
   const date = new Date().toISOString().slice(0, 10);
   return new NextResponse(new Uint8Array(pdf), {
     headers: {

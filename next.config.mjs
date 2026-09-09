@@ -8,6 +8,8 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
+  // Polices embarquées dans le PDF « liste à emporter » : à inclure dans le paquet de la fonction serverless.
+  experimental: { outputFileTracingIncludes: { "/api/selection/pdf": ["./src/assets/fonts/*.woff"] } },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },

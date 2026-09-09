@@ -49,6 +49,12 @@ Un courriel de notification part vers `CONTACT_TO` si `RESEND_API_KEY` est rense
 sur un domaine validé chez Resend) ; sans clé, rien ne part mais rien n'est perdu. Protections : champ piège, cinq envois par
 adresse et par dix minutes, validation côté serveur.
 
+## Tests
+
+- `npm test` : tests unitaires (moteur de recherche, mise en forme des noms, générateur PDF et polices) avec le lanceur de Node.
+- `scripts/qa/personas.js` : six parcours de visiteurs joués dans un navigateur (Playwright) contre un serveur local, avec captures ;
+  voir l'en-tête du fichier pour le lancer.
+
 ## Variables d'environnement
 
 Voir `.env.example`. `ADMIN_SECRET` est obligatoire (aucune valeur de repli). La connexion admin est limitée à cinq tentatives
