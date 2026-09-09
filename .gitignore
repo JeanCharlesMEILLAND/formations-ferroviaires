@@ -27,6 +27,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
 
 # prisma sqlite
 prisma/dev.db
@@ -44,4 +45,3 @@ group3-master-ingenieur-results.md
 next-env.d.ts
 
 .vercel
-config.bat
