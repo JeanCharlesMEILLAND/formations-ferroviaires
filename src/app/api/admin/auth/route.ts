@@ -13,7 +13,8 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const { password } = await request.json();
-    return loginResponse(password);
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "inconnue";
+    return loginResponse(password, ip);
   } catch {
     return unauthorizedResponse();
   }
