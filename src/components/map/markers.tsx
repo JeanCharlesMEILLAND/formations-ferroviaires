@@ -144,10 +144,11 @@ export function BoundsController({ target, desktop }: { target: { points: Array<
   useEffect(() => {
     if (!target || target.points.length === 0) return;
     if (target.points.length === 1) { map.flyTo(target.points[0], 12, { duration: 0.9 }); return; }
-    const pad = overlayPadding(desktop);
+    map.invalidateSize({ animate: false });
+    const pad = overlayPadding(desktop, map);
     map.flyToBounds(L.latLngBounds(target.points), {
-      paddingTopLeft: desktop ? [56, 56] : [36, pad.paddingTopLeft[1] + 8],
-      paddingBottomRight: desktop ? [420, 56] : [36, pad.paddingBottomRight[1] + 8],
+      paddingTopLeft: desktop ? [pad.paddingTopLeft[0] + 32, 56] : [36, pad.paddingTopLeft[1] + 8],
+      paddingBottomRight: desktop ? [56, 56] : [36, pad.paddingBottomRight[1] + 8], // symétrique : les résultats restent au centre de la carte, pas collés au panneau
       maxZoom: 12,
       duration: 0.9,
     });
@@ -155,11 +156,23 @@ export function BoundsController({ target, desktop }: { target: { points: Array<
   return null;
 }
 
-/** Marges des surcouches : recherche et puces en haut, feuille en bas sur mobile ; fiche flottante à droite sur grand écran. */
-export const overlayPadding = (desktop: boolean) => ({
-  paddingTopLeft: (desktop ? [24, 24] : [8, 130]) as [number, number],
-  paddingBottomRight: (desktop ? [24, 24] : [8, 108]) as [number, number],
-});
+/**
+ * Marges des surcouches : recherche et puces en haut, feuille en bas sur mobile. Sur grand écran, si le panneau
+ * recouvre le conteneur de la carte (au lieu d'être à côté), sa largeur devient une marge à gauche.
+ */
+export const overlayPadding = (desktop: boolean, map?: L.Map) => {
+  let left = 24;
+  if (desktop && map) {
+    const aside = document.querySelector("aside.sheet");
+    const box = map.getContainer().getBoundingClientRect();
+    const overlap = aside ? aside.getBoundingClientRect().right - box.left : 0;
+    if (overlap > 0 && overlap < box.width * 0.8) left = overlap + 24;
+  }
+  return {
+    paddingTopLeft: (desktop ? [left, 24] : [8, 130]) as [number, number],
+    paddingBottomRight: (desktop ? [24, 24] : [8, 108]) as [number, number],
+  };
+};
 
 /** Vue « toute la France » : au chargement sans animation, puis à chaque demande de recentrage. */
 export function FranceView({ tick, desktop, active }: { tick: number; desktop: boolean; active: boolean }) {
@@ -168,9 +181,18 @@ export function FranceView({ tick, desktop, active }: { tick: number; desktop: b
   useEffect(() => {
     if (!active && first.current) { first.current = false; return; }
     const bounds = L.latLngBounds(FRANCE_BOUNDS);
-    const opts = overlayPadding(desktop);
-    if (first.current) { first.current = false; map.fitBounds(bounds, { ...opts, animate: false }); return; }
-    map.flyToBounds(bounds, { ...opts, duration: 0.9 });
+    const fit = (animate: boolean) => {
+      map.invalidateSize({ animate: false }); // la taille du conteneur peut avoir changé depuis la création de la carte
+      const opts = overlayPadding(desktop, map);
+      if (animate) map.flyToBounds(bounds, { ...opts, duration: 0.9 }); else map.fitBounds(bounds, { ...opts, animate: false });
+    };
+    if (first.current) {
+      first.current = false;
+      fit(false);
+      const t = window.setTimeout(() => fit(false), 350); // seconde passe une fois la mise en page stabilisée
+      return () => window.clearTimeout(t);
+    }
+    fit(true);
   }, [map, tick, desktop, active]);
   return null;
 }
