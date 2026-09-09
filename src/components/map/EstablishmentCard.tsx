@@ -5,6 +5,7 @@ import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { displayName } from "@/lib/format";
 import { distanceKm, type Establishment } from "./types";
+import SelectionButton from "@/components/selection/SelectionButton";
 
 /** Fiche flottante d'un établissement choisi sur la carte ou dans la liste. */
 export default function EstablishmentCard({
@@ -50,6 +51,7 @@ export default function EstablishmentCard({
             {userPos && <span className="font-bold text-navy-700"> · {Math.round(distanceKm(userPos, [est.lat, est.lng]))} km</span>}
           </p>
         </div>
+        <SelectionButton slug={est.slug} labels={{ add: dict.selection.add, added: dict.selection.added, full: dict.selection.full }} variant="icon" className="-mt-1" />
         <button type="button" onClick={onClose} className="w-8 h-8 -mr-1 -mt-1 rounded-full grid place-items-center text-navy-400 hover:bg-navy-100 hover:text-navy-900 transition-colors shrink-0" aria-label={m.close}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="w-4 h-4" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
         </button>

@@ -16,7 +16,8 @@
     "update": "Update my listing",
     "near": "Near me",
     "admin": "Admin",
-    "contact": "Contact"
+    "contact": "Contact",
+    "selection": "My shortlist"
   },
   "hero": {
     "title": "Railway Training Map",
@@ -276,5 +277,39 @@
     "metaFormation": "{name}: where to train, verified institutions, target professions.",
     "metaMetier": "{name}: programs leading to it and institutions where to train.",
     "noFormation": "No linked program yet."
+  },
+  "selection": {
+    "title": "My shortlist",
+    "kicker": "Comparator",
+    "lead": "Compare up to {max} institutions side by side, take the list away as a PDF or share it by link.",
+    "empty": "Your shortlist is empty.",
+    "emptyHint": "On the map or on a listing, tap an institution's bookmark to add it here.",
+    "goMap": "Open the map",
+    "add": "Add to my shortlist",
+    "added": "In my shortlist",
+    "full": "Shortlist full: {max} listings at most.",
+    "remove": "Remove",
+    "clear": "Clear the shortlist",
+    "pdf": "Download as PDF",
+    "copy": "Copy link",
+    "copied": "Link copied",
+    "compare": "Compare",
+    "count": "{n} institutions",
+    "countOne": "1 institution",
+    "rows": {
+      "type": "Type",
+      "place": "City · Region",
+      "count": "Programs",
+      "levels": "Levels",
+      "domains": "Domains",
+      "website": "Website",
+      "metiers": "Target professions",
+      "map": "On the map",
+      "fiche": "Full listing"
+    },
+    "matrix": "Programs offered",
+    "allHave": "all",
+    "metaDescription": "Compare your selected institutions and take the list away as a PDF.",
+    "loading": "Loading your shortlist…"
   }
 }

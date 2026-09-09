@@ -7,6 +7,7 @@ import { getEstablishmentBySlug } from "@/lib/data";
 import { displayName } from "@/lib/format";
 import { Crumbs } from "@/components/fiches/parts";
 import MiniMap from "@/components/fiches/MiniMap";
+import SelectionButton from "@/components/selection/SelectionButton";
 
 export const revalidate = 600;
 
@@ -66,6 +67,7 @@ export default async function EstablishmentPage({ params }: { params: { locale: 
               {t.updateThis}
             </Link>
             <Link href={`/${L}/carte?etablissement=${e.slug}`} className={`${btn} bg-electric-500 text-white hover:bg-electric-600`}>{dict.fiches.seeOnMap}</Link>
+            <SelectionButton slug={e.slug} labels={{ add: dict.selection.add, added: dict.selection.added, full: dict.selection.full }} />
             {e.website && <a href={e.website} target="_blank" rel="noopener noreferrer" className={`${btn} border border-white/25 hover:border-signal-300`}>{t.website} ↗</a>}
             {e.onisepUrl && <a href={e.onisepUrl} target="_blank" rel="noopener noreferrer" className={`${btn} border border-white/25 hover:border-signal-300`}>ONISEP ↗</a>}
             <a href={directions} target="_blank" rel="noopener noreferrer" className={`${btn} border border-white/25 hover:border-signal-300`}>{dict.map.directions} ↗</a>

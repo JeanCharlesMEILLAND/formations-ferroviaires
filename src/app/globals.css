@@ -225,3 +225,21 @@ section[id] { scroll-margin-top: 5rem; } /* la barre de navigation collante ne c
 
 .result-link { font-size: 11px; font-weight: 800; color: #E84A28; white-space: nowrap; margin-left: 8px; }
 .result-link:hover { text-decoration: underline; }
+
+/* Sélection et comparateur */
+.bookmark { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; color: #6C7C88; background: transparent; border: 1.5px solid transparent; transition: color .18s, background .18s, transform .18s; }
+.bookmark:hover { background: #E4ECEF; color: #0C1F2C; }
+.bookmark.is-on { color: #FF5A36; background: #FFEDE8; }
+.bookmark:active { transform: scale(.92); }
+.bookmark-note { position: absolute; right: 0; top: calc(100% + 6px); z-index: 20; white-space: nowrap; background: #0C1F2C; color: #fff; font-size: 11px; font-weight: 700; padding: 6px 10px; border-radius: 8px; box-shadow: 0 8px 20px rgba(12, 31, 44, .25); animation: rise .18s ease-out both; }
+.compare-wrap { overflow-x: auto; border: 1px solid #D6DDE1; border-radius: 1rem; background: #fff; }
+.compare { border-collapse: separate; border-spacing: 0; min-width: 100%; font-size: 13px; color: #0C1F2C; }
+.compare th, .compare td { padding: 12px 14px; border-bottom: 1px solid #EEF2F4; vertical-align: top; text-align: left; min-width: 180px; }
+.compare thead th { background: #F1F3F2; position: sticky; top: 0; z-index: 2; }
+.compare .compare-label { position: sticky; left: 0; z-index: 1; background: #fff; min-width: 200px; max-width: 260px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: #4F6270; box-shadow: 1px 0 0 #EEF2F4; }
+.compare thead .compare-label { z-index: 3; background: #F1F3F2; }
+.compare tbody tr:hover td { background: #FAFBFB; }
+.compare .compare-section th { background: #0C1F2C; color: #fff; text-transform: none; letter-spacing: 0; font-size: 13px; font-family: var(--font-heading), system-ui, sans-serif; position: sticky; left: 0; }
+.compare tbody tr.is-common .compare-label { color: #13634E; }
+.compare tbody tr .compare-label a { text-transform: none; letter-spacing: 0; font-size: 13px; font-weight: 700; color: #0C1F2C; }
+.compare-yes { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; background: #DDF3EA; color: #13634E; font-weight: 800; }

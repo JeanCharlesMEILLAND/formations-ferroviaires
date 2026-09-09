@@ -11,6 +11,8 @@ import SearchField from "./SearchField";
 import EstablishmentCard from "./EstablishmentCard";
 import { MarkerClusterLayer, MapController, UserDot, BoundsController } from "./markers";
 import { useCountUp, useDesktop } from "./hooks";
+import { useSelection } from "@/lib/selection";
+import SelectionButton from "@/components/selection/SelectionButton";
 import { buildSuggestionItems, expandQuery, matchesAll, normalize, suggest, type SuggestionItem } from "@/lib/search";
 import { distanceKm, FRANCE_CENTER, FRANCE_ZOOM, type Establishment, type FilterData, type Formation, type IndexedEstablishment, type Metier, type SlimEstablishment } from "./types";
 
@@ -70,6 +72,8 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
   const [sheet, setSheet] = useState<Sheet>("peek");
   const listRef = useRef<HTMLDivElement>(null);
 
+  const sel = useSelection();
+  const selLabels = { add: dict.selection.add, added: dict.selection.added, full: dict.selection.full };
   const flyTo = useCallback((center: [number, number], zoom?: number) => setFly({ center, zoom, tick: Date.now() }), []);
 
   // Référentiels et établissements, chargés une fois (réponses en cache au CDN) ; deux nouvelles tentatives si la base se réveille.
@@ -390,16 +394,20 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
 
   const resultsHeader = (
     <div className="px-4 pt-3 pb-2.5 border-b border-navy-100">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-[10px] font-extrabold uppercase tracking-wider text-navy-400">{context ? context.kicker : m.ctxAll}</p>
-          {context && <h2 className="font-heading font-extrabold text-[20px] leading-tight text-navy-900 text-balance mt-0.5 animate-rise" key={context.title}>{context.title}</h2>}
-          <p className={`font-heading font-extrabold leading-none text-navy-900 tabular-nums ${context ? "text-[15px] mt-1.5" : "text-[24px] mt-1"}`}>
-            {count}
-            <span className="text-body-sm font-bold text-navy-500 ml-2">{displayed.length > 1 ? m.establishmentMany : m.establishmentOne}</span>
-          </p>
-        </div>
-        <div className="flex items-center gap-1.5 shrink-0">
+      <p className="text-[10px] font-extrabold uppercase tracking-wider text-navy-400">{context ? context.kicker : m.ctxAll}</p>
+      {context && <h2 className="font-heading font-extrabold text-[20px] leading-tight text-navy-900 text-balance mt-0.5 animate-rise" key={context.title}>{context.title}</h2>}
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mt-1.5">
+        <p className={`font-heading font-extrabold leading-none text-navy-900 tabular-nums ${context ? "text-[15px]" : "text-[24px]"}`}>
+          {count}
+          <span className="text-body-sm font-bold text-navy-500 ml-2">{displayed.length > 1 ? m.establishmentMany : m.establishmentOne}</span>
+        </p>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {sel.count > 0 && (
+            <a href={`/${locale}/selection`} className="chip is-on" style={{ background: "#FF5A36", borderColor: "#FF5A36" }} title={dict.selection.title}>
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" /></svg>
+              {dict.selection.compare} <span className="chip-badge" style={{ background: "#fff", color: "#C23B1E" }}>{sel.count}</span>
+            </a>
+          )}
           <button type="button" onClick={() => setFiltersOpen(!filtersOpen)} aria-expanded={filtersOpen} className={`chip ${filtersOpen || activeChips.length ? "is-on" : ""}`}>
             <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4" /></svg>
             {m.filters}{activeChips.length > 0 && <span className="chip-badge">{activeChips.length}</span>}
@@ -538,14 +546,15 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
                   {items.map((est, i) => {
                     const active = selected?.id === est.id;
                     return (
-                      <li key={est.id} id={`row-${est.id}`} className="animate-rise" style={{ animationDelay: `${Math.min(g * 2 + i, 14) * 30}ms` }}>
+                      <li key={est.id} id={`row-${est.id}`} className="animate-rise relative" style={{ animationDelay: `${Math.min(g * 2 + i, 14) * 30}ms` }}>
+                        <span className="absolute right-9 top-3 z-10"><SelectionButton slug={est.slug} labels={selLabels} variant="icon" /></span>
                         <button
                           type="button"
                           onClick={() => select(est, 12)}
                           onMouseEnter={() => setHotId(est.id)}
                           onMouseLeave={() => setHotId(null)}
                           aria-current={active ? "true" : undefined}
-                          className={`result-row ${active ? "is-active" : ""}`}
+                          className={`result-row pr-16 ${active ? "is-active" : ""}`}
                         >
                           <span className="result-icon" style={{ background: est.type.color }} aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z" /></svg></span>
                           <span className="min-w-0 flex-1">

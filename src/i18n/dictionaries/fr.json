@@ -16,7 +16,8 @@
     "update": "Mettre à jour ma fiche",
     "near": "Près de moi",
     "admin": "Administration",
-    "contact": "Contact"
+    "contact": "Contact",
+    "selection": "Ma sélection"
   },
   "hero": {
     "title": "Cartographie des Formations Ferroviaires",
@@ -276,5 +277,39 @@
     "metaFormation": "{name} : où se former, établissements vérifiés, métiers visés.",
     "metaMetier": "{name} : formations qui y mènent et établissements où se former.",
     "noFormation": "Aucune formation reliée pour l'instant."
+  },
+  "selection": {
+    "title": "Ma sélection",
+    "kicker": "Comparateur",
+    "lead": "Comparez jusqu'à {max} établissements côte à côte, emportez la liste en PDF ou partagez-la par lien.",
+    "empty": "Votre sélection est vide.",
+    "emptyHint": "Sur la carte ou sur une fiche, touchez le signet d'un établissement pour l'ajouter ici.",
+    "goMap": "Ouvrir la carte",
+    "add": "Ajouter à ma sélection",
+    "added": "Dans ma sélection",
+    "full": "Sélection pleine : {max} fiches au plus.",
+    "remove": "Retirer",
+    "clear": "Vider la sélection",
+    "pdf": "Télécharger en PDF",
+    "copy": "Copier le lien",
+    "copied": "Lien copié",
+    "compare": "Comparer",
+    "count": "{n} établissements",
+    "countOne": "1 établissement",
+    "rows": {
+      "type": "Type",
+      "place": "Ville · Région",
+      "count": "Formations",
+      "levels": "Niveaux",
+      "domains": "Domaines",
+      "website": "Site web",
+      "metiers": "Métiers visés",
+      "map": "Sur la carte",
+      "fiche": "Fiche complète"
+    },
+    "matrix": "Formations proposées",
+    "allHave": "tous",
+    "metaDescription": "Comparez vos établissements sélectionnés et emportez la liste en PDF.",
+    "loading": "Chargement de votre sélection…"
   }
 }

@@ -4,12 +4,14 @@ import Link from "next/link";
 import { useState } from "react";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
+import { useSelection } from "@/lib/selection";
 
 export const CONTACT_MAILTO =
   "mailto:contact@objectif-ofp.org?subject=Formations%20ferroviaires%20%3A%20mise%20%C3%A0%20jour%20d%27une%20fiche";
 
 export default function Header({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const [open, setOpen] = useState(false);
+  const sel = useSelection();
   const other = locale === "fr" ? "en" : "fr";
   const links: Array<{ href: string; label: string; external?: boolean }> = [
     { href: `/${locale}#metiers`, label: dict.nav.metiers },
@@ -40,6 +42,12 @@ export default function Header({ locale, dict }: { locale: Locale; dict: Diction
         </nav>
 
         <div className="flex items-center gap-2">
+          {sel.count > 0 && (
+            <Link href={`/${locale}/selection`} className="inline-flex items-center gap-1.5 rounded-button bg-electric-500 hover:bg-electric-600 text-white px-3 py-2 text-caption font-bold transition-colors" title={dict.nav.selection}>
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" /></svg>
+              <span className="hidden sm:inline">{dict.nav.selection}</span> {sel.count}
+            </Link>
+          )}
           <Link
             href={`/${locale}/carte?near=1`}
             className="hidden sm:inline-flex items-center gap-2 rounded-button border border-white/25 px-4 py-2 text-body-sm font-bold hover:border-signal-300 hover:text-signal-300 transition-colors"
