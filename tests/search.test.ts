@@ -10,6 +10,7 @@ test("normalize retire accents, casse et ponctuation", () => {
 test("expandQuery élargit avec les synonymes du rail", () => {
   const [g] = expandQuery("conducteur");
   assert.ok(g.includes("conducteur") && g.includes("conduite") && g.includes("traction"));
+  assert.ok(!g.includes("train"), "« train » seul élargit trop (matériel, transport…), retiré des synonymes");
   assert.deepEqual(expandQuery("a"), []); // mot trop court ignoré
 });
 

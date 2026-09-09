@@ -15,8 +15,8 @@ export function normalize(s: string): string {
 
 /** Vocabulaire du rail : chaque entrée élargit un mot tapé aux termes voisins présents dans les fiches. */
 export const SYNONYMS: Record<string, string[]> = {
-  conducteur: ["conduite", "traction", "tes", "licence europeenne", "train"],
-  conductrice: ["conduite", "traction", "tes", "train"],
+  conducteur: ["conduite", "traction", "tes", "licence europeenne"],
+  conductrice: ["conduite", "traction", "tes"],
   conduite: ["conducteur", "traction", "tes"],
   aiguilleur: ["circulation", "trafic", "signalisation", "regulateur"],
   aiguilleuse: ["circulation", "trafic", "signalisation"],
