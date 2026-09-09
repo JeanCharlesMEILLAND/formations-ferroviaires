@@ -125,3 +125,22 @@ model EstablishmentFormation {
   @@index([establishmentId])
   @@index([formationId])
 }
+
+/// Messages du formulaire de contact (mise à jour de fiche, signalement, proposition, autre).
+model ContactMessage {
+  id                String    @id @default(cuid())
+  kind              String    // fiche | erreur | nouveau | autre
+  name              String
+  email             String
+  organisation      String?
+  establishmentSlug String?
+  establishmentName String?
+  message           String
+  pageUrl           String?
+  status            String    @default("new") // new | handled
+  createdAt         DateTime  @default(now())
+  handledAt         DateTime?
+
+  @@index([status])
+  @@index([createdAt])
+}

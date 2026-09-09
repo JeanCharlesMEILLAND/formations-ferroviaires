@@ -5,7 +5,6 @@ import { getDictionary } from "@/i18n/get-dictionary";
 import { getHomeData, type FamilyCard } from "@/lib/home";
 import FranceMap from "@/components/home/FranceMap";
 import HeroSearch from "@/components/home/HeroSearch";
-import { CONTACT_MAILTO } from "@/components/layout/Header";
 import { displayName } from "@/lib/format";
 
 export const revalidate = 600; // dix minutes : la page reste instantanée même quand la base se réveille
@@ -111,8 +110,8 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
             </div>
           </div>
 
-          <div className="max-w-md mx-auto w-full">
-            <FranceMap regions={data.regions} locale={L} caption={dict.home.networkCaption} unitOne={dict.map.verifiedOne} unitMany={dict.map.verifiedMany} none={dict.home.noneYet} />
+          <div className="max-w-md lg:max-w-lg w-full mx-auto lg:mx-0 lg:justify-self-end lg:self-start lg:-mt-6 lg:-mr-6">
+            <FranceMap regions={data.regions} locale={L} caption={dict.home.networkCaption} unitOne={dict.map.verifiedOne} unitMany={dict.map.verifiedMany} none={dict.home.noneYet} propose={dict.contact.kinds.nouveau} />
           </div>
         </div>
         <div className="h-1.5 bg-[repeating-linear-gradient(90deg,#FFD84D_0_40px,transparent_40px_56px)] opacity-90" aria-hidden="true" />
@@ -235,8 +234,8 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
             <p className="text-navy-300 mt-2 max-w-[60ch]">{dict.home.ctaSub}</p>
           </div>
           <div className="flex flex-wrap gap-2.5 lg:justify-end">
-            <a href={CONTACT_MAILTO} className="rounded-button bg-electric-500 hover:bg-electric-600 text-white px-5 py-3 font-bold text-body-sm">{dict.home.ctaButton}</a>
-            <a href={CONTACT_MAILTO} className="rounded-button border border-white/25 px-5 py-3 font-bold text-body-sm hover:border-signal-300">{dict.home.ctaSecondary}</a>
+            <Link href={`/${L}/contact?sujet=fiche`} className="rounded-button bg-electric-500 hover:bg-electric-600 text-white px-5 py-3 font-bold text-body-sm transition-colors">{dict.home.ctaButton}</Link>
+            <Link href={`/${L}/contact?sujet=nouveau`} className="rounded-button border border-white/25 px-5 py-3 font-bold text-body-sm hover:border-signal-300 transition-colors">{dict.home.ctaSecondary}</Link>
           </div>
         </div>
       </section>

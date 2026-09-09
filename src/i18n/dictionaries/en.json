@@ -15,7 +15,8 @@
     "map": "Map",
     "update": "Update my listing",
     "near": "Near me",
-    "admin": "Admin"
+    "admin": "Admin",
+    "contact": "Contact"
   },
   "hero": {
     "title": "Railway Training Map",
@@ -106,7 +107,8 @@
     "backToMap": "Back to map",
     "onisep": "View on ONISEP",
     "futurentrain": "View on Futur en Train",
-    "otherEstablishments": "Other institutions offering this program"
+    "otherEstablishments": "Other institutions offering this program",
+    "updateThis": "Update this listing"
   },
   "formation": {
     "title": "Program details",
@@ -178,5 +180,55 @@
     "noneYet": "no verified institution yet",
     "levelWord": "Level",
     "parcoursLegend": "The numbers are the levels of the French qualifications framework: 3 = vocational certificate, 4 = high-school diploma, 5 = two years after, 6 = three years after, 7 = five years after, 8 = six years and more. The star groups professional certifications, open at any age."
+  },
+  "contact": {
+    "title": "Contact",
+    "lead": "A listing to update, an error you spotted, an institution to suggest? Write to us: the team reads every message and replies by email.",
+    "kindLabel": "Your request",
+    "kinds": {
+      "fiche": "Update my listing",
+      "erreur": "Report an error",
+      "nouveau": "Suggest an institution",
+      "autre": "Other request"
+    },
+    "kindsHint": {
+      "fiche": "You represent an institution already on the map.",
+      "erreur": "A wrong address, program or link.",
+      "nouveau": "A rail training centre missing from the map.",
+      "autre": "Partnership, press, question."
+    },
+    "name": "Your name",
+    "email": "Your email",
+    "organisation": "Organisation (optional)",
+    "establishment": "Institution concerned",
+    "establishmentHint": "Type the name, then pick it in the list. If it is missing, write it in full.",
+    "message": "Your message",
+    "messageHint": {
+      "fiche": "What changes: programs, address, website, contact, term dates, open days…",
+      "erreur": "What is wrong and what it should say instead.",
+      "nouveau": "Name, city, website and rail programs offered.",
+      "autre": "Tell us everything."
+    },
+    "send": "Send",
+    "sending": "Sending…",
+    "successTitle": "Message sent",
+    "successText": "Thank you. The team reads every message and replies by email, usually within a few days.",
+    "another": "Send another message",
+    "backHome": "Back to home",
+    "errorGeneric": "Sending failed, please try again in a moment.",
+    "errorRate": "Too many messages from your connection, try again in a few minutes.",
+    "required": "Required field",
+    "invalidEmail": "Invalid email",
+    "tooShort": "At least ten characters",
+    "privacy": "Your details are only used to reply to you. They are neither published nor shared.",
+    "directMail": "Prefer email?",
+    "metaDescription": "Update your institution's listing, report an error or suggest a rail training centre.",
+    "howTitle": "How it works",
+    "how": [
+      "Your message reaches the Objectif OFP team, with the link to the listing concerned.",
+      "We check the information against your website or the official source, then update the listing.",
+      "Your institution shows as “verified” on the map, with up-to-date programs."
+    ],
+    "fields": "Your details"
   }
 }

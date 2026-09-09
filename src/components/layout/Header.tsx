@@ -15,6 +15,7 @@ export default function Header({ locale, dict }: { locale: Locale; dict: Diction
     { href: `/${locale}#metiers`, label: dict.nav.metiers },
     { href: `/${locale}#parcours`, label: dict.nav.parcours },
     { href: `/${locale}/carte`, label: dict.nav.map },
+    { href: `/${locale}/contact`, label: dict.nav.contact },
   ];
 
   return (

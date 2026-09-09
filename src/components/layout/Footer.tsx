@@ -28,6 +28,7 @@ export default function Footer({ locale, dict }: { locale: Locale; dict: Diction
             <span>{locale === "fr" ? "Données : établissements déclarés, ONISEP, La Bonne Alternance, EPSF" : "Data: declared institutions, ONISEP, La Bonne Alternance, EPSF"}</span>
             <a href="https://www.futurentrain.fr/formations/" target="_blank" rel="noopener noreferrer" className="underline hover:text-navy-900">Futur en train</a>
             <a href="https://www.onisep.fr" target="_blank" rel="noopener noreferrer" className="underline hover:text-navy-900">ONISEP</a>
+            <Link href={`/${locale}/contact`} className="underline hover:text-navy-900">{dict.nav.contact}</Link>
             <Link href="/admin" className="underline hover:text-navy-900">{dict.nav.admin}</Link>
           </p>
         </div>

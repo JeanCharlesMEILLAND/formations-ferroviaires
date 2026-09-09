@@ -164,18 +164,25 @@ section[id] { scroll-margin-top: 5rem; } /* la barre de navigation collante ne c
 .fr-node { cursor: pointer; outline: none; animation: fr-pop .6s cubic-bezier(.2, .9, .3, 1.4) both; transform-box: fill-box; transform-origin: center; }
 .fr-halo { fill: rgba(255, 216, 77, .12); transition: fill .2s; }
 .fr-bubble { fill: #12303F; stroke: #FFD84D; stroke-width: 3; transition: fill .2s, stroke .2s; filter: url(#fr-glow); }
+.fr-node.is-empty .fr-bubble { fill: rgba(12, 31, 44, .6); stroke: rgba(255, 216, 77, .7); stroke-dasharray: 3 3; stroke-width: 2; filter: none; }
+.fr-node.is-empty .fr-count { fill: #B7C6CE; font-size: 11px; }
+.fr-node.is-empty.is-hot .fr-bubble { fill: #FFD84D; stroke-dasharray: none; }
+.fr-node.is-empty.is-hot .fr-count { fill: #0C1F2C; }
+.fr-tip-cta { display: block; margin-top: 4px; font-size: 12px; font-weight: 800; color: #E84A28 !important; }
 .fr-count { fill: #fff; font-family: var(--font-heading), system-ui, sans-serif; font-weight: 800; font-size: 14px; pointer-events: none; transition: fill .2s; }
 .fr-node.is-hot .fr-bubble, .fr-node:focus-visible .fr-bubble { fill: #FFD84D; }
 .fr-node.is-hot .fr-count, .fr-node:focus-visible .fr-count { fill: #0C1F2C; }
 .fr-node.is-hot .fr-halo, .fr-node:focus-visible .fr-halo { fill: rgba(255, 216, 77, .3); }
-.fr-tip { position: absolute; z-index: 5; transform: translate(-50%, calc(-100% - 12px)); background: #fff; color: #0C1F2C; border-radius: 12px; padding: 8px 12px; box-shadow: 0 12px 34px rgba(0, 0, 0, .38); white-space: nowrap; pointer-events: none; animation: rise .18s ease-out both; }
-.fr-tip strong { display: block; font-family: var(--font-heading), system-ui, sans-serif; font-size: 14px; line-height: 1.2; }
-.fr-tip span { display: block; font-size: 12px; color: #4F6270; margin-top: 2px; }
-.fr-tip::after { content: ""; position: absolute; left: 50%; bottom: -5px; width: 12px; height: 12px; background: #fff; transform: translateX(-50%) rotate(45deg); border-radius: 2px; }
+.fr-tip { position: absolute; z-index: 5; transform: translate(-50%, calc(-100% - 12px)); pointer-events: none; }
+.fr-tip-in { position: relative; background: #fff; color: #0C1F2C; border-radius: 12px; padding: 8px 12px; box-shadow: 0 12px 34px rgba(0, 0, 0, .38); white-space: nowrap; animation: tip-in .18s ease-out both; }
+.fr-tip-in strong { display: block; font-family: var(--font-heading), system-ui, sans-serif; font-size: 14px; line-height: 1.2; }
+.fr-tip-in span { display: block; font-size: 12px; color: #4F6270; margin-top: 2px; }
+.fr-tip-in::after { content: ""; position: absolute; left: 50%; bottom: -5px; width: 12px; height: 12px; background: #fff; transform: translateX(-50%) rotate(45deg); border-radius: 2px; }
 .fr-tip.is-right { transform: translate(-88%, calc(-100% - 12px)); }
-.fr-tip.is-right::after { left: 88%; }
+.fr-tip.is-right .fr-tip-in::after { left: 88%; }
 .fr-tip.is-left { transform: translate(-14%, calc(-100% - 12px)); }
-.fr-tip.is-left::after { left: 14%; }
+.fr-tip.is-left .fr-tip-in::after { left: 14%; }
+@keyframes tip-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @keyframes fr-draw { to { stroke-dashoffset: 0; } }
 @keyframes fr-fill { from { fill: rgba(255, 255, 255, 0); } }
 @keyframes fr-pop { from { opacity: 0; transform: scale(.3); } to { opacity: 1; transform: none; } }
@@ -191,4 +198,12 @@ section[id] { scroll-margin-top: 5rem; } /* la barre de navigation collante ne c
 .family-job.is-more { background: transparent; color: var(--fam); border: 1.5px dashed var(--fam); }
 .family-foot { margin-top: auto; display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #0C1F2C; transition: color .2s, gap .2s; }
 .family-card:hover .family-foot { color: var(--fam); gap: 10px; }
-@media (prefers-reduced-motion: reduce) { .fr-region, .fr-node, .family-card, .fr-tip { animation: none !important; } .fr-map .is-ready .fr-region { stroke-dashoffset: 0 !important; } }
+@media (prefers-reduced-motion: reduce) { .fr-region, .fr-node, .family-card, .fr-tip-in { animation: none !important; } .fr-map .is-ready .fr-region { stroke-dashoffset: 0 !important; } }
+
+/* Formulaire de contact : motifs */
+.kind-card { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; border: 1.5px solid #D6DDE1; background: #fff; cursor: pointer; transition: border-color .18s, background .18s, transform .18s; }
+.kind-card:hover { border-color: #0C1F2C; transform: translateY(-1px); }
+.kind-card.is-on { border-color: #0C1F2C; background: #F1F3F2; box-shadow: inset 0 0 0 1px #0C1F2C; }
+.kind-card:focus-within { outline: 3px solid rgba(12, 31, 44, .18); outline-offset: 2px; }
+.kind-icon { width: 36px; height: 36px; border-radius: 10px; background: #E4ECEF; color: #0C1F2C; display: grid; place-items: center; flex-shrink: 0; transition: background .18s, color .18s; }
+.kind-card.is-on .kind-icon { background: #0C1F2C; color: #FFD84D; }

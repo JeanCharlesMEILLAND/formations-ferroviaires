@@ -198,9 +198,10 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
     if (selectedRegion) chips.push({ key: "region", label: f?.regions.find((x) => x.code === selectedRegion)?.name ?? selectedRegion, clear: () => setSelectedRegion("") });
     if (selectedLevel) chips.push({ key: "level", label: (fr ? f?.levels.find((x) => x.slug === selectedLevel)?.nameFr : f?.levels.find((x) => x.slug === selectedLevel)?.nameEn) ?? selectedLevel, clear: () => setSelectedLevel("") });
     if (selectedDomain) chips.push({ key: "domain", label: (fr ? f?.domains.find((x) => x.slug === selectedDomain)?.nameFr : f?.domains.find((x) => x.slug === selectedDomain)?.nameEn) ?? selectedDomain, clear: () => setSelectedDomain("") });
+    if (selectedFamily) chips.push({ key: "family", label: `${m.family} : ${selectedFamily.replace(",", " · ")}`, clear: () => setSelectedFamily("") });
     if (selectedType) chips.push({ key: "type", label: (fr ? f?.types.find((x) => x.slug === selectedType)?.nameFr : f?.types.find((x) => x.slug === selectedType)?.nameEn) ?? selectedType, clear: () => setSelectedType("") });
     return chips;
-  }, [filterData, fr, selectedMetier, selectedFormation, selectedRegion, selectedLevel, selectedDomain, selectedType]);
+  }, [filterData, fr, m.family, selectedMetier, selectedFormation, selectedRegion, selectedLevel, selectedDomain, selectedType, selectedFamily]);
 
   const hasFilters = Boolean(searchQuery || selectedFamily || activeChips.length);
 

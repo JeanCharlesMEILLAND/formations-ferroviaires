@@ -15,7 +15,8 @@
     "map": "Carte",
     "update": "Mettre à jour ma fiche",
     "near": "Près de moi",
-    "admin": "Administration"
+    "admin": "Administration",
+    "contact": "Contact"
   },
   "hero": {
     "title": "Cartographie des Formations Ferroviaires",
@@ -106,7 +107,8 @@
     "backToMap": "Retour à la carte",
     "onisep": "Voir sur ONISEP",
     "futurentrain": "Voir sur Futur en Train",
-    "otherEstablishments": "Autres établissements proposant cette formation"
+    "otherEstablishments": "Autres établissements proposant cette formation",
+    "updateThis": "Mettre à jour cette fiche"
   },
   "formation": {
     "title": "Fiche formation",
@@ -178,5 +180,55 @@
     "noneYet": "aucun établissement vérifié pour l'instant",
     "levelWord": "Niveau",
     "parcoursLegend": "Les numéros sont les niveaux du cadre national des certifications : 3 = CAP, 4 = bac, 5 = bac + 2, 6 = bac + 3, 7 = bac + 5, 8 = bac + 6 et plus. L'étoile regroupe les certifications professionnelles, accessibles à tout âge."
+  },
+  "contact": {
+    "title": "Contact",
+    "lead": "Une fiche à mettre à jour, une erreur repérée, un établissement à proposer ? Écrivez-nous : l'équipe relit chaque message et vous répond par courriel.",
+    "kindLabel": "Votre demande",
+    "kinds": {
+      "fiche": "Mettre à jour ma fiche",
+      "erreur": "Signaler une erreur",
+      "nouveau": "Proposer un établissement",
+      "autre": "Autre demande"
+    },
+    "kindsHint": {
+      "fiche": "Vous représentez un établissement déjà sur la carte.",
+      "erreur": "Une adresse, une formation ou un lien inexact.",
+      "nouveau": "Un centre de formation ferroviaire absent de la carte.",
+      "autre": "Partenariat, presse, question."
+    },
+    "name": "Votre nom",
+    "email": "Votre courriel",
+    "organisation": "Organisme (facultatif)",
+    "establishment": "Établissement concerné",
+    "establishmentHint": "Tapez le nom, puis choisissez dans la liste. S'il n'y figure pas, écrivez-le en toutes lettres.",
+    "message": "Votre message",
+    "messageHint": {
+      "fiche": "Ce qui change : formations proposées, adresse, site web, contact, dates de rentrée, portes ouvertes…",
+      "erreur": "Ce qui est faux et ce qu'il faudrait lire à la place.",
+      "nouveau": "Nom, ville, site web et formations ferroviaires proposées.",
+      "autre": "Dites-nous tout."
+    },
+    "send": "Envoyer",
+    "sending": "Envoi…",
+    "successTitle": "Message envoyé",
+    "successText": "Merci. L'équipe relit chaque message et vous répond par courriel, en général sous quelques jours.",
+    "another": "Envoyer un autre message",
+    "backHome": "Retour à l'accueil",
+    "errorGeneric": "L'envoi a échoué, réessayez dans un instant.",
+    "errorRate": "Trop de messages envoyés depuis votre connexion, réessayez dans quelques minutes.",
+    "required": "Champ obligatoire",
+    "invalidEmail": "Courriel invalide",
+    "tooShort": "Dix caractères au moins",
+    "privacy": "Vos coordonnées servent uniquement à vous répondre. Elles ne sont ni publiées ni transmises.",
+    "directMail": "Vous préférez le courriel ?",
+    "metaDescription": "Mettre à jour la fiche de votre établissement, signaler une erreur ou proposer un centre de formation ferroviaire.",
+    "howTitle": "Comment ça se passe",
+    "how": [
+      "Votre message arrive à l'équipe d'Objectif OFP, avec le lien de la fiche concernée.",
+      "Nous vérifions les informations auprès de votre site ou de la source officielle, puis nous mettons la fiche à jour.",
+      "Votre établissement apparaît « vérifié » sur la carte, avec les formations à jour."
+    ],
+    "fields": "Vos coordonnées"
   }
 }

@@ -77,6 +77,13 @@ export default async function EstablishmentPage({
 
           {/* Quick action buttons */}
           <div className="flex flex-wrap gap-3 mt-6">
+            <Link
+              href={`/${locale}/contact?sujet=fiche&etablissement=${establishment.slug}`}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-signal-300 text-navy-900 rounded-lg text-sm font-bold hover:bg-signal-200 transition-colors"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
+              {dict.establishment.updateThis}
+            </Link>
             {establishment.website && (
               <a
                 href={establishment.website}

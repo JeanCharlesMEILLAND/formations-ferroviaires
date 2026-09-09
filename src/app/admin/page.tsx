@@ -30,7 +30,7 @@ interface Metier {
   formations: Array<{ formation: { id: string; nameFr: string; slug: string } }>;
 }
 
-type Tab = "dashboard" | "establishments" | "formations" | "metiers" | "links-ef" | "links-mf" | "enrich";
+type Tab = "dashboard" | "establishments" | "formations" | "metiers" | "links-ef" | "links-mf" | "enrich" | "messages";
 
 // ============================================================
 // Login Screen
@@ -168,6 +168,7 @@ export default function AdminPage() {
   const [levels, setLevels] = useState<Level[]>([]);
   const [domains, setDomains] = useState<Domain[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pendingMessages, setPendingMessages] = useState(0);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const showMessage = useCallback((type: "success" | "error", text: string) => {
@@ -200,6 +201,7 @@ export default function AdminPage() {
       setTypes(filters.types);
       setLevels(filters.levels);
       setDomains(filters.domains);
+      fetch("/api/admin/messages?status=new").then((r) => (r.ok ? r.json() : null)).then((d) => { if (d) setPendingMessages(d.pending); }).catch(() => {});
     } catch (e) {
       console.error(e);
       showMessage("error", "Erreur de chargement");
@@ -241,6 +243,7 @@ export default function AdminPage() {
     { key: "links-ef", label: `Liens Etab-Form (${totalLinksEF})` },
     { key: "links-mf", label: `Liens Met-Form (${totalLinksMF})` },
     { key: "enrich", label: "Enrichir (API)" },
+    { key: "messages", label: pendingMessages ? `Messages (${pendingMessages} à traiter)` : "Messages" },
   ];
 
   return (
@@ -376,6 +379,9 @@ export default function AdminPage() {
               )}
               {tab === "enrich" && (
                 <EnrichTab onRefresh={loadData} onMessage={showMessage} />
+              )}
+              {tab === "messages" && (
+                <MessagesTab onMessage={showMessage} onPending={setPendingMessages} />
               )}
             </>
           )}
@@ -1717,6 +1723,106 @@ function EnrichTab({ onRefresh, onMessage }: { onRefresh: () => void; onMessage:
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+// ============================================================
+// Messages du formulaire de contact
+// ============================================================
+
+interface ContactMessage {
+  id: string; kind: string; name: string; email: string; organisation: string | null;
+  establishmentSlug: string | null; establishmentName: string | null; message: string; pageUrl: string | null;
+  status: string; createdAt: string; handledAt: string | null;
+}
+const KIND_LABEL: Record<string, string> = { fiche: "Mise à jour de fiche", erreur: "Erreur signalée", nouveau: "Nouvel établissement", autre: "Autre" };
+const KIND_COLOR: Record<string, string> = { fiche: "bg-amber-100 text-amber-800", erreur: "bg-red-100 text-red-800", nouveau: "bg-green-100 text-green-800", autre: "bg-gray-100 text-gray-700" };
+
+function MessagesTab({ onMessage, onPending }: { onMessage: (type: "success" | "error", text: string) => void; onPending: (n: number) => void }) {
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [filter, setFilter] = useState<"new" | "handled" | "all">("new");
+  const [loadingMsg, setLoadingMsg] = useState(true);
+
+  const load = useCallback(async () => {
+    setLoadingMsg(true);
+    try {
+      const res = await fetch("/api/admin/messages");
+      if (res.ok) { const d = await res.json(); setMessages(d.messages); onPending(d.pending); }
+    } catch { onMessage("error", "Messages indisponibles"); }
+    setLoadingMsg(false);
+  }, [onMessage, onPending]);
+  useEffect(() => { load(); }, [load]);
+
+  const setStatus = async (id: string, status: "new" | "handled") => {
+    const res = await fetch("/api/admin/messages", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, status }) });
+    if (res.ok) { onMessage("success", status === "handled" ? "Message marqué traité" : "Message rouvert"); load(); } else onMessage("error", "Échec de la mise à jour");
+  };
+  const remove = async (id: string) => {
+    if (!confirm("Supprimer définitivement ce message ?")) return;
+    const res = await fetch(`/api/admin/messages?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+    if (res.ok) { onMessage("success", "Message supprimé"); load(); } else onMessage("error", "Échec de la suppression");
+  };
+
+  const shown = messages.filter((m) => filter === "all" || m.status === filter);
+  const fmt = (d: string) => new Date(d).toLocaleString("fr-FR", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+
+  return (
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900">Messages du formulaire de contact</h2>
+          <p className="text-sm text-gray-500">Mises à jour de fiches, signalements et propositions envoyés depuis /contact.</p>
+        </div>
+        <div className="flex rounded-lg bg-gray-100 p-1 gap-1">
+          {([["new", "À traiter"], ["handled", "Traités"], ["all", "Tous"]] as const).map(([k, l]) => (
+            <button key={k} onClick={() => setFilter(k)} className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${filter === k ? "bg-white shadow text-gray-900" : "text-gray-500 hover:text-gray-800"}`}>
+              {l} ({k === "all" ? messages.length : messages.filter((m) => m.status === k).length})
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {loadingMsg ? (
+        <div className="flex items-center justify-center h-40"><div className="w-8 h-8 border-2 border-gray-200 border-t-[#1B2A5B] rounded-full animate-spin" /></div>
+      ) : shown.length === 0 ? (
+        <div className="bg-white border border-gray-200 rounded-xl p-10 text-center text-gray-500 text-sm">Aucun message dans cette vue.</div>
+      ) : (
+        <div className="space-y-3">
+          {shown.map((m) => (
+            <article key={m.id} className={`bg-white border rounded-xl p-5 ${m.status === "new" ? "border-amber-200" : "border-gray-200"}`}>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${KIND_COLOR[m.kind] ?? KIND_COLOR.autre}`}>{KIND_LABEL[m.kind] ?? m.kind}</span>
+                    <span className="text-xs text-gray-400">{fmt(m.createdAt)}</span>
+                    {m.status === "handled" && m.handledAt && <span className="text-xs text-green-700 font-semibold">traité le {fmt(m.handledAt)}</span>}
+                  </div>
+                  <p className="font-semibold text-gray-900">
+                    {m.name} · <a href={`mailto:${m.email}`} className="text-[#1B2A5B] underline">{m.email}</a>
+                    {m.organisation && <span className="text-gray-500 font-normal"> · {m.organisation}</span>}
+                  </p>
+                  {m.establishmentName && (
+                    <p className="text-sm text-gray-600 mt-0.5">
+                      Établissement : {m.establishmentSlug ? <a href={`/fr/etablissement/${m.establishmentSlug}`} target="_blank" rel="noopener noreferrer" className="underline text-[#1B2A5B]">{m.establishmentName}</a> : m.establishmentName}
+                    </p>
+                  )}
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  {m.status === "new" ? (
+                    <button onClick={() => setStatus(m.id, "handled")} className="px-3 py-1.5 rounded-lg bg-[#1B2A5B] text-white text-xs font-semibold hover:bg-[#25397a]">Marquer traité</button>
+                  ) : (
+                    <button onClick={() => setStatus(m.id, "new")} className="px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700 text-xs font-semibold hover:bg-gray-50">Rouvrir</button>
+                  )}
+                  <button onClick={() => remove(m.id)} className="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 text-xs font-semibold hover:bg-red-50">Supprimer</button>
+                </div>
+              </div>
+              <p className="mt-3 text-sm text-gray-800 whitespace-pre-wrap leading-relaxed border-t border-gray-100 pt-3">{m.message}</p>
+              {m.pageUrl && <p className="mt-2 text-xs text-gray-400 truncate">Depuis : {m.pageUrl}</p>}
+            </article>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

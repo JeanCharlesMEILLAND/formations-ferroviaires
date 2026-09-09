@@ -28,6 +28,7 @@ Build de production : `npm run build && npm start`.
 | `/fr`, `/en` | Accueil : recherche, familles de métiers, parcours, campus, réseau des régions (rendu serveur, cache 10 min) |
 | `/fr/carte` | Carte et liste. Filtres portés par l'adresse : `q`, `metier`, `formation`, `region` (code), `level`, `domain`, `type`, `family`, `view`, `near=1` |
 | `/fr/etablissement/<slug>` | Fiche établissement |
+| `/fr/contact` | Formulaire de contact : mettre à jour ma fiche (établissement pré-rempli depuis `?sujet=fiche&etablissement=<slug>`), signaler une erreur, proposer un établissement, autre demande |
 | `/admin` | Back-office : établissements, formations, métiers, liens, import/export Excel, enrichissement La Bonne Alternance |
 | `/api/filters`, `/api/establishments` | Données publiques lues par la carte |
 
@@ -40,6 +41,13 @@ Build de production : `npm run build && npm start`.
   Enrichir), masqués par défaut sur la carte. Ils ne font pas partie du seed et se rejouent à la demande.
 - Sources externes : ONISEP (liens), EPSF (organismes agréés), Futur en train et Avec l'industrie ferroviaire (fiches métiers).
 - `scripts/legacy/` : scripts de construction de mars 2026, conservés pour l'historique, à ne plus exécuter.
+
+## Formulaire de contact
+
+Les messages sont enregistrés en base (table `ContactMessage`) et relus dans le back-office, onglet Messages (à traiter / traités).
+Un courriel de notification part vers `CONTACT_TO` si `RESEND_API_KEY` est renseignée (API Resend, expéditeur `CONTACT_FROM`
+sur un domaine validé chez Resend) ; sans clé, rien ne part mais rien n'est perdu. Protections : champ piège, cinq envois par
+adresse et par dix minutes, validation côté serveur.
 
 ## Variables d'environnement
 
