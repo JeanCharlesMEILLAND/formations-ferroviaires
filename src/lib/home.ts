@@ -25,9 +25,14 @@ export interface CampusCard {
   city: string;
   region: string;
   type: string;
-  formationCount: number;
-  samples: string[];
+  typeColor: string;
 }
+
+/**
+ * Campus dédiés au rail mis en avant sur l'accueil. Liste choisie à la main : le nombre de liens
+ * formation en base ne permet pas de classer (plusieurs campus portent le même jeu de 43 liens, posé en bloc en mars 2026).
+ */
+const FEATURED_CAMPUSES = ["cmq-fiaem-valenciennes", "ferrocampus-saintes", "efmo-perols", "campus-mecateam-montceau-les-mines", "campus-fer-grenay", "campus-sncf-nanterre"];
 
 export interface HomeData {
   verified: number;
@@ -54,13 +59,8 @@ export async function getHomeData(): Promise<HomeData> {
       select: { code: true, name: true, lat: true, lng: true, _count: { select: { establishments: { where: VERIFIED } } } },
     }),
     prisma.establishment.findMany({
-      where: VERIFIED,
-      select: {
-        slug: true, name: true, city: true,
-        region: { select: { name: true } },
-        type: { select: { nameFr: true } },
-        formations: { select: { formation: { select: { nameFr: true } } } },
-      },
+      where: { slug: { in: FEATURED_CAMPUSES } },
+      select: { slug: true, name: true, city: true, region: { select: { name: true } }, type: { select: { nameFr: true, color: true } } },
     }),
   ]);
 
@@ -74,18 +74,10 @@ export async function getHomeData(): Promise<HomeData> {
     families.set(label, f);
   }
 
-  const campuses = establishments
-    .map((e) => ({
-      slug: e.slug,
-      name: e.name,
-      city: e.city,
-      region: e.region.name,
-      type: e.type.nameFr,
-      formationCount: e.formations.length,
-      samples: e.formations.slice(0, 2).map((f) => f.formation.nameFr),
-    }))
-    .sort((a, b) => b.formationCount - a.formationCount || a.name.localeCompare(b.name))
-    .slice(0, 6);
+  const campuses: CampusCard[] = FEATURED_CAMPUSES
+    .map((slug) => establishments.find((e) => e.slug === slug))
+    .filter((e): e is NonNullable<typeof e> => Boolean(e))
+    .map((e) => ({ slug: e.slug, name: e.name, city: e.city, region: e.region.name, type: e.type.nameFr, typeColor: e.type.color }));
 
   return {
     verified,

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getHomeData, type FamilyCard } from "@/lib/home";
-import RegionNetwork from "@/components/home/RegionNetwork";
+import FranceMap from "@/components/home/FranceMap";
 import { CONTACT_MAILTO } from "@/components/layout/Header";
 import { displayName } from "@/lib/format";
 
@@ -124,7 +124,7 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
           </div>
 
           <div className="max-w-md mx-auto w-full">
-            <RegionNetwork regions={data.regions} locale={L} caption={`${dict.home.networkCaption}${updated ? ` · ${updated}` : ""}`} />
+            <FranceMap regions={data.regions} locale={L} caption={`${dict.home.networkCaption}${updated ? ` · ${updated}` : ""}`} />
           </div>
         </div>
         <div className="h-1.5 bg-[repeating-linear-gradient(90deg,#FFD84D_0_40px,transparent_40px_56px)] opacity-90" aria-hidden="true" />
@@ -205,21 +205,20 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
             <Link href={carte} className="font-bold border-b-2 border-signal-300 whitespace-nowrap">{dict.home.campusAll}</Link>
           </div>
           <div className="grid gap-3.5 md:grid-cols-2 lg:grid-cols-3">
-            {data.campuses.map((c) => (
-              <Link key={c.slug} href={`/${L}/etablissement/${c.slug}`} className="bg-navy-50 border border-navy-200 rounded-card p-5 flex flex-col gap-2 hover:border-navy-900 transition-colors">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h3 className="font-heading text-h4 leading-tight">{displayName(c.name)}</h3>
-                    <p className="text-caption text-navy-600 mt-1">{c.city} · {c.region} · {c.type}</p>
-                  </div>
-                  <span className="font-heading text-[30px] font-extrabold leading-none text-navy-900 text-right">
-                    {c.formationCount}
-                    <small className="block font-body text-[11px] font-semibold text-navy-400">{dict.home.formationsWord}</small>
+            {data.campuses.map((c, i) => (
+              <Link key={c.slug} href={`/${L}/etablissement/${c.slug}`} className="campus-card group" style={{ animationDelay: `${i * 60}ms` }}>
+                <span className="campus-rail" style={{ background: c.typeColor }} aria-hidden="true" />
+                <span className="flex-1 min-w-0">
+                  <span className="flex items-center gap-2 mb-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full text-white" style={{ background: c.typeColor }}>{c.type}</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-eco-50 text-eco-700">✓ {dict.map.verifiedBadge}</span>
                   </span>
-                </div>
-                <ul className="text-caption text-navy-600 pl-4 list-disc">
-                  {c.samples.map((s) => <li key={s}>{s}</li>)}
-                </ul>
+                  <span className="block font-heading text-h4 leading-tight text-navy-900 group-hover:text-electric-600 transition-colors">{displayName(c.name)}</span>
+                  <span className="block text-caption text-navy-500 mt-1">{c.city} · {c.region}</span>
+                </span>
+                <span className="campus-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="w-4 h-4"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                </span>
               </Link>
             ))}
           </div>

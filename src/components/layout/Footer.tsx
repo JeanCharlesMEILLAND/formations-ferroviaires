@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
-const PARTNERS = ["Objectif OFP", "UTPF", "Fédération des industries ferroviaires", "Futur en train", "IA k LEFER"];
+const PARTNERS = ["Objectif OFP", "IA k LEFER"];
 
 export default function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const pathname = usePathname();
