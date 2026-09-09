@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>TITRE DU DOCUMENT</title>
+<!-- Polices : remplacer par celles du projet (Google Fonts chargées par Chromium au rendu). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 15mm 16mm 17mm 16mm; }
+  /* ====== CHARTE : régler ici depuis les variables CSS / tailwind du projet ====== */
+  :root {
+    --brand-950:#0C1F2C; --brand-900:#12303F; --brand-700:#253B49; --brand-600:#4F6270; --brand-200:#D6DDE1; --brand-100:#E4ECEF; --brand-50:#F1F3F2;
+    --ok-700:#13634E; --ok-100:#DDF3EA;           /* vert : « a accès », « qui voit » */
+    --info-700:#12303F; --info-100:#E4ECEF;       /* bleu : « qui édite », encadrés d'aide */
+    --warn-100:#FFF7D6; --accent:#FF5A36;         /* orange : numéros de chapitre, avertissements */
+    --no-700:#C23B1E; --no-100:#FFEDE8;           /* rouge : « n'a pas accès » */
+    --font-body: Manrope, "Segoe UI", Arial, sans-serif;
+    --font-head: "Bricolage Grotesque", "Segoe UI", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body { font-family: var(--font-body); font-size: 10.3pt; line-height: 1.45; color: var(--brand-950); background:#fff; }
+  h1, h2, h3, h4 { font-family: var(--font-head); color: var(--brand-950); line-height: 1.2; }
+  h1 { font-size: 24pt; font-weight: 700; margin: 0 0 4mm; }
+  h2 { font-size: 17pt; font-weight: 700; margin: 0 0 3mm; padding-bottom: 2mm; border-bottom: 2px solid var(--brand-200); }
+  h2 .num { color: var(--accent); margin-right: 3mm; }
+  h3 { font-size: 12.5pt; font-weight: 600; margin: 5mm 0 2mm; color: var(--brand-700); }
+  h4 { font-size: 11pt; font-weight: 600; margin: 4mm 0 1.5mm; }
+  p { margin: 0 0 2.6mm; }
+  ul, ol { margin: 0 0 3mm; padding-left: 5.5mm; }
+  li { margin-bottom: 1.2mm; }
+  li::marker { color: var(--brand-600); }
+  a { color: var(--brand-700); text-decoration: none; }
+  .section { page-break-before: always; }            /* chapitre majeur : nouvelle page */
+  .section:first-child, .section.flow { page-break-before: auto; }   /* .flow : s'enchaîne */
+  .section.flow { margin-top: 8mm; }
+  .lead { font-size: 12pt; color: var(--brand-900); }
+  .muted { color: var(--brand-600); }
+  .small { font-size: 9.2pt; }
+
+  /* ---- couverture ---- */
+  .cover { height: 257mm; display:flex; flex-direction:column; justify-content:space-between; page-break-after: always; }
+  .cover .top { display:flex; align-items:center; gap:6mm; }
+  .cover .top img { height: 16mm; }
+  .cover .school { font-family: var(--font-head); font-weight:600; font-size: 13pt; color: var(--brand-700); }
+  .cover .title-block { margin-top: 30mm; }
+  .cover .kicker { font-family: var(--font-head); letter-spacing: .18em; text-transform: uppercase; font-size: 10pt; color: var(--accent); font-weight:600; margin-bottom: 4mm; }
+  .cover h1 { font-size: 40pt; line-height: 1.05; margin-bottom: 6mm; }
+  .cover .subtitle { font-size: 16pt; color: var(--brand-700); font-family: var(--font-head); font-weight: 400; max-width: 150mm; }
+  .cover .band { background: var(--brand-950); color: #fff; border-radius: 6mm; padding: 8mm 10mm; display:flex; justify-content:space-between; gap: 8mm; }
+  .cover .band div { font-size: 10.5pt; }
+  .cover .band b { display:block; font-family: var(--font-head); font-weight:600; font-size: 11pt; margin-bottom: 1mm; }
+  .cover .band a { color:#fff; }
+  .cover .mosaic { display:grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin-top: 14mm; }
+  .cover .mosaic img { width:100%; border-radius: 3mm; border: 1px solid var(--brand-200); display:block; }
+
+  /* ---- encadrés ---- */
+  .box { border: 1px solid var(--brand-200); background: var(--brand-50); border-radius: 3mm; padding: 3.2mm 4.5mm; margin: 2.5mm 0 3.5mm; page-break-inside: avoid; }
+  .box.green { background: var(--ok-100); border-color: #c6e6a0; }
+  .box.orange { background: var(--warn-100); border-color: #f2d6ad; }
+  .box.blue { background: var(--info-100); border-color: #bcd3f3; }
+  .box.red { background: var(--no-100); border-color: #f0c2bb; }
+  .box h4 { margin-top: 0; }
+  .box p:last-child, .box ul:last-child { margin-bottom: 0; }
+  /* deux cases « qui voit / qui édite » sous chaque écran */
+  .visibility { display:grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin: 2mm 0 4mm; page-break-inside: avoid; }
+  .visibility .v { border-radius: 3mm; padding: 3mm 4mm; font-size: 9.6pt; }
+  .visibility .sees { background: var(--ok-100); }
+  .visibility .edits { background: var(--info-100); }
+  .visibility .v b { display:block; font-family: var(--font-head); font-size: 9pt; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 1mm; }
+  .visibility .sees b { color: var(--ok-700); }
+  .visibility .edits b { color: var(--info-700); }
+
+  /* ---- cartes ---- */
+  .cards { display:grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin: 3mm 0 5mm; }
+  .card { border: 1px solid var(--brand-200); border-radius: 3mm; padding: 3.2mm 4mm; page-break-inside: avoid; background:#fff; }
+  .card .icon { font-size: 16pt; line-height: 1; margin-bottom: 1.5mm; }
+  .card h4 { margin: 0 0 1.5mm; font-size: 11.5pt; }
+  .card p { font-size: 9.8pt; margin-bottom: 1.5mm; }
+  .card ul { font-size: 9.6pt; padding-left: 4.5mm; margin-bottom: 0; }
+  .card .not { color: var(--no-700); font-size: 9.4pt; margin-top: 1.5mm; }
+  .principles { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 3.5mm; margin: 3mm 0 4mm; }
+  .principle { background: var(--brand-50); border-radius: 3mm; padding: 3.2mm; page-break-inside: avoid; }
+  .principle .icon { font-size: 18pt; margin-bottom: 1.5mm; }
+  .principle b { display:block; font-family: var(--font-head); font-size: 10.5pt; margin-bottom: 1mm; }
+  .principle p { font-size: 9.4pt; margin:0; }
+
+  /* ---- étapes numérotées ---- */
+  .steps { counter-reset: step; list-style:none; padding:0; margin: 3mm 0 4mm; }
+  .steps li { position: relative; padding-left: 12mm; margin-bottom: 3mm; page-break-inside: avoid; }
+  .steps li::before { counter-increment: step; content: counter(step); position:absolute; left:0; top:0; width: 8.5mm; height: 8.5mm; border-radius: 50%; background: var(--brand-700); color:#fff; font-family: var(--font-head); font-weight:600; display:flex; align-items:center; justify-content:center; font-size: 11pt; }
+  .steps li b { font-family: var(--font-head); font-weight:600; display:block; margin-bottom: .5mm; }
+
+  /* ---- tableaux ---- */
+  table { width:100%; border-collapse: collapse; margin: 2mm 0 4mm; font-size: 9.5pt; page-break-inside: auto; }
+  th, td { border: 1px solid var(--brand-200); padding: 1.8mm 2.4mm; vertical-align: top; text-align:left; }
+  th { background: var(--brand-100); font-family: var(--font-head); font-weight: 600; font-size: 9pt; }
+  tr { page-break-inside: avoid; }
+  td.c { text-align:center; }
+  .yes { color: var(--ok-700); font-weight:700; }
+  .no { color: var(--no-700); font-weight:700; }
+  .part { color: var(--accent); font-weight:700; }
+  .matrix th:first-child { width: 42mm; }
+  .legend { font-size: 9pt; color: var(--brand-600); margin-top: -2mm; }
+  /* grilles converties en tableaux par build.js : lignes qui se coupent proprement entre les pages */
+  table.gridtable { display: table !important; border-collapse: separate; border-spacing: 4mm 0; table-layout: fixed; width: calc(100% + 8mm); margin: 2mm -4mm 2mm; }
+  table.gridtable > tbody > tr > td { border: 0; padding: 0 0 3mm; vertical-align: top; background: none; }
+  table.gridtable > tbody > tr { page-break-inside: avoid; }
+  table.gridtable.visibility { margin-bottom: 2mm; }
+  table.gridtable.visibility > tbody > tr > td { padding-bottom: 2mm; }
+  table.gridtable.two > tbody > tr > td { padding-bottom: 1mm; }
+
+  /* ---- captures ---- */
+  figure.shot { margin: 2.5mm 0 4mm; page-break-inside: avoid; }
+  figure.shot .frame { border: 1px solid var(--brand-200); border-radius: 3mm; overflow:hidden; background:#fff; box-shadow: 0 1mm 3mm rgba(0,0,0,.08); }
+  figure.shot img { width:100%; display:block; }
+  figure.shot figcaption { font-size: 9pt; color: var(--brand-600); margin-top: 1.5mm; }
+  .two { display:grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .two figure.shot { margin: 2mm 0 3mm; }
+
+  /* ---- carte des canaux / flux ---- */
+  .channels { display:grid; grid-template-columns: repeat(3, 1fr); gap: 3.5mm; margin: 3mm 0 4mm; }
+  .chan { border-radius: 3mm; padding: 3mm 3.5mm; border: 1px solid var(--brand-200); page-break-inside: avoid; }
+  .chan b { display:block; font-family: var(--font-head); font-size: 10.5pt; margin-bottom: 1mm; }
+  .chan p { font-size: 9.3pt; margin: 0 0 1mm; }
+  .chan .who { font-size: 9pt; }
+  .chan.a { background: #fff7ec; } .chan.b { background: var(--ok-100); } .chan.c { background: var(--info-100); } .chan.d { background: var(--brand-50); }
+  .chip { display:inline-block; border-radius: 2mm; padding: .3mm 1.8mm; font-size: 8.6pt; margin: .4mm .6mm .4mm 0; background:#fff; border:1px solid var(--brand-200); }
+  .chip.on { background: var(--ok-700); color:#fff; border-color: var(--ok-700); }
+  .chip.off { color: var(--no-700); border-color: #f0c2bb; background: #fff; text-decoration: line-through; }
+
+  .faq dt { font-family: var(--font-head); font-weight:600; margin-top: 3mm; }
+  .faq dd { margin: 0.5mm 0 0; }
+  .toc ol { columns: 2; column-gap: 8mm; padding-left: 6mm; }
+  .toc li { break-inside: avoid; margin-bottom: 1.6mm; }
+  .contact { display:grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .cover h1 { color: var(--brand-950); }
+  .cover .kicker { color: var(--accent); }
+  .cover .subtitle { color: var(--brand-600); }
+  .cover .band { position: relative; }
+  .cover .band::after { content:""; position:absolute; left:10mm; right:10mm; bottom:-2.2mm; height:1.6mm; background: repeating-linear-gradient(90deg,#FFD84D 0 5mm,transparent 5mm 7.5mm); border-radius:1mm; }
+  h2 { border-bottom-color: #FFD84D; }
+  .principle { background:#F1F3F2; }
+  .chan.a { background:#FFF7D6; }
+  h2, h3 { break-after: avoid; page-break-after: avoid; }
+  h2 + p, h3 + p, h3 + figure { break-before: avoid; }
+  figure.shot .frame { max-height: 118mm; }
+  .two figure.shot .frame { max-height: 80mm; }
+</style>
+</head>
+<body>
+<!-- ===================== COUVERTURE ===================== -->
+<section class="cover">
+  <div>
+    <div class="top">
+      <img src="{{logo}}" alt="">
+      <div class="school">Objectif OFP<br><span class="muted" style="font-weight:400;font-size:10.5pt">formations-ferroviaires.vercel.app</span></div>
+    </div>
+    <div class="title-block">
+      <div class="kicker">Guide de présentation</div>
+      <h1>Formations<br>ferroviaires</h1>
+      <div class="subtitle">Le guide des métiers du rail : à quoi sert l'outil, comment on s'en sert, ce que chacun peut y faire et y voir.</div>
+    </div>
+    <div class="mosaic">
+      <img src="{{accueil}}" alt="">
+      <img src="{{carte-fiche}}" alt="">
+    </div>
+  </div>
+  <div class="band">
+    <div><b>Adresse</b><a href="https://formations-ferroviaires.vercel.app/fr">formations-ferroviaires.vercel.app</a></div>
+    <div><b>Version</b>Septembre 2026</div>
+    <div><b>Pour qui</b>équipe Objectif OFP, partenaires, établissements</div>
+    <div><b>Préparé par</b>Jean-Charles Meilland</div>
+  </div>
+</section>
+
+<!-- ===================== SOMMAIRE ===================== -->
+<section class="toc">
+  <h2>Sommaire</h2>
+  <ol>
+    <li>Pourquoi cet outil</li><li>Principes</li><li>Qui fait quoi</li><li>Commencer en cinq minutes</li><li>Visite guidée</li><li>Qui voit quoi</li><li>Messages et données personnelles</li><li>Bonnes pratiques pour l'équipe</li><li>Questions fréquentes</li><li>Et après</li><li>Contact</li>
+  </ol>
+  <div class="box" style="margin-top:8mm"><h4>En bref</h4><p>Formations ferroviaires est une carte publique, gratuite et sans compte, qui répond à une question : <strong>où se former aux métiers du rail, près de chez soi, du CAP à l'ingénieur ?</strong> Elle réunit 331 établissements vérifiés un à un, 49 formations et 32 métiers, reliés entre eux. Chaque fiche renvoie à la source officielle. Les établissements demandent la mise à jour de leur fiche par un formulaire ; l'équipe d'Objectif OFP relit, corrige et publie depuis un back-office protégé.</p></div>
+</section>
+
+<!-- ===================== 1. POURQUOI ===================== -->
+<section class="section flow">
+  <h2><span class="num">1</span>Pourquoi cet outil</h2>
+  <p class="lead">L'information existe, mais elle est dispersée : sites des écoles, ONISEP, fiches métiers de la branche, annuaires régionaux. Personne ne la rassemble sur une carte, avec le lien entre un métier, les formations qui y mènent et les lieux qui les proposent.</p>
+  <ul>
+    <li><strong>Un lycéen</strong> qui veut conduire des trains ne sait pas qu'un Bac pro MELEC y mène, ni où le préparer près de chez lui.</li>
+    <li><strong>Un adulte en reconversion</strong> cherche une certification courte reconnue par la branche et tombe sur des offres commerciales.</li>
+    <li><strong>Un établissement</strong> ouvre une nouvelle session et n'a aucun endroit unique où le faire savoir.</li>
+    <li><strong>Un conseiller d'orientation</strong> compare trois campus à la main, dans trois onglets.</li>
+  </ul>
+  <h3>Ce que chacun y gagne</h3>
+  <div class="cards">
+    <div class="card"><div class="icon">🎓</div><h4>Candidats et familles</h4><ul><li>Trois entrées : un métier, une formation, ou « près de chez moi ».</li><li>Des fiches vérifiées, avec le lien vers la source officielle (RNCP, ONISEP).</li><li>Une sélection à comparer et à emporter en PDF.</li></ul></div>
+    <div class="card"><div class="icon">🏫</div><h4>Établissements</h4><ul><li>Une fiche visible sur la carte, avec la mention « vérifié ».</li><li>Une mise à jour demandée en deux minutes, depuis la fiche elle-même.</li><li>Aucun compte à créer, aucun mot de passe à retenir.</li></ul></div>
+    <div class="card"><div class="icon">🧭</div><h4>Conseillers et partenaires</h4><ul><li>Une adresse à partager : chaque recherche a son lien.</li><li>Une liste à emporter avec les filtres en titre.</li><li>Les pages formation et métier, citables telles quelles.</li></ul></div>
+    <div class="card"><div class="icon">🛠️</div><h4>Objectif OFP</h4><ul><li>Un back-office simple : établissements, formations, métiers, liens.</li><li>Les demandes des établissements arrivent au même endroit.</li><li>Un contrôle de qualité qui pointe ce qui mérite relecture.</li></ul></div>
+  </div>
+  <div class="box orange"><h4>Ce que l'outil n'est pas</h4><p>Ce n'est ni une plateforme d'inscription, ni un site d'avis, ni un moteur d'offres d'emploi. Il oriente vers les établissements et les sources officielles ; l'inscription se fait chez eux. Les données viennent des établissements déclarés, de l'ONISEP, de l'EPSF pour les organismes agréés, et de La Bonne Alternance pour les établissements généralistes. Les fiches métiers renvoient vers Futur en train et Avec l'industrie ferroviaire.</p></div>
+</section>
+
+<!-- ===================== 2. PRINCIPES ===================== -->
+<section class="section flow">
+  <h2><span class="num">2</span>Principes</h2>
+  <div class="principles">
+    <div class="principle"><div class="icon">✅</div><b>Vérifié une fiche à la fois</b><p>Un établissement porte la mention « Vérifié » quand l'équipe a relu sa fiche. Les établissements importés automatiquement sont masqués par défaut et signalés « Généraliste ».</p></div>
+    <div class="principle"><div class="icon">🔗</div><b>Tout renvoie à la source</b><p>Code RNCP vers France compétences, lien ONISEP, site de l'établissement, fiches métiers de la branche : l'outil ne réécrit pas l'information officielle.</p></div>
+    <div class="principle"><div class="icon">🗺️</div><b>Une carte, trois entrées</b><p>On part d'un métier, d'une formation, ou de sa position. Les trois mènent au même endroit : la liste et la carte des établissements.</p></div>
+    <div class="principle"><div class="icon">🔍</div><b>Une recherche qui pardonne</b><p>Accents ignorés, synonymes du rail, fautes de frappe tolérées, suggestions dès la frappe. « aiguileur » trouve quand même les aiguilleurs.</p></div>
+    <div class="principle"><div class="icon">📎</div><b>Chaque recherche a son lien</b><p>Filtres et recherche s'inscrivent dans l'adresse. On copie le lien, on l'envoie, l'autre voit la même chose.</p></div>
+    <div class="principle"><div class="icon">🆓</div><b>Gratuit, sans compte, sans traceur</b><p>Aucune inscription pour les visiteurs. Aucun outil de mesure d'audience tiers. Deux réglages restent dans le navigateur : la sélection et la légende.</p></div>
+  </div>
+  <h3>Qui parle à qui</h3>
+  <div class="channels">
+    <div class="chan a"><b>Le visiteur cherche</b><p>Accueil → carte → fiche établissement → source officielle. Il peut mettre des fiches en signet, les comparer, emporter la liste en PDF.</p><p class="who"><span class="chip on">sans compte</span><span class="chip on">mobile et ordinateur</span></p></div>
+    <div class="chan b"><b>L'établissement demande</b><p>Depuis sa fiche, « Mettre à jour cette fiche » ouvre le formulaire pré-rempli. Le message arrive à l'équipe avec le lien de la fiche.</p><p class="who"><span class="chip on">formulaire</span><span class="chip off">accès direct à la fiche</span></p></div>
+    <div class="chan c"><b>L'équipe publie</b><p>Dans le back-office, elle relit le message, corrige la fiche, la marque traitée. La carte se met à jour dans les dix minutes.</p><p class="who"><span class="chip on">mot de passe</span><span class="chip on">traçabilité des messages</span></p></div>
+  </div>
+</section>
+
+<!-- ===================== 3. RÔLES ===================== -->
+<section class="section flow">
+  <h2><span class="num">3</span>Qui fait quoi</h2>
+  <div class="cards">
+    <div class="card"><div class="icon">👤</div><h4>Le visiteur</h4><p>Candidat, parent, conseiller, curieux. Il arrive par un lien ou un moteur de recherche.</p><ul><li>cherche, filtre, ouvre les fiches, les pages formation et métier ;</li><li>met jusqu'à huit établissements en signet, les compare, télécharge la liste ;</li><li>signale une erreur ou propose un établissement.</li></ul><p class="not">Ne voit pas : les établissements généralistes tant qu'il ne les affiche pas, les messages des autres, le back-office.</p></div>
+    <div class="card"><div class="icon">🏫</div><h4>Le référent d'un établissement</h4><p>Directeur, responsable de formation, chargé de communication. Il n'a pas de compte : il passe par le formulaire.</p><ul><li>demande la mise à jour de sa fiche : formations, adresse, site, dates ;</li><li>propose un établissement absent de la carte ;</li><li>reçoit une réponse par courriel de l'équipe.</li></ul><p class="not">Ne voit pas : ses demandes une fois envoyées, les demandes des autres établissements. Ne modifie rien directement.</p></div>
+    <div class="card"><div class="icon">🛡️</div><h4>L'administrateur Objectif OFP</h4><p>Une ou deux personnes de l'équipe, avec le mot de passe du back-office.</p><ul><li>crée et corrige établissements, formations, métiers et leurs liens ;</li><li>traite les messages du formulaire, importe les établissements généralistes ;</li><li>relit les points signalés par le contrôle de qualité.</li></ul><p class="not">Ne voit pas : qui consulte le site (aucune mesure d'audience individuelle), le contenu des sélections des visiteurs.</p></div>
+    <div class="card"><div class="icon">🤝</div><h4>Le partenaire</h4><p>Fédération, région, école partenaire. Il consulte comme un visiteur et relaie.</p><ul><li>partage des liens de recherche déjà filtrés (une région, une famille de métiers) ;</li><li>intègre les pages formation et métier dans ses propres supports ;</li><li>signale à l'équipe ce qui manque.</li></ul><p class="not">Ne voit pas : le back-office. Un accès dédié pourrait être ouvert plus tard si le besoin apparaît.</p></div>
+  </div>
+</section>
+
+<!-- ===================== 4. COMMENCER ===================== -->
+<section class="section flow">
+  <h2><span class="num">4</span>Commencer en cinq minutes</h2>
+  <ol class="steps">
+    <li><b>Ouvrir l'adresse</b>formations-ferroviaires.vercel.app, sur ordinateur ou téléphone. Rien à installer, rien à créer.</li>
+    <li><b>Dire ce que l'on cherche</b>Dans le champ « Je cherche », taper un métier, une formation ou une ville. Des suggestions apparaissent dès la deuxième lettre ; on peut aussi cliquer une famille de métiers.</li>
+    <li><b>Affiner</b>« Près de moi » trie par distance. « Filtres » ouvre le métier, la formation, la région, le niveau, le domaine et le type d'établissement. Le titre du panneau nomme les critères actifs.</li>
+    <li><b>Ouvrir une fiche</b>Un clic dans la liste ou sur la carte ouvre la fiche flottante : formations, site, itinéraire. « Voir la fiche » donne la page complète.</li>
+    <li><b>Garder et comparer</b>Le signet ajoute l'établissement à « Ma sélection ». La page de comparaison met les fiches côte à côte, formation par formation.</li>
+    <li><b>Emporter</b>« Emporter la liste (PDF) » depuis la carte, ou « Télécharger en PDF » depuis la sélection : un document A4 à la charte, avec les liens cliquables.</li>
+  </ol>
+  <div class="box green"><h4>Bon à savoir</h4><ul>
+    <li>Le lien de la page contient la recherche : le copier suffit pour la partager.</li>
+    <li>Sur téléphone, la liste est une feuille qu'on tire vers le haut ; la carte reste derrière.</li>
+    <li>Les 1 464 établissements généralistes (lycées, CFA importés) sont masqués par défaut : « Afficher » les ajoute.</li>
+    <li>Le site existe aussi en anglais, à l'adresse /en.</li>
+  </ul></div>
+</section>
+
+<!-- ===================== 5. VISITE GUIDÉE ===================== -->
+<section class="section">
+  <h2><span class="num">5</span>Visite guidée</h2>
+
+  <h3>5.1 L'accueil</h3>
+  <p>Une promesse, un champ de recherche vivant, trois portes d'entrée et la carte de France des établissements vérifiés par région. Plus bas, les familles de métiers, le parcours du CAP à l'ingénieur avec les niveaux expliqués, et les campus ferroviaires.</p>
+  <figure class="shot"><div class="frame"><img src="{{accueil}}" alt=""></div><figcaption>L'accueil : le champ « Je cherche » propose des exemples, la carte de France donne le nombre d'établissements vérifiés par région.</figcaption></figure>
+  <div class="two">
+    <figure class="shot"><div class="frame"><img src="{{accueil-familles}}" alt=""></div><figcaption>Les familles de métiers, avec leurs métiers et le nombre de formations.</figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="{{accueil-parcours}}" alt=""></div><figcaption>Le parcours par niveau : chaque étape ouvre la carte filtrée.</figcaption></figure>
+  </div>
+  <div class="visibility"><div class="v sees"><b>Qui voit</b>Tout le monde, sans compte. Les chiffres se mettent à jour toutes les dix minutes.</div><div class="v edits"><b>Qui modifie</b>Personne à la main : l'accueil se construit à partir des fiches du back-office.</div></div>
+
+  <h3>5.2 La carte et la recherche</h3>
+  <p>Le panneau de gauche porte la recherche, les filtres et la liste groupée par région ; la carte suit les résultats et se cadre sur eux. Le titre du panneau dit en toutes lettres ce que l'on regarde. Les suggestions distinguent établissements, formations, métiers et villes.</p>
+  <div class="two">
+    <figure class="shot"><div class="frame"><img src="{{carte-suggestions}}" alt=""></div><figcaption>Dès « aiguil », les suggestions proposent le métier, les formations liées et les établissements.</figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="{{carte-filtres}}" alt=""></div><figcaption>Filtres combinés : le titre nomme la famille de métiers et la région, les puces se retirent d'un clic.</figcaption></figure>
+  </div>
+  <figure class="shot"><div class="frame"><img src="{{carte-fiche}}" alt=""></div><figcaption>La fiche flottante d'un établissement choisi : formations, site web, itinéraire, signet.</figcaption></figure>
+  <div class="visibility"><div class="v sees"><b>Qui voit</b>Tout le monde. Les généralistes sont masqués tant qu'on ne clique pas « Afficher ».</div><div class="v edits"><b>Qui modifie</b>L'administrateur, depuis le back-office. Un visiteur peut signaler une erreur par le formulaire.</div></div>
+
+  <h3>5.3 La fiche établissement</h3>
+  <p>Nom, type, mention « Vérifié », adresse et mini-carte, formations groupées par niveau avec leurs métiers visés, liens vers le site et ONISEP. Le bouton jaune « Mettre à jour cette fiche » ouvre le formulaire déjà rempli avec l'établissement.</p>
+  <figure class="shot"><div class="frame" style="max-height:105mm"><img src="{{fiche}}" alt=""></div><figcaption>La fiche du Ferrocampus de Saintes. Chaque formation renvoie à sa propre page.</figcaption></figure>
+  <div class="visibility"><div class="v sees"><b>Qui voit</b>Tout le monde ; la page est référencée par les moteurs de recherche.</div><div class="v edits"><b>Qui modifie</b>L'administrateur. L'établissement demande, l'équipe applique.</div></div>
+
+  <h3>5.4 Les pages formation et métier</h3>
+  <p>Une page par formation (niveau, domaine, code RNCP, métiers visés, établissements par région) et une page par métier (formations qui y mènent, établissements, métiers voisins, fiches externes). Elles servent de pages d'atterrissage depuis les moteurs de recherche et de supports à citer.</p>
+  <div class="two">
+    <figure class="shot"><div class="frame"><img src="{{formation}}" alt=""></div><figcaption>Page formation : BTS Électrotechnique, avec ses 14 établissements vérifiés.</figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="{{metier}}" alt=""></div><figcaption>Page métier : Aiguilleur, les deux formations qui y mènent et où les suivre.</figcaption></figure>
+  </div>
+  <div class="visibility"><div class="v sees"><b>Qui voit</b>Tout le monde.</div><div class="v edits"><b>Qui modifie</b>L'administrateur, via les formations, les métiers et leurs liens dans le back-office.</div></div>
+
+  <h3>5.5 Ma sélection et le comparateur</h3>
+  <p>Le signet garde jusqu'à huit établissements dans le navigateur du visiteur. La page « Ma sélection » les met en colonnes : type, lieu, niveaux, domaines, métiers visés, puis la grille des formations avec une coche par établissement et la mention « tous » sur celles qu'ils ont en commun. Le lien de la page contient la sélection.</p>
+  <figure class="shot"><div class="frame" style="max-height:118mm"><img src="{{selection}}" alt=""></div><figcaption>Trois établissements côte à côte. Chaque colonne se retire, le lien se copie, la liste se télécharge.</figcaption></figure>
+  <div class="visibility"><div class="v sees"><b>Qui voit</b>Le visiteur, dans son navigateur ; quiconque reçoit le lien voit la même sélection.</div><div class="v edits"><b>Qui modifie</b>Le visiteur lui-même. Rien n'est envoyé à l'équipe.</div></div>
+
+  <h3>5.6 La liste à emporter</h3>
+  <p>Deux documents PDF à la charte du site, générés à la demande : la liste des résultats de la carte (tableau par région, avec les filtres en titre) et la sélection détaillée (formations et métiers par établissement). Les liens y sont cliquables.</p>
+  <div class="two">
+    <figure class="shot"><div class="frame"><img src="{{pdf-liste}}" alt=""></div><figcaption>La liste des résultats en PDF, ici une recherche « conducteur » en Hauts-de-France.</figcaption></figure>
+    <figure class="shot"><div class="frame" style="max-width:62mm;margin:0 auto"><img src="{{mobile}}" alt=""></div><figcaption>Sur téléphone : la recherche reste sur la carte, la liste se tire vers le haut.</figcaption></figure>
+  </div>
+
+  <h3>5.7 Le formulaire de contact</h3>
+  <p>Quatre motifs : mettre à jour ma fiche, signaler une erreur, proposer un établissement, autre demande. Depuis une fiche, l'établissement est déjà renseigné. Le message est enregistré et apparaît dans le back-office ; l'équipe répond par courriel.</p>
+  <figure class="shot"><div class="frame" style="max-height:100mm"><img src="{{contact}}" alt=""></div><figcaption>Le formulaire ouvert depuis la fiche du Ferrocampus : motif et établissement pré-remplis.</figcaption></figure>
+  <div class="visibility"><div class="v sees"><b>Qui voit</b>L'expéditeur voit sa confirmation ; seul l'administrateur voit les messages.</div><div class="v edits"><b>Qui modifie</b>L'administrateur marque traité, rouvre ou supprime.</div></div>
+
+  <h3>5.8 Le back-office</h3>
+  <p>Accessible à l'adresse /admin avec le mot de passe de l'équipe. Onglets : tableau de bord, établissements, formations, métiers, liens, enrichissement par l'API La Bonne Alternance, messages et qualité des données. Cinq tentatives de connexion échouées bloquent l'adresse pendant quinze minutes.</p>
+  <div class="two">
+    <figure class="shot"><div class="frame"><img src="{{admin-tableau}}" alt=""></div><figcaption>Le tableau de bord : compteurs et points d'attention.</figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="{{admin-messages}}" alt=""></div><figcaption>Les messages du formulaire, avec le lien de la fiche et « Marquer traité » (exemple fictif).</figcaption></figure>
+  </div>
+  <div class="two">
+    <figure class="shot"><div class="frame"><img src="{{admin-qualite}}" alt=""></div><figcaption>Le contrôle de qualité : jeux identiques, coordonnées hors de France, doublons, orphelins.</figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="{{admin-connexion}}" alt=""></div><figcaption>La porte d'entrée : un mot de passe, cinq essais, puis quinze minutes d'attente.</figcaption></figure>
+  </div>
+  <div class="visibility"><div class="v sees"><b>Qui voit</b>L'administrateur seulement.</div><div class="v edits"><b>Qui modifie</b>L'administrateur. Chaque modification est visible sur le site dans les dix minutes.</div></div>
+</section>
+
+<!-- ===================== 6. QUI VOIT QUOI ===================== -->
+<section class="section flow">
+  <h2><span class="num">6</span>Qui voit quoi</h2>
+  <table class="matrix">
+    <tr><th>Action</th><th>Visiteur</th><th>Établissement</th><th>Administrateur</th></tr>
+    <tr><td>Chercher, filtrer, ouvrir les fiches et les pages</td><td class="c"><span class="yes">✔</span></td><td class="c"><span class="yes">✔</span></td><td class="c"><span class="yes">✔</span></td></tr>
+    <tr><td>Afficher les établissements généralistes</td><td class="c"><span class="part">◐</span> sur demande</td><td class="c"><span class="part">◐</span> sur demande</td><td class="c"><span class="yes">✔</span></td></tr>
+    <tr><td>Mettre en signet, comparer, télécharger la liste</td><td class="c"><span class="yes">✔</span></td><td class="c"><span class="yes">✔</span></td><td class="c"><span class="yes">✔</span></td></tr>
+    <tr><td>Demander la mise à jour d'une fiche, signaler, proposer</td><td class="c"><span class="yes">✔</span></td><td class="c"><span class="yes">✔</span></td><td class="c">—</td></tr>
+    <tr><td>Modifier une fiche, une formation, un métier, un lien</td><td class="c"><span class="no">✘</span></td><td class="c"><span class="no">✘</span></td><td class="c"><span class="yes">✔</span></td></tr>
+    <tr><td>Importer les établissements généralistes</td><td class="c"><span class="no">✘</span></td><td class="c"><span class="no">✘</span></td><td class="c"><span class="yes">✔</span></td></tr>
+    <tr><td>Lire et traiter les messages du formulaire</td><td class="c"><span class="no">✘</span></td><td class="c"><span class="no">✘</span> (les siens non plus)</td><td class="c"><span class="yes">✔</span></td></tr>
+    <tr><td>Consulter le contrôle de qualité des données</td><td class="c"><span class="no">✘</span></td><td class="c"><span class="no">✘</span></td><td class="c"><span class="yes">✔</span></td></tr>
+  </table>
+  <p class="legend">✔ oui · ◐ sur demande · ✘ non</p>
+  <div class="cards">
+    <div class="box red"><h4>Ce que l'établissement ne voit pas</h4><p>Il ne modifie pas sa fiche lui-même et ne suit pas ses demandes en ligne : il reçoit une réponse par courriel. Il ne voit pas les demandes des autres.</p></div>
+    <div class="box red"><h4>Ce que l'administrateur ne voit pas</h4><p>Il ne sait pas qui consulte : aucune mesure d'audience individuelle, aucun traceur. Les sélections des visiteurs restent dans leur navigateur.</p></div>
+  </div>
+</section>
+
+<!-- ===================== 7. MESSAGES ET DONNÉES ===================== -->
+<section class="section flow">
+  <h2><span class="num">7</span>Messages et données personnelles</h2>
+  <h3>Ce qui part, et vers qui</h3>
+  <ul>
+    <li><strong>Formulaire de contact.</strong> Le message est enregistré en base et affiché dans l'onglet Messages. Un courriel de notification part vers contact@objectif-ofp.org dès que le service d'envoi est configuré (voir « Et après »). L'expéditeur ne reçoit pas de copie automatique : c'est l'équipe qui lui répond.</li>
+    <li><strong>Rien d'autre.</strong> Aucune lettre d'information, aucun rappel, aucune alerte automatique aux établissements.</li>
+  </ul>
+  <h3>Les données personnelles</h3>
+  <ul>
+    <li>Le formulaire demande un nom, un courriel, un organisme facultatif et un message. Ces données servent uniquement à répondre ; elles ne sont ni publiées ni transmises.</li>
+    <li>L'administrateur peut supprimer un message définitivement depuis le back-office.</li>
+    <li>Les fiches d'établissements ne contiennent que des informations publiques : nom, adresse, site, formations.</li>
+    <li>Le site ne dépose aucun traceur. Le navigateur du visiteur garde seulement sa sélection et l'état de la légende ; l'administrateur a un témoin de session.</li>
+    <li>Hébergement : site chez Vercel, base de données chez Neon (Europe). Fonds de carte OpenStreetMap.</li>
+  </ul>
+</section>
+
+<!-- ===================== 8. BONNES PRATIQUES ===================== -->
+<section class="section flow">
+  <h2><span class="num">8</span>Bonnes pratiques pour l'équipe</h2>
+  <ol class="steps">
+    <li><b>Traiter un message</b>Ouvrir l'onglet Messages, lire, suivre le lien de la fiche, appliquer la modification dans l'onglet Établissements, répondre par courriel, puis « Marquer traité ».</li>
+    <li><b>Vérifier un établissement</b>Comparer la fiche avec le site de l'établissement et l'ONISEP. Un établissement saisi ou relu à la main porte la mention « Vérifié » ; un import automatique reste « Généraliste ».</li>
+    <li><b>Relire le contrôle de qualité</b>Une fois par mois : jeux de formations identiques (liens posés en bloc), plus de vingt formations, coordonnées hors de France, doublons, formations et métiers orphelins.</li>
+    <li><b>Partager des liens filtrés</b>Pour une région ou une famille de métiers, ouvrir la carte avec les filtres voulus et copier l'adresse : elle reproduit exactement la vue.</li>
+    <li><b>Garder le mot de passe pour l'équipe</b>Un seul mot de passe donne accès à tout le back-office. Le changer si une personne quitte l'équipe.</li>
+  </ol>
+</section>
+
+<!-- ===================== 9. FAQ ===================== -->
+<section class="section flow">
+  <h2><span class="num">9</span>Questions fréquentes</h2>
+  <dl class="faq">
+    <dt>Mon établissement n'apparaît pas sur la carte.</dt><dd>Il est peut-être parmi les généralistes masqués : cliquer « Afficher » dans le panneau. S'il manque vraiment, « Proposer un établissement » dans le formulaire.</dd>
+    <dt>Que veut dire « Vérifié » ?</dt><dd>Que l'équipe d'Objectif OFP a relu la fiche : nom, adresse, formations, liens. Les établissements importés automatiquement ne portent pas cette mention.</dd>
+    <dt>Combien de temps prend une mise à jour ?</dt><dd>Le temps que l'équipe relise le message. Une fois la fiche modifiée, le site la reflète dans les dix minutes.</dd>
+    <dt>Faut-il un compte ?</dt><dd>Non, ni pour chercher, ni pour comparer, ni pour demander une mise à jour. Seul le back-office demande un mot de passe.</dd>
+    <dt>Puis-je citer une page dans un document ?</dt><dd>Oui : les pages formation, métier et établissement ont chacune une adresse stable et sont conçues pour cela.</dd>
+    <dt>Ma sélection a disparu.</dt><dd>Elle est conservée dans le navigateur utilisé. Un autre appareil, une navigation privée ou un nettoyage du navigateur la remettent à zéro. Le lien de la page « Ma sélection » permet de la retrouver.</dd>
+  </dl>
+</section>
+
+<!-- ===================== 10. ET APRÈS ===================== -->
+<section class="section flow">
+  <h2><span class="num">10</span>Et après</h2>
+  <ul>
+    <li><strong>Courriels de notification.</strong> Brancher le service d'envoi (clé Resend et domaine d'expédition) pour que chaque message du formulaire arrive aussi par courriel. Sans cela, les messages restent visibles dans le back-office seulement.</li>
+    <li><strong>Nettoyage des liens posés en bloc.</strong> Six campus portent la même liste de 43 formations, héritée de la construction initiale : le contrôle de qualité les signale, la relecture reste à faire.</li>
+    <li><strong>Adresse définitive.</strong> Rattacher le site à un nom de domaine d'Objectif OFP.</li>
+    <li><strong>Version anglaise.</strong> Elle existe ; les fiches restent en français tant que les données ne sont pas traduites.</li>
+    <li><strong>Accès partenaires.</strong> Ouvrir, si le besoin se confirme, un accès de lecture au back-office pour les partenaires qui relisent des fiches.</li>
+  </ul>
+</section>
+
+<!-- ===================== 11. CONTACT ===================== -->
+<section class="section flow">
+  <h2><span class="num">11</span>Contact</h2>
+  <div class="cards">
+    <div class="box"><h4>Pour les établissements et les visiteurs</h4><p>Le formulaire du site, ou <a href="mailto:contact@objectif-ofp.org">contact@objectif-ofp.org</a></p></div>
+    <div class="box"><h4>Adresse de l'outil</h4><p><a href="https://formations-ferroviaires.vercel.app/fr">formations-ferroviaires.vercel.app</a> · back-office : /admin</p></div>
+  </div>
+</section>
+
+</body>
+</html>
