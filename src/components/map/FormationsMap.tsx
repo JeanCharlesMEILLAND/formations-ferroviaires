@@ -107,6 +107,38 @@ interface FilterData {
 }
 
 // ============================================================
+// Utilitaires
+// ============================================================
+
+/** Échappe une valeur avant insertion dans le HTML d'une fenêtre (les noms peuvent venir d'un import externe). */
+function esc(value: unknown): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+/** Distance à vol d'oiseau en kilomètres. */
+function distanceKm(a: [number, number], b: [number, number]): number {
+  const R = 6371, dLat = ((b[0] - a[0]) * Math.PI) / 180, dLng = ((b[1] - a[1]) * Math.PI) / 180;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos((a[0] * Math.PI) / 180) * Math.cos((b[0] * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+/** Filtres reçus de l'adresse (page /carte?q=…&family=…), pour des recherches partageables. */
+export interface InitialFilters {
+  search?: string;
+  metier?: string;
+  formation?: string;
+  region?: string;
+  level?: string;
+  domain?: string;
+  type?: string;
+  family?: string;
+  near?: boolean;
+  view?: "establishments" | "formations" | "metiers";
+}
+
+// ============================================================
 // Map sub-components
 // ============================================================
 
@@ -181,39 +213,39 @@ function MarkerClusterLayer({
         .slice(0, 5)
         .map(
           (ef) =>
-            `<li style="font-size:11px;color:#344479;display:flex;align-items:flex-start;gap:6px;margin-bottom:4px;">
+            `<li style="font-size:11px;color:#3C4E5C;display:flex;align-items:flex-start;gap:6px;margin-bottom:4px;">
               <span style="width:6px;height:6px;border-radius:50%;background:${ef.formation.domain.color};margin-top:5px;flex-shrink:0;"></span>
-              <span>${ef.formation.nameFr}${ef.formation.rncpCode ? ` <span style="color:#9EA6C0">(RNCP ${ef.formation.rncpCode})</span>` : ""}</span>
+              <span>${esc(ef.formation.nameFr)}${ef.formation.rncpCode ? ` <span style="color:#B7C6CE">(RNCP ${esc(ef.formation.rncpCode)})</span>` : ""}</span>
             </li>`
         )
         .join("");
 
       const moreHtml =
         est.formations.length > 5
-          ? `<li style="font-size:11px;color:#00ACC1;font-weight:600;">+${est.formations.length - 5} ${dict.map.formations}...</li>`
+          ? `<li style="font-size:11px;color:#E84A28;font-weight:600;">+${est.formations.length - 5} ${dict.map.formations}…</li>`
           : "";
 
       const popupContent = `
-        <div style="padding:16px;font-family:var(--font-inter),system-ui,sans-serif;">
+        <div style="padding:16px;font-family:var(--font-body),system-ui,sans-serif;">
           <div style="margin-bottom:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
             <span style="display:inline-block;padding:2px 8px;border-radius:20px;color:white;font-size:10px;font-weight:500;background:${est.type.color};">
-              ${locale === "fr" ? est.type.nameFr : est.type.nameEn}
+              ${esc(locale === "fr" ? est.type.nameFr : est.type.nameEn)}
             </span>
-            ${isApi ? `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;background:#FFF3E0;color:#E65100;border:1px solid #FFE0B2;">Passerelle ferroviaire</span>` : ""}
+            ${isApi ? `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;background:#FFF7D6;color:#7F5F06;border:1px solid #FFE47A;">Établissement généraliste</span>` : `<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;background:#DDF3EA;color:#13634E;">Vérifié</span>`}
           </div>
-          <h3 style="font-weight:700;color:#1B2A5B;font-size:15px;margin:0 0 4px;">${est.name}</h3>
-          <p style="font-size:12px;color:#596794;margin:0 0 12px;">${est.city} — ${est.region.name}</p>
+          <h3 style="font-weight:700;color:#0C1F2C;font-size:15px;margin:0 0 4px;font-family:var(--font-heading),sans-serif;">${esc(est.name)}</h3>
+          <p style="font-size:12px;color:#6C7C88;margin:0 0 12px;">${esc(est.city)} — ${esc(est.region.name)}</p>
           ${
             est.formations.length > 0
-              ? `<p style="font-size:12px;font-weight:600;color:#344479;margin:0 0 6px;">${dict.establishment.formations} :</p>
+              ? `<p style="font-size:12px;font-weight:600;color:#3C4E5C;margin:0 0 6px;">${dict.establishment.formations} :</p>
                  <ul style="list-style:none;padding:0;margin:0 0 12px;">${formationsHtml}${moreHtml}</ul>`
               : ""
           }
           <div style="display:flex;gap:8px;">
-            <a href="/${locale}/etablissement/${est.slug}" style="font-size:11px;background:#1B2A5B;color:white;padding:6px 12px;border-radius:6px;text-decoration:none;font-weight:500;">${dict.map.seeDetails}</a>
+            <a href="/${locale}/etablissement/${esc(est.slug)}" style="font-size:11px;background:#0C1F2C;color:white;padding:6px 12px;border-radius:999px;text-decoration:none;font-weight:600;">${dict.map.seeDetails}</a>
             ${
               est.onisepUrl
-                ? `<a href="${est.onisepUrl}" target="_blank" rel="noopener noreferrer" style="font-size:11px;border:1px solid #C5CAD9;color:#344479;padding:6px 12px;border-radius:6px;text-decoration:none;font-weight:500;">ONISEP</a>`
+                ? `<a href="${esc(est.onisepUrl)}" target="_blank" rel="noopener noreferrer" style="font-size:11px;border:1px solid #D6DDE1;color:#3C4E5C;padding:6px 12px;border-radius:999px;text-decoration:none;font-weight:600;">ONISEP</a>`
                 : ""
             }
           </div>
@@ -280,22 +312,31 @@ function createMarkerIcon(color: string, isApi = false): L.DivIcon {
 export default function FormationsMap({
   dict,
   locale,
+  initial,
 }: {
   dict: Dictionary;
   locale: Locale;
+  initial?: InitialFilters;
 }) {
   const [establishments, setEstablishments] = useState<Establishment[]>([]);
   const [filterData, setFilterData] = useState<FilterData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [retryTick, setRetryTick] = useState(0);
 
-  // Filter state
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState("");
-  const [selectedDomain, setSelectedDomain] = useState("");
-  const [selectedLevel, setSelectedLevel] = useState("");
-  const [selectedMetier, setSelectedMetier] = useState("");
-  const [selectedFormation, setSelectedFormation] = useState("");
+  // Filter state (initialisé depuis l'adresse pour des recherches partageables)
+  const [searchQuery, setSearchQuery] = useState(initial?.search ?? "");
+  const [selectedType, setSelectedType] = useState(initial?.type ?? "");
+  const [selectedRegion, setSelectedRegion] = useState(initial?.region ?? "");
+  const [selectedDomain, setSelectedDomain] = useState(initial?.domain ?? "");
+  const [selectedLevel, setSelectedLevel] = useState(initial?.level ?? "");
+  const [selectedMetier, setSelectedMetier] = useState(initial?.metier ?? "");
+  const [selectedFormation, setSelectedFormation] = useState(initial?.formation ?? "");
+  const [selectedFamily, setSelectedFamily] = useState(initial?.family ?? "");
+
+  // Position du visiteur (« près de moi »)
+  const [userPos, setUserPos] = useState<[number, number] | null>(null);
+  const [locating, setLocating] = useState(false);
 
   // Map control state
   const [flyTo, setFlyTo] = useState<[number, number] | null>(null);
@@ -306,7 +347,7 @@ export default function FormationsMap({
   const [showLegend, setShowLegend] = useState(true);
 
   // Sidebar view mode: establishments, formations, or metiers
-  const [listView, setListView] = useState<"establishments" | "formations" | "metiers">("establishments");
+  const [listView, setListView] = useState<"establishments" | "formations" | "metiers">(initial?.view ?? "establishments");
 
   // Sidebar toggle for mobile
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -315,11 +356,23 @@ export default function FormationsMap({
 
   // Fetch filter data
   useEffect(() => {
-    fetch("/api/filters")
-      .then((r) => r.json())
-      .then((data) => setFilterData(data))
-      .catch(console.error);
-  }, []);
+    let cancelled = false;
+    const load = async (attempt: number): Promise<void> => {
+      try {
+        const r = await fetch("/api/filters");
+        const data = r.ok ? await r.json() : null;
+        if (!data || !Array.isArray(data.types)) throw new Error("filtres indisponibles");
+        if (!cancelled) { setFilterData(data); setLoadError(null); }
+      } catch (err) {
+        // La base se réveille en quelques secondes : on retente deux fois avant d'afficher un message.
+        if (attempt < 3 && !cancelled) { await new Promise((res) => setTimeout(res, 2500)); return load(attempt + 1); }
+        if (!cancelled) setLoadError(locale === "fr" ? "La base met quelques secondes à se réveiller." : "The database is waking up, give it a few seconds.");
+        console.error(err);
+      }
+    };
+    load(1);
+    return () => { cancelled = true; };
+  }, [locale, retryTick]);
 
   // Fetch establishments (debounced search)
   useEffect(() => {
@@ -335,19 +388,55 @@ export default function FormationsMap({
 
     const timeout = setTimeout(() => {
       fetch(`/api/establishments?${params.toString()}`)
-        .then((r) => r.json())
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
         .then((data) => {
-          setEstablishments(data);
+          setEstablishments(Array.isArray(data) ? data : []);
+          setLoadError(null);
           setLoading(false);
         })
         .catch((err) => {
           console.error(err);
+          setEstablishments([]);
+          setLoadError(locale === "fr" ? "La base met quelques secondes à se réveiller." : "The database is waking up, give it a few seconds.");
           setLoading(false);
         });
     }, searchQuery ? 300 : 0);
 
     return () => clearTimeout(timeout);
-  }, [selectedType, selectedRegion, selectedDomain, selectedLevel, selectedMetier, selectedFormation, searchQuery]);
+  }, [selectedType, selectedRegion, selectedDomain, selectedLevel, selectedMetier, selectedFormation, searchQuery, locale, retryTick]);
+
+  // « Près de moi » : géolocalisation, centrage et tri par distance
+  const locate = useCallback(() => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) return;
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const p: [number, number] = [pos.coords.latitude, pos.coords.longitude];
+        setUserPos(p); setFlyTo(p); setFlyZoom(9); setLocating(false);
+      },
+      () => setLocating(false),
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
+    );
+  }, []);
+
+  useEffect(() => { if (initial?.near) locate(); }, [initial?.near, locate]);
+
+  // Adresse à jour avec les filtres : une recherche se partage par son lien
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams();
+    if (searchQuery) params.set("q", searchQuery);
+    if (selectedMetier) params.set("metier", selectedMetier);
+    if (selectedFormation) params.set("formation", selectedFormation);
+    if (selectedRegion) params.set("region", selectedRegion);
+    if (selectedLevel) params.set("level", selectedLevel);
+    if (selectedDomain) params.set("domain", selectedDomain);
+    if (selectedType) params.set("type", selectedType);
+    if (selectedFamily) params.set("family", selectedFamily);
+    if (listView !== "establishments") params.set("view", listView);
+    const qs = params.toString();
+    window.history.replaceState(null, "", `${window.location.pathname}${qs ? `?${qs}` : ""}`);
+  }, [searchQuery, selectedMetier, selectedFormation, selectedRegion, selectedLevel, selectedDomain, selectedType, selectedFamily, listView]);
 
   // Marker icon cache
   const markerIcons = useMemo(() => {
@@ -385,6 +474,8 @@ export default function FormationsMap({
     setSelectedLevel("");
     setSelectedMetier("");
     setSelectedFormation("");
+    setSelectedFamily("");
+    setUserPos(null);
     setFlyTo([46.6, 2.5]);
     setFlyZoom(6);
   }, []);
@@ -438,18 +529,31 @@ export default function FormationsMap({
   }, [filterData]);
 
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [showApiEstablishments, setShowApiEstablishments] = useState(true);
+  const [showApiEstablishments, setShowApiEstablishments] = useState(false);
 
-  // Filter out API establishments if toggle is off
+  // Formations menant aux métiers de la famille choisie (ex. « Conduite », ou « Commercial,Production »)
+  const familyFormationSlugs = useMemo(() => {
+    if (!selectedFamily || !filterData?.metierFormationLinks) return null;
+    const families = new Set(selectedFamily.split(",").map((f) => f.trim()).filter(Boolean));
+    const slugs = new Set<string>();
+    for (const link of filterData.metierFormationLinks) {
+      if (families.has(link.metier.family)) slugs.add(link.formation.slug);
+    }
+    return slugs;
+  }, [selectedFamily, filterData]);
+
+  // Généralistes masqués par défaut, filtre par famille, tri par distance si le visiteur est localisé
   const displayedEstablishments = useMemo(() => {
-    if (showApiEstablishments) return establishments;
-    return establishments.filter(e => e.source !== "api");
-  }, [establishments, showApiEstablishments]);
+    let list = showApiEstablishments ? establishments : establishments.filter((e) => e.source !== "api");
+    if (familyFormationSlugs) list = list.filter((e) => e.formations.some((ef) => familyFormationSlugs.has(ef.formation.slug)));
+    if (userPos) list = [...list].sort((a, b) => distanceKm(userPos, [a.lat, a.lng]) - distanceKm(userPos, [b.lat, b.lng]));
+    return list;
+  }, [establishments, showApiEstablishments, familyFormationSlugs, userPos]);
 
   const apiCount = useMemo(() => establishments.filter(e => e.source === "api").length, [establishments]);
 
   const hasFilters =
-    searchQuery || selectedType || selectedRegion || selectedDomain || selectedLevel || selectedMetier || selectedFormation;
+    searchQuery || selectedType || selectedRegion || selectedDomain || selectedLevel || selectedMetier || selectedFormation || selectedFamily;
 
   const activeFilterCount = [selectedType, selectedRegion, selectedDomain, selectedLevel, selectedMetier, selectedFormation].filter(Boolean).length;
 
@@ -503,6 +607,34 @@ export default function FormationsMap({
               )}
             </div>
           </div>
+
+          {/* Près de moi, famille choisie, état de la base */}
+          <div className="px-4 pb-2 flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={locate}
+              disabled={locating}
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold border transition-colors ${userPos ? "bg-navy-900 text-white border-navy-900" : "bg-white text-navy-700 border-navy-200 hover:border-navy-900"} disabled:opacity-60`}
+            >
+              <span aria-hidden="true">◎</span> {locating ? "Localisation…" : userPos ? (locale === "fr" ? "Triés par distance" : "Sorted by distance") : dict.nav.near}
+            </button>
+            {selectedFamily && (
+              <button type="button" onClick={() => setSelectedFamily("")} className="inline-flex items-center gap-1.5 rounded-full bg-signal-100 text-signal-800 border border-signal-300 px-3 py-1.5 text-[11px] font-bold" aria-label={`Retirer le filtre ${selectedFamily}`}>
+                {selectedFamily.replace(",", " · ")} ✕
+              </button>
+            )}
+            {userPos && (
+              <button type="button" onClick={() => { setUserPos(null); setFlyTo([46.6, 2.5]); setFlyZoom(6); }} className="text-[11px] text-navy-400 underline">
+                {locale === "fr" ? "Toute la France" : "All of France"}
+              </button>
+            )}
+          </div>
+          {loadError && (
+            <div role="alert" className="mx-4 mb-2 rounded-xl border border-signal-300 bg-signal-50 px-3 py-2 text-[12px] text-navy-800 flex items-center justify-between gap-2">
+              <span>{loadError}</span>
+              <button type="button" onClick={() => { setLoadError(null); setRetryTick((t) => t + 1); }} className="font-bold underline whitespace-nowrap">{locale === "fr" ? "Réessayer" : "Retry"}</button>
+            </div>
+          )}
 
           {/* Primary filters: Metier & Formation */}
           <div className="px-4 pb-2 space-y-2">
@@ -567,7 +699,7 @@ export default function FormationsMap({
                 <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className={activeFilterCount > 0 ? "text-electric-500" : ""}>
                   <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
                 </svg>
-                Filtres avances
+                Filtres avancés
                 {activeFilterCount > 0 && (
                   <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-electric-500 text-white text-[10px] font-bold">
                     {activeFilterCount}
@@ -713,9 +845,9 @@ export default function FormationsMap({
           <div className="px-4 py-3">
             <div className="flex rounded-xl bg-navy-900/5 p-1 gap-1">
               {([
-                { key: "establishments" as const, label: "Etablissements", count: displayedEstablishments.length, color: "bg-blue-500" },
+                { key: "establishments" as const, label: "Établissements", count: displayedEstablishments.length, color: "bg-navy-900" },
                 { key: "formations" as const, label: "Formations", count: formationsInResults.length, color: "bg-electric-500" },
-                { key: "metiers" as const, label: "Metiers", count: metiersGrouped.length, color: "bg-amber-500" },
+                { key: "metiers" as const, label: "Métiers", count: metiersGrouped.length, color: "bg-signal-500" },
               ]).map((v) => (
                 <button
                   key={v.key}
@@ -745,7 +877,7 @@ export default function FormationsMap({
               >
                 <span className="flex items-center gap-2">
                   <span className={`w-2.5 h-2.5 rounded-full border-2 border-dashed ${showApiEstablishments ? "bg-amber-400 border-amber-600" : "bg-navy-200 border-navy-300"}`} />
-                  Passerelles ({apiCount})
+                  {locale === "fr" ? "Établissements généralistes" : "Generalist institutions"} ({apiCount})
                 </span>
                 <span className={`text-[10px] px-2 py-0.5 rounded-full ${showApiEstablishments ? "bg-amber-200 text-amber-800" : "bg-navy-100 text-navy-400"}`}>
                   {showApiEstablishments ? "ON" : "OFF"}
@@ -816,6 +948,7 @@ export default function FormationsMap({
                       </h3>
                       <p className="text-caption text-navy-400 mt-0.5">
                         {est.city} — {est.region.name}
+                        {userPos && <span className="font-bold text-navy-700"> · {Math.round(distanceKm(userPos, [est.lat, est.lng]))} km</span>}
                       </p>
                       <div className="flex flex-wrap gap-1 mt-2">
                         <span
@@ -826,7 +959,7 @@ export default function FormationsMap({
                         </span>
                         {est.source === "api" && (
                           <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                            Passerelle
+                            {locale === "fr" ? "Généraliste" : "Generalist"}
                           </span>
                         )}
                         <span className="text-[10px] text-navy-400 py-0.5">

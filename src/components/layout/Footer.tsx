@@ -1,85 +1,35 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
-export default function Footer({ dict }: { dict: Dictionary }) {
+const PARTNERS = ["Objectif OFP", "UTPF", "Fédération des industries ferroviaires", "Futur en train", "IA k LEFER"];
+
+export default function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+  const pathname = usePathname();
+  // La carte occupe tout l'écran : pas de pied de page sous elle.
+  if (pathname?.includes("/carte")) return null;
+
   return (
-    <footer className="bg-navy-900 text-white py-10">
-      <div className="max-w-content mx-auto px-container">
-        <div className="flex flex-col md:flex-row justify-between items-start gap-8">
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-electric-500 flex items-center justify-center">
-                <span className="text-white font-heading font-bold text-lg">F</span>
-              </div>
-              <span className="font-heading font-bold text-lg">
-                FIF {dict.meta.siteName}
-              </span>
-            </div>
-            <p className="text-navy-200 text-body-sm max-w-xs">
-              {dict.footer.projectBy}{" "}
-              <a
-                href="https://www.ffrail.fr"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-electric-400 hover:text-electric-300 underline"
-              >
-                {dict.footer.fif}
-              </a>
-            </p>
-          </div>
-
-          {/* Links */}
-          <div>
-            <h4 className="font-heading font-semibold text-body-sm mb-3 text-electric-400">
-              {dict.footer.usefulLinks}
-            </h4>
-            <ul className="space-y-2 text-body-sm text-navy-200">
-              <li>
-                <a
-                  href="https://www.futurentrain.fr/formations/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
-                >
-                  Futur en Train
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.onisep.fr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
-                >
-                  ONISEP
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.campusfrance.org/fr/etablissements-enseignement-superieur-France"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
-                >
-                  Campus France
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.ffrail.fr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
-                >
-                  FIF - ffrail.fr
-                </a>
-              </li>
-            </ul>
-          </div>
+    <footer className="border-t border-navy-200 bg-navy-50 text-navy-500">
+      <div className="max-w-content mx-auto px-container py-8">
+        <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-2 pb-6 text-body-sm font-bold text-navy-400">
+          {PARTNERS.map((p) => (
+            <span key={p}>{p}</span>
+          ))}
         </div>
-
-        <div className="mt-8 pt-6 border-t border-navy-700 text-center text-caption text-navy-400">
-          &copy; {new Date().getFullYear()} FIF - {dict.footer.fif}. {dict.footer.rights}.
+        <div className="flex flex-col md:flex-row justify-between gap-3 text-caption border-t border-navy-200 pt-5">
+          <p className="max-w-xl">
+            {dict.meta.siteName} · {dict.home.partners}
+          </p>
+          <p className="flex flex-wrap gap-x-4 gap-y-1">
+            <span>{locale === "fr" ? "Données : établissements déclarés, ONISEP, La Bonne Alternance, EPSF" : "Data: declared institutions, ONISEP, La Bonne Alternance, EPSF"}</span>
+            <a href="https://www.futurentrain.fr/formations/" target="_blank" rel="noopener noreferrer" className="underline hover:text-navy-900">Futur en train</a>
+            <a href="https://www.onisep.fr" target="_blank" rel="noopener noreferrer" className="underline hover:text-navy-900">ONISEP</a>
+            <Link href="/admin" className="underline hover:text-navy-900">{dict.nav.admin}</Link>
+          </p>
         </div>
       </div>
     </footer>

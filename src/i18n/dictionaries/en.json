@@ -2,13 +2,20 @@
   "meta": {
     "siteName": "Railway Training",
     "siteDescription": "Railway training map in France - Find institutions offering railway sector training programs",
-    "ogTitle": "Railway Training in France"
+    "ogTitle": "Railway Training in France",
+    "tagline": "The guide to railway careers"
   },
   "nav": {
     "home": "Map",
     "about": "About",
     "switchLang": "FR",
-    "backToFif": "Back to FIF"
+    "backToFif": "Back to FIF",
+    "metiers": "Jobs",
+    "parcours": "Pathways",
+    "map": "Map",
+    "update": "Update my listing",
+    "near": "Near me",
+    "admin": "Admin"
   },
   "hero": {
     "title": "Railway Training Map",
@@ -78,5 +85,45 @@
     "usefulLinks": "Useful links",
     "legal": "Legal notice",
     "rights": "All rights reserved"
+  },
+  "home": {
+    "kicker": "{verified} verified institutions · {formations} programmes · {metiers} jobs",
+    "title": "Find where to train for railway careers,",
+    "titleAccent": "near you.",
+    "lead": "From vocational certificates to engineering degrees, as an apprentice, a student or a career changer: every programme links to its official source and to the institutions that teach it.",
+    "searchPlaceholder": "A job, a programme, a city… e.g. train driver, electrical engineering, Lille",
+    "searchButton": "Search",
+    "nearButton": "Near me",
+    "frequent": "Frequent searches",
+    "doorJob": "I have a job in mind",
+    "doorJobSub": "{metiers} jobs, from vocational to engineering",
+    "doorFormation": "I know the programme",
+    "doorFormationSub": "{formations} diplomas and EPSF certifications",
+    "doorNear": "I'm looking near me",
+    "doorNearSub": "Geolocation or pick a region",
+    "networkCaption": "Verified institutions per region",
+    "trustVerified": "verified institutions",
+    "trustFormations": "programmes",
+    "trustMetiers": "jobs",
+    "trustRegions": "regions",
+    "trustWith": "Listings checked with UTPF and FIF",
+    "trustUpdated": "Updated",
+    "familiesTitle": "By job",
+    "familiesSub": "Each family groups jobs linked to the programmes that lead to them. Pick a family, we show the way.",
+    "familiesAll": "All jobs",
+    "jobs": "jobs",
+    "formationsWord": "programmes",
+    "seeFormations": "See programmes",
+    "parcoursTitle": "From vocational certificate to engineer, one track",
+    "parcoursSub": "Each level opens the next. Example of a railway maintenance pathway, as it exists in the institutions on the map.",
+    "parcoursAll": "See all {formations} programmes",
+    "campusTitle": "The campuses that train the most",
+    "campusSub": "Verified institutions covering the most railway programmes, from vocational baccalaureate to engineering.",
+    "campusAll": "All institutions",
+    "ctaTitle": "Do you train for railway careers?",
+    "ctaSub": "Keep your listing up to date: programmes, intake dates, open days, contact. After a review by the team, your institution shows as verified.",
+    "ctaButton": "Update my listing",
+    "ctaSecondary": "Suggest an institution",
+    "partners": "A service run by Objectif OFP with UTPF and FIF, as part of the Transformeurs programme."
   }
 }

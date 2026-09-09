@@ -1,14 +1,21 @@
 {
   "meta": {
-    "siteName": "Formations Ferroviaires",
+    "siteName": "Formations ferroviaires",
     "siteDescription": "Cartographie des formations ferroviaires en France - Trouvez les établissements qui proposent des formations dans le secteur ferroviaire",
-    "ogTitle": "Formations Ferroviaires en France"
+    "ogTitle": "Formations Ferroviaires en France",
+    "tagline": "Le guide des métiers du rail"
   },
   "nav": {
     "home": "Cartographie",
     "about": "A propos",
     "switchLang": "EN",
-    "backToFif": "Retour FIF"
+    "backToFif": "Retour FIF",
+    "metiers": "Métiers",
+    "parcours": "Parcours",
+    "map": "Carte",
+    "update": "Mettre à jour ma fiche",
+    "near": "Près de moi",
+    "admin": "Administration"
   },
   "hero": {
     "title": "Cartographie des Formations Ferroviaires",
@@ -78,5 +85,45 @@
     "usefulLinks": "Liens utiles",
     "legal": "Mentions légales",
     "rights": "Tous droits réservés"
+  },
+  "home": {
+    "kicker": "{verified} établissements vérifiés · {formations} formations · {metiers} métiers",
+    "title": "Trouvez où se former aux métiers du rail,",
+    "titleAccent": "près de chez vous.",
+    "lead": "Du CAP à l'ingénieur, en apprentissage, en formation initiale ou en reconversion : chaque formation renvoie à la source officielle et aux établissements qui la préparent.",
+    "searchPlaceholder": "Un métier, une formation, une ville… ex. conducteur de train, BTS électrotechnique, Lille",
+    "searchButton": "Chercher",
+    "nearButton": "Près de moi",
+    "frequent": "Recherches fréquentes",
+    "doorJob": "Je vise un métier",
+    "doorJobSub": "{metiers} métiers, du CAP à l'ingénieur",
+    "doorFormation": "Je connais la formation",
+    "doorFormationSub": "{formations} diplômes et certifications EPSF",
+    "doorNear": "Je cherche près de chez moi",
+    "doorNearSub": "Géolocalisation ou choix de la région",
+    "networkCaption": "Établissements vérifiés par région",
+    "trustVerified": "établissements vérifiés",
+    "trustFormations": "formations",
+    "trustMetiers": "métiers",
+    "trustRegions": "régions",
+    "trustWith": "Fiches vérifiées avec l'UTPF et la FIF",
+    "trustUpdated": "Mise à jour",
+    "familiesTitle": "Par métier",
+    "familiesSub": "Chaque famille regroupe des métiers reliés aux formations qui y mènent. Choisissez la famille, on vous montre le chemin.",
+    "familiesAll": "Tous les métiers",
+    "jobs": "métiers",
+    "formationsWord": "formations",
+    "seeFormations": "Voir les formations",
+    "parcoursTitle": "Du CAP à l'ingénieur, une seule voie",
+    "parcoursSub": "Chaque niveau ouvre le suivant. Exemple d'un parcours en maintenance ferroviaire, tel qu'il existe dans les établissements de la carte.",
+    "parcoursAll": "Voir les {formations} formations",
+    "campusTitle": "Les campus qui forment le plus",
+    "campusSub": "Les établissements vérifiés qui couvrent le plus de formations ferroviaires, du bac pro à l'ingénieur.",
+    "campusAll": "Tous les établissements",
+    "ctaTitle": "Vous formez aux métiers du rail ?",
+    "ctaSub": "Tenez votre fiche à jour : formations, dates de rentrée, portes ouvertes, contact. Une relecture par l'équipe, et votre établissement apparaît « vérifié ».",
+    "ctaButton": "Mettre à jour ma fiche",
+    "ctaSecondary": "Proposer un établissement",
+    "partners": "Un service porté par Objectif OFP avec l'UTPF et la FIF, dans le cadre du programme Transformeurs."
   }
 }

@@ -9,6 +9,8 @@ import {
   getMetierFormationLinks,
 } from "@/lib/data";
 
+export const dynamic = "force-dynamic"; // toujours lu en base, jamais figé au build
+
 export async function GET() {
   try {
     const [regions, types, levels, domains, metiers, formations, metierFormationLinks] = await Promise.all([
