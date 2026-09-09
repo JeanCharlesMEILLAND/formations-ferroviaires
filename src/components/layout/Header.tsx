@@ -11,11 +11,10 @@ export const CONTACT_MAILTO =
 export default function Header({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const [open, setOpen] = useState(false);
   const other = locale === "fr" ? "en" : "fr";
-  const links = [
+  const links: Array<{ href: string; label: string; external?: boolean }> = [
     { href: `/${locale}#metiers`, label: dict.nav.metiers },
     { href: `/${locale}#parcours`, label: dict.nav.parcours },
     { href: `/${locale}/carte`, label: dict.nav.map },
-    { href: CONTACT_MAILTO, label: dict.nav.update, external: true },
   ];
 
   return (

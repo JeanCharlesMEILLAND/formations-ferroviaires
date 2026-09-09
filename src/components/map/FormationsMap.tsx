@@ -160,7 +160,6 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
   }, [establishments, showApi, familyFormationSlugs, userPos]);
 
   const apiCount = useMemo(() => establishments.filter((e) => e.source === "api").length, [establishments]);
-  const verifiedCount = useMemo(() => displayed.filter((e) => e.source !== "api").length, [displayed]);
 
   const formationsInResults = useMemo(() => {
     const map = new Map<string, { formation: Formation; count: number }>();
@@ -204,6 +203,17 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
   }, [filterData, fr, selectedMetier, selectedFormation, selectedRegion, selectedLevel, selectedDomain, selectedType]);
 
   const hasFilters = Boolean(searchQuery || selectedFamily || activeChips.length);
+
+  // Liste groupée par région (sauf tri par distance)
+  const groupedResults = useMemo<Array<[string | null, Establishment[]]>>(() => {
+    if (userPos) return [[null, displayed]];
+    const groups = new Map<string, Establishment[]>();
+    for (const e of displayed) {
+      const g = groups.get(e.region.name);
+      if (g) g.push(e); else groups.set(e.region.name, [e]);
+    }
+    return Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+  }, [displayed, userPos]);
   const count = useCountUp(displayed.length);
 
   // ------------------------------------------------------------------ actions
@@ -283,31 +293,34 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
   );
 
   const resultsHeader = (
-    <div className="px-4 pt-3 pb-2">
-      <div className="flex items-end justify-between gap-3">
-        <div className="min-w-0">
-          <p className="font-heading font-extrabold text-[26px] leading-none text-navy-900 tabular-nums">
-            {count}
-            <span className="text-body-sm font-bold text-navy-500 ml-2">{displayed.length > 1 ? m.establishmentMany : m.establishmentOne}</span>
-          </p>
-          <p className="text-caption text-navy-400 mt-1">
-            {verifiedCount} {verifiedCount > 1 ? m.verifiedMany : m.verifiedOne}
-            {apiCount > 0 && <span> · {apiCount.toLocaleString(fr ? "fr-FR" : "en-GB")} {m.generalists.toLowerCase()} {showApi ? m.shown : m.hidden}</span>}
-            {userPos && (
-              <button type="button" onClick={() => { setUserPos(null); flyTo(FRANCE_CENTER, FRANCE_ZOOM); }} className="ml-2 underline font-bold text-navy-600">{m.allFrance}</button>
-            )}
-          </p>
-        </div>
+    <div className="px-4 pt-3 pb-2.5 border-b border-navy-100">
+      <div className="flex items-center justify-between gap-3">
+        <p className="font-heading font-extrabold text-[24px] leading-none text-navy-900 tabular-nums">
+          {count}
+          <span className="text-body-sm font-bold text-navy-500 ml-2">{displayed.length > 1 ? m.establishmentMany : m.establishmentOne}</span>
+        </p>
         <div className="flex items-center gap-1.5 shrink-0">
           <button type="button" onClick={() => setFiltersOpen(!filtersOpen)} aria-expanded={filtersOpen} className={`chip ${filtersOpen || activeChips.length ? "is-on" : ""}`}>
             <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4" /></svg>
             {m.filters}{activeChips.length > 0 && <span className="chip-badge">{activeChips.length}</span>}
           </button>
-          {hasFilters && (
-            <button type="button" onClick={resetFilters} className="chip chip-danger">{m.clear}</button>
-          )}
+          {hasFilters && <button type="button" onClick={resetFilters} className="chip chip-danger">{m.clear}</button>}
         </div>
       </div>
+
+      {(apiCount > 0 || userPos) && (
+        <p className="text-caption text-navy-400 mt-2 flex flex-wrap gap-x-3 gap-y-0.5">
+          {userPos && (
+            <span>{m.sortedByDistance} · <button type="button" onClick={() => { setUserPos(null); flyTo(FRANCE_CENTER, FRANCE_ZOOM); }} className="underline font-bold text-navy-600">{m.allFrance}</button></span>
+          )}
+          {apiCount > 0 && (
+            <span title={m.generalistsHint}>
+              {apiCount.toLocaleString(fr ? "fr-FR" : "en-GB")} {showApi ? (apiCount > 1 ? m.genShownMany : m.genShownOne) : apiCount > 1 ? m.genHiddenMany : m.genHiddenOne} ·{" "}
+              <button type="button" onClick={() => setShowApi(!showApi)} className="underline font-bold text-navy-600">{showApi ? m.hide : m.show}</button>
+            </span>
+          )}
+        </p>
+      )}
 
       {activeChips.length > 0 && (
         <div className="flex flex-wrap gap-1.5 mt-2.5">
@@ -322,7 +335,7 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
       <div className={`collapsible ${filtersOpen ? "is-open" : ""}`}>
         <div>
           <div className="grid grid-cols-2 gap-x-2 gap-y-2.5 pt-3">
-            <label className="field col-span-2"><span>{m.metier}</span>
+            <label className="field col-span-2"><span>{m.metierLabel}</span>
               <select value={selectedMetier} onChange={(e) => setSelectedMetier(e.target.value)} className={selectClass(!!selectedMetier)}>
                 <option value="">{m.allMetiers}</option>
                 {Object.entries(metiersByFamily).map(([family, items]) => (
@@ -330,7 +343,7 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
                 ))}
               </select><Chevron />
             </label>
-            <label className="field col-span-2"><span>{m.formation}</span>
+            <label className="field col-span-2"><span>{m.formationLabel}</span>
               <select value={selectedFormation} onChange={(e) => setSelectedFormation(e.target.value)} className={selectClass(!!selectedFormation)}>
                 <option value="">{m.allFormations}</option>
                 {filterData?.formations.map((x) => <option key={x.slug} value={x.slug}>{x.nameFr}</option>)}
@@ -360,16 +373,6 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
                 {filterData?.types.map((x) => <option key={x.slug} value={x.slug}>{fr ? x.nameFr : x.nameEn}</option>)}
               </select><Chevron />
             </label>
-            {apiCount > 0 && (
-              <label className="col-span-2 flex items-center gap-3 rounded-xl border border-navy-100 bg-navy-50/60 px-3 py-2 cursor-pointer">
-                <span className={`switch ${showApi ? "is-on" : ""}`} aria-hidden="true"><span /></span>
-                <input type="checkbox" className="sr-only" checked={showApi} onChange={(e) => setShowApi(e.target.checked)} />
-                <span className="min-w-0">
-                  <span className="block text-[13px] font-bold text-navy-800">{m.generalists} <span className="text-navy-400 font-semibold">({apiCount})</span></span>
-                  <span className="block text-[11px] text-navy-400 leading-snug">{m.generalistsHint}</span>
-                </span>
-              </label>
-            )}
           </div>
         </div>
       </div>
@@ -422,40 +425,43 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
       ) : view === "establishments" ? (
         displayed.length === 0 ? empty(m.noResults, m.noResultsHint) : (
           <ul>
-            {displayed.map((est, i) => {
-              const active = selected?.id === est.id;
-              return (
-                <li key={est.id} className="animate-rise" style={{ animationDelay: `${Math.min(i, 14) * 35}ms` }}>
-                  <button
-                    type="button"
-                    onClick={() => select(est, 12)}
-                    onMouseEnter={() => setHotId(est.id)}
-                    onMouseLeave={() => setHotId(null)}
-                    aria-current={active ? "true" : undefined}
-                    className={`result-row ${active ? "is-active" : ""}`}
-                  >
-                    <span className="result-dot" style={{ background: est.type.color }} aria-hidden="true" />
-                    <span className="min-w-0 flex-1">
-                      <span className="block font-heading font-bold text-[14px] leading-snug text-navy-900">{displayName(est.name)}</span>
-                      <span className="block text-caption text-navy-400 mt-0.5 truncate">
-                        {est.city} · {est.region.name}
-                        {userPos && <span className="font-bold text-navy-700"> · {Math.round(distanceKm(userPos, [est.lat, est.lng]))} km</span>}
-                      </span>
-                      <span className="flex flex-wrap items-center gap-1.5 mt-1.5">
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full text-white" style={{ background: est.type.color }}>{fr ? est.type.nameFr : est.type.nameEn}</span>
-                        {est.source === "api" ? (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-signal-50 text-signal-800 border border-signal-200">{m.generalistBadge}</span>
-                        ) : (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-eco-50 text-eco-700">✓ {m.verifiedBadge}</span>
-                        )}
-                        <span className="text-[11px] text-navy-500 font-semibold">{est.formations.length} {est.formations.length > 1 ? m.formations : m.formation}</span>
-                      </span>
-                    </span>
-                    <svg className="result-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
-                  </button>
-                </li>
-              );
-            })}
+            {groupedResults.map(([head, items], g) => (
+              <li key={head ?? "all"}>
+                {head && <p className="list-head"><span>{head}</span><span className="tabular-nums">{items.length}</span></p>}
+                <ul>
+                  {items.map((est, i) => {
+                    const active = selected?.id === est.id;
+                    return (
+                      <li key={est.id} className="animate-rise" style={{ animationDelay: `${Math.min(g * 2 + i, 14) * 30}ms` }}>
+                        <button
+                          type="button"
+                          onClick={() => select(est, 12)}
+                          onMouseEnter={() => setHotId(est.id)}
+                          onMouseLeave={() => setHotId(null)}
+                          aria-current={active ? "true" : undefined}
+                          className={`result-row ${active ? "is-active" : ""}`}
+                        >
+                          <span className="result-icon" style={{ background: est.type.color }} aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z" /></svg></span>
+                          <span className="min-w-0 flex-1">
+                            <span className="result-title">{displayName(est.name)}</span>
+                            <span className="result-sub">
+                              {est.city}{head ? "" : ` · ${est.region.name}`}
+                              {userPos && <b className="text-navy-700"> · {Math.round(distanceKm(userPos, [est.lat, est.lng]))} km</b>}
+                            </span>
+                            <span className="result-meta">
+                              <i style={{ background: est.type.color }} />{fr ? est.type.nameFr : est.type.nameEn}
+                              <span aria-hidden="true">·</span>{est.formations.length} {est.formations.length > 1 ? m.formations : m.formation}
+                              {showApi && (est.source === "api" ? <em>{m.generalistBadge}</em> : <em className="is-ok">✓ {m.verifiedBadge}</em>)}
+                            </span>
+                          </span>
+                          <svg className="result-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </li>
+            ))}
           </ul>
         )
       ) : view === "formations" ? (
@@ -464,22 +470,20 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
             {formationsInResults.map(({ formation: f, count: n }, i) => {
               const linked = metiersByFormationSlug[f.slug] ?? [];
               return (
-                <li key={f.id} className="animate-rise" style={{ animationDelay: `${Math.min(i, 14) * 35}ms` }}>
+                <li key={f.id} className="animate-rise" style={{ animationDelay: `${Math.min(i, 14) * 30}ms` }}>
                   <div className={`result-row is-static ${selectedFormation === f.slug ? "is-active" : ""}`}>
-                    <span className="result-dot" style={{ background: f.domain.color }} aria-hidden="true" />
+                    <span className="result-icon" style={{ background: f.domain.color }} aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round" aria-hidden="true"><path d="M12 3L3 8l9 5 9-5-9-5zM3 13l9 5 9-5M3 18l9 5 9-5" /></svg></span>
                     <div className="min-w-0 flex-1">
-                      <button type="button" onClick={() => pickFormation(f.slug)} className="block text-left font-heading font-bold text-[14px] leading-snug text-navy-900 hover:text-electric-600 transition-colors">
-                        {f.nameFr}
-                      </button>
-                      <p className="text-caption text-navy-400 mt-0.5">
+                      <button type="button" onClick={() => pickFormation(f.slug)} className="result-title text-left hover:text-electric-600 transition-colors">{f.nameFr}</button>
+                      <p className="result-sub">
                         {fr ? f.level.nameFr : f.level.nameEn} · {fr ? f.domain.nameFr : f.domain.nameEn}
                         {f.rncpCode && <span className="font-mono"> · RNCP {f.rncpCode}</span>}
                       </p>
-                      <p className="text-[11px] font-semibold text-navy-600 mt-1">{n} {n > 1 ? m.establishmentMany : m.establishmentOne}</p>
+                      <p className="result-meta">{n} {n > 1 ? m.establishmentMany : m.establishmentOne}</p>
                       {linked.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 mt-2">
                           {linked.slice(0, 3).map((mt) => (
-                            <button key={mt.slug} type="button" onClick={() => pickMetier(mt.slug)} className="chip chip-sm" title={`${m.metier} : ${mt.nameFr}`}>
+                            <button key={mt.slug} type="button" onClick={() => pickMetier(mt.slug)} className="chip chip-sm" title={`${m.metierLabel} : ${mt.nameFr}`}>
                               {mt.nameFr.length > 32 ? `${mt.nameFr.slice(0, 30)}…` : mt.nameFr}
                             </button>
                           ))}
@@ -498,15 +502,15 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
           <ul>
             {Object.entries(metiersInResults.reduce<Record<string, Metier[]>>((acc, mt) => { (acc[mt.family] ??= []).push(mt); return acc; }, {})).map(([family, items]) => (
               <li key={family}>
-                <p className="sticky top-0 z-10 px-4 py-1.5 bg-navy-50/95 backdrop-blur text-[10px] font-bold text-navy-500 uppercase tracking-wider">{family}</p>
+                <p className="list-head"><span>{family}</span><span className="tabular-nums">{items.length}</span></p>
                 <ul>
                   {items.map((mt, i) => (
-                    <li key={mt.id} className="animate-rise" style={{ animationDelay: `${Math.min(i, 10) * 35}ms` }}>
+                    <li key={mt.id} className="animate-rise" style={{ animationDelay: `${Math.min(i, 10) * 30}ms` }}>
                       <button type="button" onClick={() => pickMetier(mt.slug)} className={`result-row ${selectedMetier === mt.slug ? "is-active" : ""}`}>
-                        <span className="result-dot bg-signal-300" aria-hidden="true" />
+                        <span className="result-icon is-soft" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></svg></span>
                         <span className="min-w-0 flex-1">
-                          <span className="block font-heading font-bold text-[14px] leading-snug text-navy-900">{mt.nameFr}</span>
-                          {mt.level && <span className="block text-caption text-navy-400 mt-0.5">{mt.level}</span>}
+                          <span className="result-title">{mt.nameFr}</span>
+                          {mt.level && <span className="result-sub">{mt.level}</span>}
                         </span>
                         <svg className="result-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
                       </button>

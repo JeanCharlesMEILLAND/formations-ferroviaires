@@ -8,6 +8,7 @@ body {
   background: #F1F3F2;
 }
 .text-balance { text-wrap: balance; }
+section[id] { scroll-margin-top: 5rem; } /* la barre de navigation collante ne cache pas le titre visé par une ancre */
 
 /* ============================================================
    Carte : Leaflet, marqueurs, panneau de recherche
@@ -89,7 +90,7 @@ body {
 .segmented button.is-on span { background: #0C1F2C; color: #fff; }
 
 /* Lignes de résultats */
-.result-row { position: relative; display: flex; gap: 12px; align-items: flex-start; width: 100%; text-align: left; padding: 14px 16px 14px 18px; border-bottom: 1px solid #EEF2F4; transition: background .18s, padding-left .2s; }
+.result-row { position: relative; display: flex; gap: 12px; align-items: flex-start; width: 100%; text-align: left; padding: 12px 14px 12px 18px; border-bottom: 1px solid #EEF2F4; transition: background .18s, padding-left .2s; }
 .result-row:not(.is-static):hover { background: #F6F8F9; padding-left: 22px; }
 .result-row::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 4px; border-radius: 0 4px 4px 0; background: #FF5A36; transform: scaleY(0); transition: transform .22s cubic-bezier(.2, .7, .2, 1); }
 .result-row.is-active { background: #FFF3EF; }
@@ -127,28 +128,67 @@ body {
   .segmented-thumb, .collapsible, .result-row, .chip, .search-label, .map-btn, .sheet { transition: none !important; }
 }
 
-/* ============================================================
-   Accueil : silhouette de la France
-   ============================================================ */
-.fr-land { fill: rgba(255, 255, 255, .07); animation: fr-fill 1.2s ease-out .8s both; }
-.fr-outline { fill: none; stroke: #FFD84D; stroke-width: 2; stroke-linejoin: round; stroke-dasharray: 2600; stroke-dashoffset: 2600; animation: fr-draw 2.4s cubic-bezier(.4, 0, .2, 1) forwards; opacity: .85; }
-.fr-node { cursor: pointer; outline: none; animation: fr-pop .6s cubic-bezier(.2, .9, .3, 1.4) both; transform-box: fill-box; transform-origin: center; }
-.fr-halo { fill: rgba(255, 216, 77, .12); transition: fill .2s; }
-.fr-bubble { fill: #12303F; stroke: #FFD84D; stroke-width: 3; transition: fill .2s, stroke .2s; filter: url(#fr-glow); }
-.fr-count { fill: #fff; font-family: var(--font-heading), system-ui, sans-serif; font-weight: 800; font-size: 14px; pointer-events: none; transition: fill .2s; }
-.fr-name { fill: #FFD84D; font-family: var(--font-body), system-ui, sans-serif; font-weight: 700; font-size: 13px; opacity: 0; transform: translateY(4px); transition: opacity .2s, transform .2s; pointer-events: none; paint-order: stroke; stroke: #0C1F2C; stroke-width: 4px; stroke-linejoin: round; }
-.fr-node:hover .fr-bubble, .fr-node:focus-visible .fr-bubble { fill: #FFD84D; }
-.fr-node:hover .fr-count, .fr-node:focus-visible .fr-count { fill: #0C1F2C; }
-.fr-node:hover .fr-halo, .fr-node:focus-visible .fr-halo { fill: rgba(255, 216, 77, .28); }
-.fr-node:hover .fr-name, .fr-node:focus-visible .fr-name { opacity: 1; transform: none; }
-@keyframes fr-draw { to { stroke-dashoffset: 0; } }
-@keyframes fr-fill { from { fill: rgba(255, 255, 255, 0); } }
-@keyframes fr-pop { from { opacity: 0; transform: scale(.3); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .fr-land, .fr-outline, .fr-node { animation: none; stroke-dashoffset: 0; } }
-
 /* Accueil : cartes campus */
 .campus-card { display: flex; gap: 14px; align-items: flex-start; background: #F1F3F2; border: 1px solid #D6DDE1; border-radius: 1rem; padding: 18px 18px 18px 0; position: relative; overflow: hidden; transition: transform .22s cubic-bezier(.2, .7, .2, 1), box-shadow .22s, border-color .22s; animation: rise .5s cubic-bezier(.2, .7, .2, 1) both; }
 .campus-card:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(12, 31, 44, .12); border-color: #0C1F2C; }
 .campus-rail { width: 6px; align-self: stretch; border-radius: 0 4px 4px 0; flex-shrink: 0; }
 .campus-arrow { width: 32px; height: 32px; border-radius: 999px; background: #fff; border: 1px solid #D6DDE1; display: grid; place-items: center; color: #0C1F2C; flex-shrink: 0; transition: background .2s, color .2s, transform .2s; }
 .campus-card:hover .campus-arrow { background: #0C1F2C; color: #fff; transform: translateX(2px); }
+
+/* Panneau de la carte : lignes de résultats */
+.result-icon { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: #fff; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06); }
+.result-icon svg { width: 18px; height: 18px; }
+.result-icon.is-soft { background: #FFF7D6; color: #A67D0A; }
+.result-title { display: block; font-family: var(--font-heading), system-ui, sans-serif; font-weight: 700; font-size: 14px; line-height: 1.3; color: #0C1F2C; }
+.result-sub { display: block; font-size: 12px; color: #6C7C88; margin-top: 2px; }
+.result-sub b { font-weight: 700; }
+.result-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 11px; color: #4F6270; font-weight: 600; margin-top: 6px; }
+.result-meta i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.result-meta em { font-style: normal; font-size: 10px; font-weight: 800; padding: 1px 7px; border-radius: 999px; background: #FFF7D6; color: #7F5F06; }
+.result-meta em.is-ok { background: #DDF3EA; color: #13634E; }
+.list-head { position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; gap: 8px; padding: 6px 16px; background: rgba(241, 243, 242, .96); backdrop-filter: blur(6px); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: #4F6270; border-bottom: 1px solid #E4ECEF; }
+
+/* Recherche du hero */
+.search-field.is-hero input { height: 52px; border: none; box-shadow: none; background: transparent; border-radius: 12px; padding: 20px 12px 6px 42px; font-size: 16px; }
+.search-field.is-hero input:focus { box-shadow: none; }
+.search-field.is-hero .search-icon { left: 12px; }
+.search-field.is-hero .search-label { left: 42px; right: 8px; }
+.search-field.is-hero.is-active .search-label { transform: translateY(-50%) translateY(-12px) scale(.72); }
+
+/* ============================================================
+   Accueil : carte de France par régions, cartes par famille
+   ============================================================ */
+.fr-region { fill: rgba(255, 255, 255, .07); stroke: rgba(255, 216, 77, .7); stroke-width: 1.1; stroke-linejoin: round; transition: fill .25s, stroke .25s; cursor: pointer; }
+.fr-map .is-ready .fr-region { animation: fr-draw 1.8s cubic-bezier(.4, 0, .2, 1) forwards, fr-fill 1.2s ease-out 1s both; }
+.fr-region.is-hot { fill: rgba(255, 216, 77, .24); stroke: #FFD84D; stroke-width: 1.6; }
+.fr-node { cursor: pointer; outline: none; animation: fr-pop .6s cubic-bezier(.2, .9, .3, 1.4) both; transform-box: fill-box; transform-origin: center; }
+.fr-halo { fill: rgba(255, 216, 77, .12); transition: fill .2s; }
+.fr-bubble { fill: #12303F; stroke: #FFD84D; stroke-width: 3; transition: fill .2s, stroke .2s; filter: url(#fr-glow); }
+.fr-count { fill: #fff; font-family: var(--font-heading), system-ui, sans-serif; font-weight: 800; font-size: 14px; pointer-events: none; transition: fill .2s; }
+.fr-node.is-hot .fr-bubble, .fr-node:focus-visible .fr-bubble { fill: #FFD84D; }
+.fr-node.is-hot .fr-count, .fr-node:focus-visible .fr-count { fill: #0C1F2C; }
+.fr-node.is-hot .fr-halo, .fr-node:focus-visible .fr-halo { fill: rgba(255, 216, 77, .3); }
+.fr-tip { position: absolute; z-index: 5; transform: translate(-50%, calc(-100% - 12px)); background: #fff; color: #0C1F2C; border-radius: 12px; padding: 8px 12px; box-shadow: 0 12px 34px rgba(0, 0, 0, .38); white-space: nowrap; pointer-events: none; animation: rise .18s ease-out both; }
+.fr-tip strong { display: block; font-family: var(--font-heading), system-ui, sans-serif; font-size: 14px; line-height: 1.2; }
+.fr-tip span { display: block; font-size: 12px; color: #4F6270; margin-top: 2px; }
+.fr-tip::after { content: ""; position: absolute; left: 50%; bottom: -5px; width: 12px; height: 12px; background: #fff; transform: translateX(-50%) rotate(45deg); border-radius: 2px; }
+.fr-tip.is-right { transform: translate(-88%, calc(-100% - 12px)); }
+.fr-tip.is-right::after { left: 88%; }
+.fr-tip.is-left { transform: translate(-14%, calc(-100% - 12px)); }
+.fr-tip.is-left::after { left: 14%; }
+@keyframes fr-draw { to { stroke-dashoffset: 0; } }
+@keyframes fr-fill { from { fill: rgba(255, 255, 255, 0); } }
+@keyframes fr-pop { from { opacity: 0; transform: scale(.3); } to { opacity: 1; transform: none; } }
+
+.family-card { --fam: #0C1F2C; --fam-soft: #E4ECEF; display: flex; flex-direction: column; gap: 14px; background: #fff; border: 1px solid #D6DDE1; border-radius: 1rem; padding: 20px 20px 18px 24px; position: relative; overflow: hidden; transition: transform .22s cubic-bezier(.2, .7, .2, 1), box-shadow .22s, border-color .22s; animation: rise .5s cubic-bezier(.2, .7, .2, 1) both; }
+.family-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--fam); }
+.family-card:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(12, 31, 44, .12); border-color: var(--fam); }
+.family-head { display: flex; gap: 12px; align-items: center; }
+.family-tile { width: 46px; height: 46px; border-radius: 12px; background: var(--fam-soft); color: var(--fam); display: grid; place-items: center; flex-shrink: 0; }
+.family-stats { display: block; font-size: 12px; color: #6C7C88; font-weight: 600; margin-top: 2px; }
+.family-jobs { display: flex; flex-wrap: wrap; gap: 6px; }
+.family-job { font-size: 12px; font-weight: 600; color: #253B49; background: #F1F3F2; border-radius: 999px; padding: 4px 10px; line-height: 1.3; }
+.family-job.is-more { background: transparent; color: var(--fam); border: 1.5px dashed var(--fam); }
+.family-foot { margin-top: auto; display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #0C1F2C; transition: color .2s, gap .2s; }
+.family-card:hover .family-foot { color: var(--fam); gap: 10px; }
+@media (prefers-reduced-motion: reduce) { .fr-region, .fr-node, .family-card, .fr-tip { animation: none !important; } .fr-map .is-ready .fr-region { stroke-dashoffset: 0 !important; } }

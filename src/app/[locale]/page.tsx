@@ -4,6 +4,7 @@ import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getHomeData, type FamilyCard } from "@/lib/home";
 import FranceMap from "@/components/home/FranceMap";
+import HeroSearch from "@/components/home/HeroSearch";
 import { CONTACT_MAILTO } from "@/components/layout/Header";
 import { displayName } from "@/lib/format";
 
@@ -23,19 +24,21 @@ function fill(template: string, values: Record<string, number | string>): string
   return template.replace(/\{(\w+)\}/g, (_, k) => String(values[k] ?? ""));
 }
 
-/** Pictogrammes par famille de métiers (traits simples, couleur de l'encre). */
+/** Pictogrammes et couleurs par famille de métiers. */
+const FAMILY_STYLE: Record<string, { d: string; color: string; soft: string }> = {
+  Conduite: { d: "M4 16h16M6 16V9a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v7M8 20h8M7 12h10", color: "#A67D0A", soft: "#FFF7D6" },
+  Maintenance: { d: "M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.4 2.4-2-2 2.4-2.4Z", color: "#1B8C6E", soft: "#DDF3EA" },
+  "Gestion du trafic": { d: "M12 3v18M5 8h14M7 8v4M17 8v4M9 12h6", color: "#12303F", soft: "#E4ECEF" },
+  Ingénierie: { d: "M3 20h18M5 20V9l7-5 7 5v11M9 20v-6h6v6", color: "#E84A28", soft: "#FFEDE8" },
+  Infrastructure: { d: "M3 17h18M3 13h18M6 13V7M12 13V7M18 13V7M4 7h16", color: "#3C4E5C", soft: "#E4ECEF" },
+};
+const FAMILY_DEFAULT = { d: "M4 19h16M6 19V7l6-3 6 3v12M10 19v-4h4v4", color: "#6C7C88", soft: "#F1F3F2" };
+
 function FamilyIcon({ label }: { label: string }) {
-  const paths: Record<string, string> = {
-    Conduite: "M4 16h16M6 16V9a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v7M8 20h8M7 12h10",
-    Maintenance: "M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.4 2.4-2-2 2.4-2.4Z",
-    "Gestion du trafic": "M12 3v18M5 8h14M7 8v4M17 8v4M9 12h6",
-    Ingénierie: "M3 20h18M5 20V9l7-5 7 5v11M9 20v-6h6v6",
-    Infrastructure: "M3 17h18M3 13h18M6 13V7M12 13V7M18 13V7M4 7h16",
-  };
-  const d = paths[label] ?? "M4 19h16M6 19V7l6-3 6 3v12M10 19v-4h4v4";
+  const st = FAMILY_STYLE[label] ?? FAMILY_DEFAULT;
   return (
-    <span className="w-11 h-11 rounded-xl bg-navy-100 grid place-items-center shrink-0" aria-hidden="true">
-      <svg viewBox="0 0 24 24" className="w-6 h-6 stroke-navy-900" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={d} /></svg>
+    <span className="family-tile" aria-hidden="true">
+      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={st.d} /></svg>
     </span>
   );
 }
@@ -48,15 +51,16 @@ const CHIPS: Array<{ label: string; family: string }> = [
   { label: "Ingénierie", family: "Ingénierie" },
 ];
 
+/** Niveaux du cadre national des certifications (3 = CAP … 8 = doctorat), avec leur équivalent en années après le bac. */
 const PARCOURS = [
-  { n: "3", level: "cap-niv3", label: "CAP", ex: "CAP maintenance des véhicules", sub: "Lycées pro, CFA" },
-  { n: "4", level: "bac-niv4", label: "Bac pro", ex: "Bac pro MELEC, MSPC", sub: "Lycées des métiers", hot: true },
-  { n: "4+", level: "bac1-cs", label: "Mention", ex: "MC4 maintenance des installations ferroviaires", sub: "Campus ferroviaires" },
-  { n: "5", level: "bts-niv5", label: "BTS", ex: "BTS électrotechnique, BTS MS", sub: "Alternance possible", hot: true },
-  { n: "6", level: "licence-niv6", label: "Licence, BUT", ex: "Licence pro GMSF, BUT GEII", sub: "IUT, universités" },
-  { n: "7", level: "master-niv7", label: "Ingénieur", ex: "Ingénieur ferroviaire et transports guidés", sub: "ESTACA, IMT, ENTPE", hot: true },
-  { n: "8", level: "mastere-niv8", label: "Mastère", ex: "Mastère spécialisé smart mobility", sub: "Grandes écoles" },
-  { n: "★", level: "certification-pro", label: "Certifications", ex: "SECUFER, TES, licence européenne", sub: "Organismes agréés EPSF" },
+  { n: "3", level: "cap-niv3", eq: { fr: "CAP", en: "vocational certificate" }, ex: "CAP maintenance des véhicules", sub: "Lycées pro, CFA" },
+  { n: "4", level: "bac-niv4", eq: { fr: "bac", en: "high-school diploma" }, ex: "Bac pro MELEC, MSPC", sub: "Lycées des métiers", hot: true },
+  { n: "4+", level: "bac1-cs", eq: { fr: "bac + 1", en: "1 year after" }, ex: "MC4 maintenance des installations ferroviaires", sub: "Campus ferroviaires" },
+  { n: "5", level: "bts-niv5", eq: { fr: "bac + 2", en: "2 years after" }, ex: "BTS électrotechnique, BTS MS", sub: "Alternance possible", hot: true },
+  { n: "6", level: "licence-niv6", eq: { fr: "bac + 3", en: "3 years after" }, ex: "Licence pro GMSF, BUT GEII", sub: "IUT, universités" },
+  { n: "7", level: "master-niv7", eq: { fr: "bac + 5", en: "5 years after" }, ex: "Ingénieur ferroviaire et transports guidés", sub: "ESTACA, IMT, ENTPE", hot: true },
+  { n: "8", level: "mastere-niv8", eq: { fr: "bac + 6 et plus", en: "6 years and more" }, ex: "Mastère spécialisé smart mobility", sub: "Grandes écoles" },
+  { n: "★", level: "certification-pro", eq: { fr: "certifications", en: "certifications" }, ex: "SECUFER, TES, licence européenne", sub: "Organismes agréés EPSF" },
 ];
 
 export default async function HomePage({ params }: { params: { locale: Locale } }) {
@@ -80,23 +84,7 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
             </h1>
             <p className="text-body-lg text-navy-300 max-w-[56ch] mb-6">{dict.home.lead}</p>
 
-            <form action={carte} method="get" role="search" className="flex flex-wrap gap-2 items-center bg-white rounded-2xl p-2 pl-4 shadow-search">
-              <span className="font-heading font-extrabold text-navy-900" aria-hidden="true">⌕</span>
-              <label htmlFor="home-q" className="sr-only">{dict.common.search}</label>
-              <input
-                id="home-q"
-                name="q"
-                type="search"
-                placeholder={dict.home.searchPlaceholder}
-                className="flex-1 min-w-[12rem] border-0 outline-none text-body-lg text-navy-900 placeholder:text-navy-400 bg-transparent py-2"
-              />
-              <Link href={`${carte}?near=1`} className="rounded-xl bg-navy-100 text-navy-900 px-3 py-2.5 text-body-sm font-bold whitespace-nowrap hover:bg-navy-200">
-                ◎ {dict.home.nearButton}
-              </Link>
-              <button type="submit" className="rounded-xl bg-electric-500 hover:bg-electric-600 text-white px-5 py-3 text-body-sm font-extrabold">
-                {dict.home.searchButton}
-              </button>
-            </form>
+            <HeroSearch action={carte} label={dict.map.searchLabel} suggestions={dict.map.suggestions} nearHref={`${carte}?near=1`} nearLabel={dict.home.nearButton} submitLabel={dict.home.searchButton} />
 
             <div className="flex flex-wrap gap-2 mt-4" aria-label={dict.home.frequent}>
               {CHIPS.map((c) => (
@@ -124,7 +112,7 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
           </div>
 
           <div className="max-w-md mx-auto w-full">
-            <FranceMap regions={data.regions} locale={L} caption={`${dict.home.networkCaption}${updated ? ` · ${updated}` : ""}`} />
+            <FranceMap regions={data.regions} locale={L} caption={dict.home.networkCaption} unitOne={dict.map.verifiedOne} unitMany={dict.map.verifiedMany} none={dict.home.noneYet} />
           </div>
         </div>
         <div className="h-1.5 bg-[repeating-linear-gradient(90deg,#FFD84D_0_40px,transparent_40px_56px)] opacity-90" aria-hidden="true" />
@@ -152,19 +140,29 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
           <Link href={`${carte}?view=metiers`} className="font-bold border-b-2 border-signal-300 whitespace-nowrap">{dict.home.familiesAll}</Link>
         </div>
         <div className="grid gap-3.5 md:grid-cols-2 lg:grid-cols-3">
-          {data.families.map((f: FamilyCard) => (
-            <Link key={f.key} href={`${carte}?family=${encodeURIComponent(f.key)}`} className="bg-white border border-navy-200 rounded-card p-5 flex flex-col gap-2.5 hover:border-navy-900 hover:shadow-card-hover transition-all">
-              <FamilyIcon label={f.label} />
-              <h3 className="font-heading text-h4">{f.label}</h3>
-              <span className="text-caption text-navy-400">{f.jobCount} {dict.home.jobs} · {f.formationCount} {dict.home.formationsWord}</span>
-              <ul className="text-body-sm text-navy-600">
-                {f.jobs.slice(0, 3).map((j) => (
-                  <li key={j} className="py-1 border-t border-dashed border-navy-200">{j}</li>
-                ))}
-              </ul>
-              <span className="text-caption font-bold text-electric-600 mt-auto">{dict.home.seeFormations} →</span>
-            </Link>
-          ))}
+          {data.families.map((f: FamilyCard, i) => {
+            const st = FAMILY_STYLE[f.label] ?? FAMILY_DEFAULT;
+            const more = f.jobs.length - 4;
+            return (
+              <Link key={f.key} href={`${carte}?family=${encodeURIComponent(f.key)}`} className="family-card" style={{ "--fam": st.color, "--fam-soft": st.soft, animationDelay: `${i * 60}ms` } as React.CSSProperties}>
+                <span className="family-head">
+                  <FamilyIcon label={f.label} />
+                  <span className="min-w-0">
+                    <span className="block font-heading text-h4 leading-tight text-navy-900">{f.label}</span>
+                    <span className="family-stats">{f.jobCount} {dict.home.jobs} · {f.formationCount} {dict.home.formationsWord}</span>
+                  </span>
+                </span>
+                <span className="family-jobs">
+                  {f.jobs.slice(0, 4).map((j) => <span key={j} className="family-job">{j}</span>)}
+                  {more > 0 && <span className="family-job is-more">+{more}</span>}
+                </span>
+                <span className="family-foot">
+                  {dict.home.seeFormations}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="w-4 h-4" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                </span>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
@@ -174,6 +172,10 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
           <div>
             <h2 className="font-heading text-h2">{dict.home.parcoursTitle}</h2>
             <p className="text-navy-600 max-w-[60ch] mt-1.5">{dict.home.parcoursSub}</p>
+            <p className="text-caption text-navy-500 max-w-[70ch] mt-2 flex items-start gap-2">
+              <span className="w-5 h-5 rounded-full border-2 border-navy-900 grid place-items-center font-mono text-[9px] font-bold shrink-0 mt-0.5" aria-hidden="true">5</span>
+              <span>{dict.home.parcoursLegend}</span>
+            </p>
           </div>
           <Link href={`${carte}?view=formations`} className="font-bold border-b-2 border-signal-300 whitespace-nowrap">{fill(dict.home.parcoursAll, v)}</Link>
         </div>
@@ -184,7 +186,7 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
               <li key={p.level} className="px-2.5 relative">
                 <Link href={`${carte}?level=${p.level}`} className="block group">
                   <span className={`w-10 h-10 rounded-full border-[3px] grid place-items-center font-mono font-bold text-caption ${p.hot ? "bg-signal-300 border-signal-300 text-navy-900" : "bg-white border-navy-900 text-navy-900"}`}>{p.n}</span>
-                  <span className="block text-[11px] font-bold uppercase tracking-wider text-navy-400 mt-2.5">{p.label}</span>
+                  <span className="block text-[11px] font-bold uppercase tracking-wider text-navy-400 mt-2.5">{p.n === "★" ? p.eq[L] : `${dict.home.levelWord} ${p.n} · ${p.eq[L]}`}</span>
                   <span className="block text-body-sm font-semibold mt-1 group-hover:text-electric-600">{p.ex}</span>
                   <span className="block text-caption text-navy-600">{p.sub}</span>
                 </Link>
