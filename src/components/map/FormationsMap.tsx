@@ -260,19 +260,22 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
 
   const hasFilters = Boolean(searchQuery || selectedFamily || activeChips.length);
 
-  // Titre de contexte : le premier critère actif, en toutes lettres (« Famille de métiers · Maintenance »)
-  const context = useMemo<{ kicker: string; title: string } | null>(() => {
+  // Titre de contexte : tous les critères actifs en toutes lettres, du plus précis au plus large
+  // (« Recherche · Région » / « « aiguilleur » · Occitanie »)
+  const context = useMemo<{ kicker: string; title: string; parts: number } | null>(() => {
     const f = filterData;
     const q = searchQuery.trim();
-    if (q.length >= 2) return { kicker: m.ctxSearch, title: `« ${q} »` };
-    if (selectedMetier) return { kicker: m.ctxMetier, title: f?.metiers.find((x) => x.slug === selectedMetier)?.nameFr ?? selectedMetier };
-    if (selectedFormation) return { kicker: m.ctxFormation, title: f?.formations.find((x) => x.slug === selectedFormation)?.nameFr ?? selectedFormation };
-    if (selectedFamily) return { kicker: m.ctxFamily, title: selectedFamily.replace(",", " · ") };
-    if (selectedRegion) return { kicker: m.ctxRegion, title: f?.regions.find((x) => x.code === selectedRegion)?.name ?? selectedRegion };
-    if (selectedLevel) { const x = f?.levels.find((l) => l.slug === selectedLevel); return { kicker: m.ctxLevel, title: (fr ? x?.nameFr : x?.nameEn) ?? selectedLevel }; }
-    if (selectedDomain) { const x = f?.domains.find((d) => d.slug === selectedDomain); return { kicker: m.ctxDomain, title: (fr ? x?.nameFr : x?.nameEn) ?? selectedDomain }; }
-    if (selectedType) { const x = f?.types.find((t) => t.slug === selectedType); return { kicker: m.ctxType, title: (fr ? x?.nameFr : x?.nameEn) ?? selectedType }; }
-    return null;
+    const parts: Array<[string, string]> = [];
+    if (q.length >= 2) parts.push([m.ctxSearch, `« ${q} »`]);
+    if (selectedMetier) parts.push([m.ctxMetier, f?.metiers.find((x) => x.slug === selectedMetier)?.nameFr ?? selectedMetier]);
+    if (selectedFormation) parts.push([m.ctxFormation, f?.formations.find((x) => x.slug === selectedFormation)?.nameFr ?? selectedFormation]);
+    if (selectedFamily) parts.push([m.ctxFamily, selectedFamily.replace(",", " · ")]);
+    if (selectedRegion) parts.push([m.ctxRegion, f?.regions.find((x) => x.code === selectedRegion)?.name ?? selectedRegion]);
+    if (selectedLevel) { const x = f?.levels.find((l) => l.slug === selectedLevel); parts.push([m.ctxLevel, (fr ? x?.nameFr : x?.nameEn) ?? selectedLevel]); }
+    if (selectedDomain) { const x = f?.domains.find((d) => d.slug === selectedDomain); parts.push([m.ctxDomain, (fr ? x?.nameFr : x?.nameEn) ?? selectedDomain]); }
+    if (selectedType) { const x = f?.types.find((t) => t.slug === selectedType); parts.push([m.ctxType, (fr ? x?.nameFr : x?.nameEn) ?? selectedType]); }
+    if (parts.length === 0) return null;
+    return { kicker: parts.map((p) => p[0]).join(" · "), title: parts.map((p) => p[1]).join(" · "), parts: parts.length };
   }, [filterData, fr, m, searchQuery, selectedMetier, selectedFormation, selectedFamily, selectedRegion, selectedLevel, selectedDomain, selectedType]);
 
   // Liste groupée par région (sauf tri par distance)
@@ -395,7 +398,13 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
   const resultsHeader = (
     <div className="px-4 pt-3 pb-2.5 border-b border-navy-100">
       <p className="text-[10px] font-extrabold uppercase tracking-wider text-navy-400">{context ? context.kicker : m.ctxAll}</p>
-      {context && <h2 className="font-heading font-extrabold text-[20px] leading-tight text-navy-900 text-balance mt-0.5 animate-rise" key={context.title}>{context.title}</h2>}
+      {context && (
+        <h2 className={`font-heading font-extrabold leading-tight text-navy-900 text-balance mt-0.5 animate-rise ${context.title.length > 44 ? "text-[16px]" : "text-[20px]"}`} key={context.title}>
+          {context.title.split(" · ").map((part, i) => (
+            <span key={i} className="inline">{i > 0 && <span className="text-navy-300 font-semibold mx-1.5" aria-hidden="true">·</span>}{part}</span>
+          ))}
+        </h2>
+      )}
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mt-1.5">
         <p className={`font-heading font-extrabold leading-none text-navy-900 tabular-nums ${context ? "text-[15px]" : "text-[24px]"}`}>
           {count}
