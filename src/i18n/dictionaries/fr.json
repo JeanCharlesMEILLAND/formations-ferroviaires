@@ -102,7 +102,17 @@
       "city": "Ville"
     },
     "suggestionsHint": "Suggestions",
-    "noSuggestion": "Aucune suggestion, lancez la recherche telle quelle"
+    "noSuggestion": "Aucune suggestion, lancez la recherche telle quelle",
+    "fuzzyHint": "Pas de résultat exact pour « {q} », voici les plus proches.",
+    "ctxFamily": "Famille de métiers",
+    "ctxMetier": "Métier",
+    "ctxFormation": "Formation",
+    "ctxRegion": "Région",
+    "ctxLevel": "Niveau",
+    "ctxDomain": "Domaine",
+    "ctxType": "Type d'établissement",
+    "ctxSearch": "Recherche",
+    "ctxAll": "Tous les établissements vérifiés"
   },
   "establishment": {
     "title": "Fiche établissement",

@@ -52,3 +52,41 @@ test("un synonyme court ne matche qu'en mot entier et les familles suivent la me
   assert.ok(!r.some((i) => i.slug === "efmo"), "« tes » ne doit pas matcher « mobilités »");
   assert.equal(matchesAll(normalize("Formation TES conduite"), expandQuery("conducteur")), true);
 });
+
+import { editDistance, fuzzyHit, tolerance } from "../src/lib/search";
+
+test("editDistance compte une faute, une inversion, et s'arrête au-delà de la borne", () => {
+  assert.equal(editDistance("lyon", "lyon", 2), 0);
+  assert.equal(editDistance("lyno", "lyon", 2), 1, "inversion");
+  assert.equal(editDistance("electrotecnique", "electrotechnique", 2), 1, "lettre manquante");
+  assert.equal(editDistance("aiguileur", "aiguilleur", 2), 1);
+  assert.equal(editDistance("chat", "train", 1), 2, "au-delà de la borne : borne + 1");
+});
+
+test("tolérance : rien sous quatre lettres, une jusqu'à six, deux au-delà", () => {
+  assert.equal(tolerance("bac"), 0);
+  assert.equal(tolerance("lyon"), 1);
+  assert.equal(tolerance("electrotechnique"), 2);
+  assert.equal(tolerance("bac4"), 0, "les codes avec chiffres restent exacts");
+});
+
+test("fuzzyHit retrouve un mot ou un début de mot à une faute près", () => {
+  const hay = normalize("BTS Électrotechnique, Lyon, maintenance des installations");
+  assert.equal(fuzzyHit(hay, "electrotecnique"), true);
+  assert.equal(fuzzyHit(hay, "electrotech"), true, "début de mot");
+  assert.equal(fuzzyHit(hay, "lyno"), true);
+  assert.equal(fuzzyHit(hay, "paris"), false);
+  assert.equal(fuzzyHit(hay, "bts"), false, "trop court pour tolérer");
+  assert.equal(matchesAll(hay, expandQuery("maintenace lyon"), true), true);
+  assert.equal(matchesAll(hay, expandQuery("maintenace lyon")), false, "sans tolérance");
+});
+
+test("suggest tolère une faute mais classe l'exact devant", () => {
+  const idx = buildSuggestionItems({
+    establishments: [], cities: [],
+    formations: [{ slug: "bts-electro", nameFr: "BTS Électrotechnique", level: "BTS", count: 40 }],
+    metiers: [{ slug: "aiguilleur", nameFr: "Aiguilleur / Aiguilleuse", family: "Gestion du trafic", count: 3 }],
+  });
+  assert.equal(suggest(idx, "aiguileur")[0]?.slug, "aiguilleur");
+  assert.equal(suggest(idx, "electrotecnique")[0]?.slug, "bts-electro");
+});

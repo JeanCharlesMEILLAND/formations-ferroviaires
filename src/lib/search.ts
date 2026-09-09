@@ -63,9 +63,48 @@ function hit(haystack: string, term: string): boolean {
   return term.length >= 4 ? haystack.includes(term) : ` ${haystack} `.includes(` ${term} `);
 }
 
-/** Vrai si chaque groupe de la requête trouve au moins une alternative dans le texte normalisé. */
-export function matchesAll(haystack: string, groups: string[][]): boolean {
-  return groups.every((alts) => alts.some((a) => hit(haystack, a)));
+/**
+ * Distance d'édition (Damerau-Levenshtein, alignement optimal) bornée : au-delà de `max`, on renvoie max + 1
+ * sans finir le calcul. Une lettre en trop, en moins, changée ou deux lettres inversées comptent 1.
+ */
+export function editDistance(a: string, b: string, max: number): number {
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+  let prev2: number[] = [], prev: number[] = [], cur: number[] = [];
+  for (let j = 0; j <= b.length; j++) prev[j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    cur = [i];
+    let rowMin = i;
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      let v = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost);
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) v = Math.min(v, prev2[j - 2] + 1);
+      cur[j] = v;
+      if (v < rowMin) rowMin = v;
+    }
+    if (rowMin > max) return max + 1;
+    prev2 = prev; prev = cur;
+  }
+  return prev[b.length];
+}
+
+/** Tolérance admise pour un mot tapé : aucune sous quatre lettres, une jusqu'à six, deux au-delà. */
+export const tolerance = (token: string): number => (token.length < 4 || /\d/.test(token) ? 0 : token.length <= 6 ? 1 : 2);
+
+/** Vrai si un mot du texte, ou le début d'un mot plus long, est à une faute près du terme tapé. */
+export function fuzzyHit(haystack: string, token: string): boolean {
+  const max = tolerance(token);
+  if (max === 0) return false;
+  for (const w of haystack.split(" ")) {
+    if (w.length < 4) continue;
+    if (editDistance(token, w, max) <= max) return true;
+    if (token.length >= 5 && w.length > token.length && editDistance(token, w.slice(0, token.length), max) <= max) return true;
+  }
+  return false;
+}
+
+/** Vrai si chaque groupe de la requête trouve au moins une alternative dans le texte normalisé (à une faute près si `fuzzy`). */
+export function matchesAll(haystack: string, groups: string[][], fuzzy = false): boolean {
+  return groups.every((alts) => alts.some((a) => hit(haystack, a)) || (fuzzy && fuzzyHit(haystack, alts[0])));
 }
 
 export type SuggestionKind = "establishment" | "formation" | "metier" | "city";
@@ -82,12 +121,13 @@ export interface SuggestionItem {
   lng?: number;
 }
 
-/** Qualité d'une correspondance : début du texte > début d'un mot > au milieu d'un mot > synonyme seul. */
+/** Qualité d'une correspondance : début du texte > début d'un mot > au milieu d'un mot > synonyme > à une faute près. */
 function quality(n: string, token: string, alts: string[]): number {
-  if (n.startsWith(token)) return 4;
-  if (n.includes(` ${token}`)) return 3;
-  if (hit(n, token)) return 2;
-  return alts.some((a) => hit(n, a)) ? 1 : 0;
+  if (n.startsWith(token)) return 5;
+  if (n.includes(` ${token}`)) return 4;
+  if (hit(n, token)) return 3;
+  if (alts.some((a) => hit(n, a))) return 2;
+  return fuzzyHit(n, token) ? 1 : 0;
 }
 
 const KIND_ORDER: Record<SuggestionKind, number> = { establishment: 0, formation: 1, metier: 2, city: 3 };

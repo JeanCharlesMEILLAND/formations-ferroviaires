@@ -102,7 +102,17 @@
       "city": "City"
     },
     "suggestionsHint": "Suggestions",
-    "noSuggestion": "No suggestion, search as typed"
+    "noSuggestion": "No suggestion, search as typed",
+    "fuzzyHint": "No exact match for “{q}”, here are the closest.",
+    "ctxFamily": "Job family",
+    "ctxMetier": "Profession",
+    "ctxFormation": "Program",
+    "ctxRegion": "Region",
+    "ctxLevel": "Level",
+    "ctxDomain": "Domain",
+    "ctxType": "Institution type",
+    "ctxSearch": "Search",
+    "ctxAll": "All verified institutions"
   },
   "establishment": {
     "title": "Institution details",

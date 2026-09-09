@@ -123,14 +123,15 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
     });
   }, [slim, filterData, metiersByFormationSlug]);
 
-  // Filtres et recherche appliqués dans le navigateur : aucun aller-retour, résultat immédiat
-  const filtered = useMemo(() => {
+  // Filtres et recherche appliqués dans le navigateur : aucun aller-retour, résultat immédiat.
+  // Sans résultat exact, une seconde passe accepte une faute de frappe par mot.
+  const { filtered, fuzzy } = useMemo(() => {
     const groups = searchQuery.trim().length >= 2 ? expandQuery(searchQuery) : [];
     const metierSlugs = selectedMetier && filterData
       ? new Set(filterData.metierFormationLinks.filter((l) => l.metier.slug === selectedMetier).map((l) => l.formation.slug))
       : null;
     const byFormation = Boolean(selectedLevel || selectedDomain || selectedFormation || metierSlugs);
-    return establishments.filter((e) => {
+    const base = establishments.filter((e) => {
       if (selectedType && e.type.slug !== selectedType) return false;
       if (selectedRegion && e.region.code !== selectedRegion) return false;
       if (byFormation && !e.formations.some(({ formation: f }) =>
@@ -138,9 +139,13 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
         (!selectedDomain || f.domain.slug === selectedDomain) &&
         (!selectedFormation || f.slug === selectedFormation) &&
         (!metierSlugs || metierSlugs.has(f.slug)))) return false;
-      if (groups.length && !matchesAll(e.n, groups)) return false;
       return true;
     });
+    if (groups.length === 0) return { filtered: base, fuzzy: false };
+    const exact = base.filter((e) => matchesAll(e.n, groups));
+    if (exact.length > 0) return { filtered: exact, fuzzy: false };
+    const close = base.filter((e) => matchesAll(e.n, groups, true));
+    return { filtered: close, fuzzy: close.length > 0 };
   }, [establishments, filterData, searchQuery, selectedType, selectedRegion, selectedLevel, selectedDomain, selectedFormation, selectedMetier]);
 
   // Suggestions : établissements vérifiés, formations, métiers et villes présents dans les données chargées
@@ -250,6 +255,21 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
   }, [filterData, fr, m.family, selectedMetier, selectedFormation, selectedRegion, selectedLevel, selectedDomain, selectedType, selectedFamily]);
 
   const hasFilters = Boolean(searchQuery || selectedFamily || activeChips.length);
+
+  // Titre de contexte : le premier critère actif, en toutes lettres (« Famille de métiers · Maintenance »)
+  const context = useMemo<{ kicker: string; title: string } | null>(() => {
+    const f = filterData;
+    const q = searchQuery.trim();
+    if (q.length >= 2) return { kicker: m.ctxSearch, title: `« ${q} »` };
+    if (selectedMetier) return { kicker: m.ctxMetier, title: f?.metiers.find((x) => x.slug === selectedMetier)?.nameFr ?? selectedMetier };
+    if (selectedFormation) return { kicker: m.ctxFormation, title: f?.formations.find((x) => x.slug === selectedFormation)?.nameFr ?? selectedFormation };
+    if (selectedFamily) return { kicker: m.ctxFamily, title: selectedFamily.replace(",", " · ") };
+    if (selectedRegion) return { kicker: m.ctxRegion, title: f?.regions.find((x) => x.code === selectedRegion)?.name ?? selectedRegion };
+    if (selectedLevel) { const x = f?.levels.find((l) => l.slug === selectedLevel); return { kicker: m.ctxLevel, title: (fr ? x?.nameFr : x?.nameEn) ?? selectedLevel }; }
+    if (selectedDomain) { const x = f?.domains.find((d) => d.slug === selectedDomain); return { kicker: m.ctxDomain, title: (fr ? x?.nameFr : x?.nameEn) ?? selectedDomain }; }
+    if (selectedType) { const x = f?.types.find((t) => t.slug === selectedType); return { kicker: m.ctxType, title: (fr ? x?.nameFr : x?.nameEn) ?? selectedType }; }
+    return null;
+  }, [filterData, fr, m, searchQuery, selectedMetier, selectedFormation, selectedFamily, selectedRegion, selectedLevel, selectedDomain, selectedType]);
 
   // Liste groupée par région (sauf tri par distance)
   const groupedResults = useMemo<Array<[string | null, Establishment[]]>>(() => {
@@ -370,11 +390,15 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
 
   const resultsHeader = (
     <div className="px-4 pt-3 pb-2.5 border-b border-navy-100">
-      <div className="flex items-center justify-between gap-3">
-        <p className="font-heading font-extrabold text-[24px] leading-none text-navy-900 tabular-nums">
-          {count}
-          <span className="text-body-sm font-bold text-navy-500 ml-2">{displayed.length > 1 ? m.establishmentMany : m.establishmentOne}</span>
-        </p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[10px] font-extrabold uppercase tracking-wider text-navy-400">{context ? context.kicker : m.ctxAll}</p>
+          {context && <h2 className="font-heading font-extrabold text-[20px] leading-tight text-navy-900 text-balance mt-0.5 animate-rise" key={context.title}>{context.title}</h2>}
+          <p className={`font-heading font-extrabold leading-none text-navy-900 tabular-nums ${context ? "text-[15px] mt-1.5" : "text-[24px] mt-1"}`}>
+            {count}
+            <span className="text-body-sm font-bold text-navy-500 ml-2">{displayed.length > 1 ? m.establishmentMany : m.establishmentOne}</span>
+          </p>
+        </div>
         <div className="flex items-center gap-1.5 shrink-0">
           <button type="button" onClick={() => setFiltersOpen(!filtersOpen)} aria-expanded={filtersOpen} className={`chip ${filtersOpen || activeChips.length ? "is-on" : ""}`}>
             <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.4" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18M6 12h12M10 19h4" /></svg>
@@ -395,6 +419,12 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
               <button type="button" onClick={() => setShowApi(!showApi)} className="underline font-bold text-navy-600">{showApi ? m.hide : m.show}</button>
             </span>
           )}
+        </p>
+      )}
+
+      {fuzzy && (
+        <p className="mt-2 rounded-xl bg-signal-50 border border-signal-200 px-3 py-2 text-caption text-navy-800 animate-rise" role="status">
+          {m.fuzzyHint.replace("{q}", searchQuery.trim())}
         </p>
       )}
 
