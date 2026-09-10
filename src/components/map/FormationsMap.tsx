@@ -319,8 +319,13 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
   const wasFiltered = useRef(false);
   useEffect(() => {
     const active = hasFilters && !userPos;
-    if (active && displayed.length > 0) setFit({ points: displayed.slice(0, 500).map((e) => [e.lat, e.lng] as [number, number]), tick: Date.now() });
-    else if (!active && wasFiltered.current && !userPos) recenter();
+    if (active && displayed.length > 0) {
+      // Les établissements d'outre-mer (Martinique…) étireraient l'emprise jusqu'aux Antilles et la France
+      // finirait au bord de la carte : on cadre la métropole quand elle contient des résultats, tout sinon.
+      const all = displayed.slice(0, 500).map((e) => [e.lat, e.lng] as [number, number]);
+      const metro = all.filter(([lat, lng]) => lat >= 41 && lat <= 51.5 && lng >= -5.5 && lng <= 10);
+      setFit({ points: metro.length > 0 ? metro : all, tick: Date.now() });
+    } else if (!active && wasFiltered.current && !userPos) recenter();
     wasFiltered.current = active;
   }, [displayed, hasFilters, userPos, recenter]);
 
