@@ -11,7 +11,11 @@ const nextConfig = {
   // Polices embarquées dans le PDF « liste à emporter » : à inclure dans le paquet de la fonction serverless.
   experimental: { outputFileTracingIncludes: { "/api/selection/pdf": ["./src/assets/fonts/*.woff"] } },
   async headers() {
-    return [{ source: "/(.*)", headers: securityHeaders }];
+    return [
+      { source: "/(.*)", headers: securityHeaders },
+      // Données générées au build (réseau ferré) : un jour de cache, servies compressées par Vercel
+      { source: "/data/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800" }] },
+    ];
   },
 };
 

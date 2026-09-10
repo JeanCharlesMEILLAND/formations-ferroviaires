@@ -45,3 +45,6 @@ group3-master-ingenieur-results.md
 next-env.d.ts
 
 .vercel
+
+# Téléchargements du script de carte (régénérables)
+scripts/cache/

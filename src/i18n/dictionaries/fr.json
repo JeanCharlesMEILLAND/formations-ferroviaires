@@ -116,7 +116,10 @@
     "ctxAll": "Tous les établissements vérifiés",
     "exportPdf": "Emporter la liste (PDF)",
     "exportHint": "Les {n} premiers établissements affichés, avec vos filtres",
-    "exportBusy": "Préparation…"
+    "exportBusy": "Préparation…",
+    "rail": "Réseau ferré",
+    "railLine": "ligne exploitée",
+    "railLgv": "LGV"
   },
   "establishment": {
     "title": "Fiche établissement",
@@ -201,7 +204,8 @@
     "partners": "Un service porté par Objectif OFP.",
     "noneYet": "aucun établissement vérifié pour l'instant",
     "levelWord": "Niveau",
-    "parcoursLegend": "Les numéros sont les niveaux du cadre national des certifications : 3 = CAP, 4 = bac, 5 = bac + 2, 6 = bac + 3, 7 = bac + 5, 8 = bac + 6 et plus. L'étoile regroupe les certifications professionnelles, accessibles à tout âge."
+    "parcoursLegend": "Les numéros sont les niveaux du cadre national des certifications : 3 = CAP, 4 = bac, 5 = bac + 2, 6 = bac + 3, 7 = bac + 5, 8 = bac + 6 et plus. L'étoile regroupe les certifications professionnelles, accessibles à tout âge.",
+    "railCaption": "Réseau ferré exploité et lignes à grande vitesse : SNCF Réseau (ODbL)"
   },
   "contact": {
     "title": "Contact",

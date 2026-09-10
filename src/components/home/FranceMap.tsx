@@ -4,14 +4,16 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { RegionNode } from "@/lib/home";
 import { FRANCE_REGIONS, FRANCE_VIEW } from "./france-regions";
+import { FRANCE_RAIL } from "./france-rail";
 
 /**
- * Carte de France : vraies formes des régions (GeoJSON officiel simplifié, projection Lambert),
- * une bulle par région dimensionnée par le nombre d'établissements vérifiés, étiquette HTML au survol.
+ * Carte de France : vraies formes des régions (GeoJSON officiel simplifié, projection Lambert), le réseau ferré
+ * exploité et les LGV (SNCF Réseau, même projection), une bulle par région dimensionnée par le nombre
+ * d'établissements vérifiés, étiquette HTML au survol.
  */
 export default function FranceMap({
-  regions, locale, caption, unitOne, unitMany, none, propose,
-}: { regions: RegionNode[]; locale: string; caption: string; unitOne: string; unitMany: string; none: string; propose: string }) {
+  regions, locale, caption, railCaption, unitOne, unitMany, none, propose,
+}: { regions: RegionNode[]; locale: string; caption: string; railCaption: string; unitOne: string; unitMany: string; none: string; propose: string }) {
   const [hover, setHover] = useState<string | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const counts = new Map(regions.map((r) => [r.code, r.count]));
@@ -53,6 +55,10 @@ export default function FranceMap({
             onMouseLeave={() => setHover(null)}
           />
         ))}
+        <g className="fr-rail" aria-hidden="true" pointerEvents="none">
+          <path d={FRANCE_RAIL.classic} className="fr-rail-line" />
+          <path d={FRANCE_RAIL.lgv} className="fr-rail-lgv" />
+        </g>
         {shapes.map((s) => {
           const empty = s.count === 0;
           const r = empty ? 10 : radius(s.count);
@@ -85,7 +91,12 @@ export default function FranceMap({
         </div>
       )}
       </div>
-      <figcaption className="text-caption text-navy-300 text-center mt-3">{caption}</figcaption>
+      <figcaption className="text-caption text-navy-300 text-center mt-3">
+        {caption}
+        <span className="block mt-1 text-navy-400">
+          <span className="fr-legend-swatch fr-legend-line" aria-hidden="true" /> <span className="fr-legend-swatch fr-legend-lgv" aria-hidden="true" /> {railCaption}
+        </span>
+      </figcaption>
     </figure>
   );
 }

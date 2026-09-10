@@ -161,6 +161,13 @@ section[id] { scroll-margin-top: 5rem; } /* la barre de navigation collante ne c
 .fr-region { fill: rgba(255, 255, 255, .07); stroke: rgba(255, 216, 77, .7); stroke-width: 1.1; stroke-linejoin: round; transition: fill .25s, stroke .25s; cursor: pointer; }
 .fr-map .is-ready .fr-region { animation: fr-draw 1.8s cubic-bezier(.4, 0, .2, 1) forwards, fr-fill 1.2s ease-out 1s both; }
 .fr-region.is-hot { fill: rgba(255, 216, 77, .24); stroke: #FFD84D; stroke-width: 1.6; }
+.fr-rail { opacity: 0; }
+.fr-map .is-ready .fr-rail { animation: fr-fade .9s ease-out 1.3s both; }
+.fr-rail-line { fill: none; stroke: rgba(201, 216, 223, .5); stroke-width: .7; stroke-linejoin: round; stroke-linecap: round; }
+.fr-rail-lgv { fill: none; stroke: #FF5A36; stroke-width: 1.7; stroke-linejoin: round; stroke-linecap: round; }
+@keyframes fr-fade { from { opacity: 0; } to { opacity: 1; } }
+.fr-legend-swatch { display: inline-block; width: 18px; height: 0; vertical-align: middle; border-top: 2px solid rgba(201, 216, 223, .6); }
+.fr-legend-lgv { border-top: 3px solid #FF5A36; }
 .fr-node { cursor: pointer; outline: none; animation: fr-pop .6s cubic-bezier(.2, .9, .3, 1.4) both; transform-box: fill-box; transform-origin: center; }
 .fr-halo { fill: rgba(255, 216, 77, .12); transition: fill .2s; }
 .fr-bubble { fill: #12303F; stroke: #FFD84D; stroke-width: 3; transition: fill .2s, stroke .2s; filter: url(#fr-glow); }
@@ -198,7 +205,7 @@ section[id] { scroll-margin-top: 5rem; } /* la barre de navigation collante ne c
 .family-job.is-more { background: transparent; color: var(--fam); border: 1.5px dashed var(--fam); }
 .family-foot { margin-top: auto; display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: #0C1F2C; transition: color .2s, gap .2s; }
 .family-card:hover .family-foot { color: var(--fam); gap: 10px; }
-@media (prefers-reduced-motion: reduce) { .fr-region, .fr-node, .family-card, .fr-tip-in { animation: none !important; } .fr-map .is-ready .fr-region { stroke-dashoffset: 0 !important; } }
+@media (prefers-reduced-motion: reduce) { .fr-region, .fr-node, .family-card, .fr-tip-in, .fr-rail { animation: none !important; } .fr-map .is-ready .fr-region { stroke-dashoffset: 0 !important; } .fr-rail { opacity: 1; } }
 
 /* Formulaire de contact : motifs */
 .kind-card { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; border: 1.5px solid #D6DDE1; background: #fff; cursor: pointer; transition: border-color .18s, background .18s, transform .18s; }

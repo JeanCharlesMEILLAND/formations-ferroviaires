@@ -111,7 +111,7 @@ export default async function HomePage({ params }: { params: { locale: Locale } 
           </div>
 
           <div className="max-w-md lg:max-w-lg w-full mx-auto lg:mx-0 lg:justify-self-end lg:self-start lg:-mt-6 lg:-mr-6">
-            <FranceMap regions={data.regions} locale={L} caption={dict.home.networkCaption} unitOne={dict.map.verifiedOne} unitMany={dict.map.verifiedMany} none={dict.home.noneYet} propose={dict.contact.kinds.nouveau} />
+            <FranceMap regions={data.regions} locale={L} caption={dict.home.networkCaption} railCaption={dict.home.railCaption} unitOne={dict.map.verifiedOne} unitMany={dict.map.verifiedMany} none={dict.home.noneYet} propose={dict.contact.kinds.nouveau} />
           </div>
         </div>
         <div className="h-1.5 bg-[repeating-linear-gradient(90deg,#FFD84D_0_40px,transparent_40px_56px)] opacity-90" aria-hidden="true" />

@@ -11,6 +11,7 @@ import SearchField from "./SearchField";
 import EstablishmentCard from "./EstablishmentCard";
 import { MarkerClusterLayer, MapController, UserDot, BoundsController, FranceView } from "./markers";
 import ExportPdfButton from "./ExportPdfButton";
+import RailLayer, { RAIL_COLORS } from "./RailLayer";
 import { useCountUp, useDesktop } from "./hooks";
 import { useSelection } from "@/lib/selection";
 import SelectionButton from "@/components/selection/SelectionButton";
@@ -71,6 +72,9 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
   const [showLegend, setShowLegendState] = useState(false);
   useEffect(() => { try { setShowLegendState(localStorage.getItem("ff-legend") === "1"); } catch { /* stockage indisponible */ } }, []);
   const setShowLegend = (v: boolean) => { setShowLegendState(v); try { localStorage.setItem("ff-legend", v ? "1" : "0"); } catch { /* ignoré */ } };
+  const [showRail, setShowRailState] = useState(true);
+  useEffect(() => { try { setShowRailState(localStorage.getItem("ff-rail") !== "0"); } catch { /* stockage indisponible */ } }, []);
+  const setShowRail = (v: boolean) => { setShowRailState(v); try { localStorage.setItem("ff-rail", v ? "1" : "0"); } catch { /* ignoré */ } };
   const [view, setView] = useState<View>(initial?.view ?? "establishments");
   const [sheet, setSheet] = useState<Sheet>("peek");
   const listRef = useRef<HTMLDivElement>(null);
@@ -676,6 +680,12 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
               </li>
             ))}
           </ul>
+          <label className="mt-2 pt-2 border-t border-navy-900/10 flex items-center gap-2 text-[11px] text-navy-700 cursor-pointer">
+            <input type="checkbox" checked={showRail} onChange={(e) => setShowRail(e.target.checked)} className="accent-electric-500 w-3.5 h-3.5" />
+            <span className="font-semibold">{m.rail}</span>
+            <span className="inline-flex items-center gap-1 ml-auto text-navy-500"><span className="inline-block w-4 border-t-2" style={{ borderColor: RAIL_COLORS.classic, opacity: .6 }} aria-hidden="true" /> {m.railLine}</span>
+            <span className="inline-flex items-center gap-1 text-navy-500"><span className="inline-block w-4 border-t-[3px]" style={{ borderColor: RAIL_COLORS.lgv }} aria-hidden="true" /> {m.railLgv}</span>
+          </label>
         </div>
       ) : (
         <button type="button" onClick={() => setShowLegend(true)} className="map-btn" aria-label={m.legend}>
@@ -739,6 +749,7 @@ export default function FormationsMap({ dict, locale, initial }: { dict: Diction
             maxZoom={19}
           />
           {desktop && <ZoomControl position="bottomright" />}
+          <RailLayer visible={showRail} />
           <MapController target={fly} />
           <FranceView tick={franceTick} desktop={desktop} active={!hasFilters && !initial?.near && !initial?.establishment} />
           <BoundsController target={fit} desktop={desktop} />

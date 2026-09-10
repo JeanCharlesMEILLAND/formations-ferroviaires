@@ -40,6 +40,11 @@ Build de production : `npm run build && npm start`.
 - **Établissements généralistes** (`source = "api"`) : importés depuis l'API La Bonne Alternance par le back-office (onglet
   Enrichir), masqués par défaut sur la carte. Ils ne font pas partie du seed et se rejouent à la demande.
 - Sources externes : ONISEP (liens), EPSF (organismes agréés), Futur en train et Avec l'industrie ferroviaire (fiches métiers).
+- **Cartes** : contours des régions (gregoiredavid/france-geojson, licence ouverte) et réseau ferré national exploité avec ses LGV
+  (SNCF Réseau, « formes des lignes du RFN » et « vitesse maximale nominale sur ligne », ODbL), générés par
+  `npx tsx scripts/build-france-map.ts` → `src/components/home/france-regions.ts`, `france-rail.ts` (accueil, SVG projeté en Lambert)
+  et `public/data/rfn-exploite.json` (page carte, polylignes simplifiées à 100 m dessinées en canvas sous les marqueurs).
+  Téléchargements mis en cache dans `scripts/cache/`. Ni la Corse ni les tronçons centraux du RER (RATP) ne font partie du RFN.
 - `scripts/legacy/` : scripts de construction de mars 2026, conservés pour l'historique, à ne plus exécuter.
 
 ## Formulaire de contact

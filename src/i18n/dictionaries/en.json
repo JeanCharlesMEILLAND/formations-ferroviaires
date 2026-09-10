@@ -116,7 +116,10 @@
     "ctxAll": "All verified institutions",
     "exportPdf": "Take the list away (PDF)",
     "exportHint": "The first {n} institutions shown, with your filters",
-    "exportBusy": "Preparing…"
+    "exportBusy": "Preparing…",
+    "rail": "Rail network",
+    "railLine": "line in service",
+    "railLgv": "high-speed"
   },
   "establishment": {
     "title": "Institution details",
@@ -201,7 +204,8 @@
     "partners": "A service run by Objectif OFP.",
     "noneYet": "no verified institution yet",
     "levelWord": "Level",
-    "parcoursLegend": "The numbers are the levels of the French qualifications framework: 3 = vocational certificate, 4 = high-school diploma, 5 = two years after, 6 = three years after, 7 = five years after, 8 = six years and more. The star groups professional certifications, open at any age."
+    "parcoursLegend": "The numbers are the levels of the French qualifications framework: 3 = vocational certificate, 4 = high-school diploma, 5 = two years after, 6 = three years after, 7 = five years after, 8 = six years and more. The star groups professional certifications, open at any age.",
+    "railCaption": "Rail lines in service and high-speed lines: SNCF Réseau (ODbL)"
   },
   "contact": {
     "title": "Contact",
