@@ -36,22 +36,25 @@ export default function HeroSearch({
 
   return (
     <form action={action} method="get" role="search" onSubmit={(e) => { e.preventDefault(); if (value.trim()) go(); else router.push(action); }} className="flex flex-wrap gap-2 items-center bg-white rounded-2xl p-2 shadow-search relative z-20">
-      <div className="flex-1 min-w-[14rem]">
+      {/* Sur mobile, le champ prend toute la ligne et les boutons passent dessous : l'exemple tapé garde sa place */}
+      <div className="flex-1 min-w-[14rem] basis-full sm:basis-0">
         <SearchField
           value={value}
           onChange={(v) => { setValue(v); ensureIndex(); }}
           label={label}
           suggestions={suggestions}
+          hero
           suggest={(q) => (items ? suggest(items, q, 9) : [])}
           onPick={pick}
           onSubmit={() => { if (value.trim()) go(); }}
           kindLabels={kindLabels}
         />
       </div>
-      <Link href={nearHref} className="rounded-xl bg-navy-100 text-navy-900 px-3 py-2.5 text-body-sm font-bold whitespace-nowrap hover:bg-navy-200 transition-colors">
-        ◎ {nearLabel}
+      {/* Icône seule sous 2xl : la place va à l'étiquette animée du champ, qui sinon se coupe */}
+      <Link href={nearHref} aria-label={nearLabel} title={nearLabel} className="inline-flex items-center gap-1.5 rounded-xl bg-navy-100 text-navy-900 px-3 py-2.5 text-body-sm font-bold whitespace-nowrap hover:bg-navy-200 transition-colors">
+        <span aria-hidden="true">◎</span><span className="hidden 2xl:inline">{nearLabel}</span>
       </Link>
-      <button type="submit" className="rounded-xl bg-electric-500 hover:bg-electric-600 text-white px-5 py-3 text-body-sm font-extrabold transition-colors">
+      <button type="submit" className="flex-1 sm:flex-none rounded-xl bg-electric-500 hover:bg-electric-600 text-white px-5 py-3 text-body-sm font-extrabold transition-colors">
         {submitLabel}
       </button>
     </form>

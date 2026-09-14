@@ -17,13 +17,15 @@ const KIND_ICON: Record<SuggestionKind, string> = {
  * propositions (établissements, formations, métiers, villes) s'ouvre sous le champ, pilotable au clavier.
  */
 export default function SearchField({
-  value, onChange, label, suggestions, compact = false, autoFocus = false, suggest, onPick, onSubmit, kindLabels,
+  value, onChange, label, suggestions, compact = false, hero = false, autoFocus = false, suggest, onPick, onSubmit, kindLabels,
 }: {
   value: string;
   onChange: (v: string) => void;
   label: string;
   suggestions: string[];
   compact?: boolean;
+  /** Variante du hero : étiquette au plus large, la place à droite n'est réservée qu'au bouton d'effacement */
+  hero?: boolean;
   autoFocus?: boolean;
   suggest?: (q: string) => SuggestionItem[];
   onPick?: (item: SuggestionItem) => void;
@@ -58,7 +60,7 @@ export default function SearchField({
   let lastKind: SuggestionKind | null = null;
 
   return (
-    <div ref={rootRef} className={`search-field ${idle ? "" : "is-active"} ${compact ? "is-compact" : ""}`}>
+    <div ref={rootRef} className={`search-field ${idle ? "" : "is-active"} ${compact ? "is-compact" : ""} ${hero ? "is-hero" : ""}`}>
       <svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
         <circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" />
       </svg>
