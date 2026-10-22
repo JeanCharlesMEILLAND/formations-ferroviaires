@@ -3,7 +3,7 @@
 Le guide des métiers du rail : où se former, près de chez soi, du CAP à l'ingénieur. Carte interactive des
 établissements, formations et métiers ferroviaires en France, avec un back-office de gestion.
 
-Site : https://formations-ferroviaires.vercel.app · Porté par Objectif OFP.
+Site (adresse provisoire) : https://formations-ferroviaires.vercel.app.
 
 ## Pile technique
 
